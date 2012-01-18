@@ -1,24 +1,36 @@
 \usepackage[english]{babel}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{amssymb}
+\usepackage{amsmath}
 
 \usepackage{multibib}
 
+% Math
+\newcommand{\injection}{\rightarrowtail}
+\newcommand{\surjection}{\twoheadrightarrow}
+\newcommand{\bijection}{\to}
+
+% References
 \newcommand{\equref}[1]{Eq.~(\ref{eq:#1})}
 \newcommand{\secref}[1]{Sec.~\ref{sec:#1}}
 
 \newcommand{\equlabel}[1]{\label{eq:#1}}
 \newcommand{\seclabel}[1]{\label{sec:#1}}
 
+% System
 \newcommand{\system}{\mathcal{S}}
 
+% Platform
 \newcommand{\platform}{\mathcal{P}}
+
 \newcommand{\coreset}{\platform}
 \newcommand{\core}{\rho}
 \newcommand{\coreindex}{I_\core}
 \newcommand{\corecount}{N_\core}
+
 \newcommand{\physics}{\mathcal{X}}
 
+% Application
 \newcommand{\application}{\mathcal{A}}
 \newcommand{\edgeset}{\mathcal{E}}
 
@@ -27,18 +39,21 @@
 \newcommand{\taskindex}{I_\task}
 \newcommand{\taskcount}{N_\task}
 
+\newcommand{\deadline}{\mathcal{D}}
+
+% Mapping and Scheduling
 \newcommand{\mapping}{\phi}
 \newcommand{\schedule}{\psi}
 \newcommand{\real}{\mathbb{R}}
 \newcommand{\positivereal}{\real^{+}}
 
-\newcommand{\pdf}{f}
+\newcommand{\period}{\mathcal{T}}
+\newcommand{\executiontime}{\tau}
 
-\newcommand{\timeset}{T}
-\renewcommand{\time}{t}
-\newcommand{\timeindex}{I_\time}
-\newcommand{\timecount}{N_\time}
+% Circuit
+\newcommand{\circuit}{\xi}
 
+% Stochastic Processes
 \newcommand{\outcomeset}{\Omega}
 \newcommand{\outcome}{\omega}
 \newcommand{\salgebra}{\mathcal{F}}
@@ -46,27 +61,45 @@
 
 \newcommand{\pspace}{(\outcomeset, \salgebra, \pmeasure)}
 
+\newcommand{\pdf}{f}
+
+\newcommand{\normal}{N}
+
+\newcommand{\mean}[1]{\text{E}(#1)}
+\newcommand{\variance}[1]{\text{Var}(#1)}
+
+% Time
+\newcommand{\timeset}{T}
+\renewcommand{\time}{t}
+\newcommand{\timeindex}{I_\time}
+\newcommand{\timecount}{N_\time}
+
 \newcommand{\m}[1]{\mathbf{#1}}
 \renewcommand{\v}[1]{\mathbf{#1}}
+\newcommand{\s}[1]{\mbox{#1}}
+
+\newcommand{\sep}{\hspace{10pt}}
 
 \newcommand{\powerset}{U}
 \newcommand{\power}{U}
 \newcommand{\vpower}{\v{U}}
+\newcommand{\spower}{\s{U}}
+\newcommand{\svpower}{\v{U}}
 
 \newcommand{\temperatureset}{\Theta}
 \newcommand{\temperature}{\Theta}
 \newcommand{\vtemperature}{\v{\Theta}}
+\newcommand{\stemperature}{\Theta}
+\newcommand{\svtemperature}{\v{\Theta}}
 
 \newcommand{\mcapacitance}{\m{C}}
 \newcommand{\mconductance}{\m{G}}
-\newcommand{\mresistance}{\m{R}}
+\newcommand{\resistance}{R}
+\newcommand{\mresistance}{\m{\resistance}}
 
-\newcommand{\nodecount}{N_n}
-
-\newcommand{\apply}[1]{, \hspace{10pt} #1}
-
-\newcommand{\period}{\Pi}
-\newcommand{\executiontime}{\pi}
-
-\newcommand{\taskpower}{U}
-\newcommand{\tasktime}{T}
+\newcommand{\nodeset}{\mathcal{N}}
+\newcommand{\node}{n}
+\newcommand{\nodeindex}{I_\node}
+\newcommand{\nodecount}{N_\node}
+\newcommand{\nodeindexactive}{I^{act}_\node}
+\newcommand{\nodeindexpassive}{I^{pas}_\node}

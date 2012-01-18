@@ -1,26 +1,53 @@
 \subsection{Problem Formulation}
 Given:
 \begin{itemize}
-  \item A multiprocessor system $\system = (\platform, \application)$ with $\physics$.
-  \item The mapping $\mapping$ and schedule $\schedule$ of the application $\application$.
-  \item The execution time $\executiontime_i$ (deterministic) of each task $\task_i \in \taskset$ running on the corresponding core $\core_j \in \coreset, \mapping(i) = j$.
-  \item The probability density function $\pdf_{\power_{\task_i}}(\power)$ of the power dissipation $\power_{\task_i}$ of each task $\task_i \in \taskset$. Probability distributions are assumed to be independent.
+  \item A multiprocessor system $\system = (\platform, \application)$.
+  \item Physical characteristics the platform and ambience $\physics$.
+  \item The mapping $\mapping$ and schedule $\schedule$ of the application.
+  \item The execution time $\executiontime_i$ of each task $\task_i \in \taskset$ running on the corresponding core $\core_j \in \coreset, \mapping(i) = j$.
+  \item The probability density function $\pdf_{\spower_{\task_i}}(\spower)$ of the power dissipation $\spower_{\task_i}(\outcome)$ of each task $\task_i \in \taskset$.
 \end{itemize}
 
 Find:
 \begin{itemize}
-  \item Probability distribution of the static steady-state temperature of the system.
+  \item The probability density function $\pdf_{\stemperature_{\node_i}}(\stemperature)$ of the temperature $\stemperature_{\node_i}(\outcome)$ of each thermal node $\node_i \in \nodeset$ in the static steady state of the system.
+\end{itemize}
+
+Assumptions:
+\begin{itemize}
+  \item Normal distribution of $\spower_{\task_i}(\outcome) \sim \normal(\mean{\spower_{\task_i}}, \variance{\spower_{\task_i}})$.
+  \item Independence of $\spower_{\task_i}(\outcome)$.
 \end{itemize}
 
 \subsection{Model}
-In the steady-state case, \equref{fourier} does not depend on time and drops the derivative term:
+In the steady-state case, \equref{stochastic-fourier} does not depend on time and drops the derivative term:
 \[
-  \vtemperature(\outcome) = \mconductance^{-1} \vpower(\outcome) = \mresistance \: \vpower(\outcome)
+  \svtemperature_\node(\outcome) = \mconductance^{-1} \svpower_\node(\outcome) = \mresistance \svpower_\node(\outcome)
 \]
-where $\vpower(\outcome)$ is a vector of random variables that represent the average power dissipation of thermal nodes, consequently, $\vtemperature(\outcome)$ is a vector of random variables that correspond to temperature and are linear combinations of the power random variables.
+where $\svpower_\node(\outcome)$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\svtemperature_\node(\outcome)$ is a random vector that corresponds to temperature.
 
-Suppose the execution time of each task $\task_i \in \taskset$ is fixed and equal to $\executiontime_i$. The period of the application is $\period$.
+The average power dissipation of active thermal nodes is modeled using the following equation:
 \[
-\power_i(\outcome) = \frac{1}{\period} \sum_{j \in \taskindex^{\core_i}} \executiontime_j \taskpower_{ij}(\outcome)
+  \spower_{\node_i}(\outcome) = \frac{1}{\period} \sum_{j \in \taskindex^{\node_i}} \executiontime_j \spower_{\task_j}(\outcome), \sep i \in \nodeindexactive
 \]
-where $\taskindex^{\core_i} = \{ k: k \in \taskindex, \mapping(k) = i \}$ is the index set of tasks mapped onto the $i$th core.
+Since $\spower_{\task_j}$ are normally distributed and $\spower_{\node_i}$ are linear combinations of $\spower_{\task_j}$, $\spower_{\node_i}$ are also distributed normally:
+\begin{align}
+  & \spower_{\node_i}(\outcome) \sim \normal(\mean{\spower_{\node_i}}, \variance{\spower_{\node_i}}), \sep i \in \nodeindex \nonumber \\
+  & \mean{\spower_{\node_i}} = \frac{1}{\period} \sum_{j \in \nodeindexactive} \executiontime_j \: \mean{\spower_{\task_j}} \equlabel{power-mean} \\
+  & \variance{\spower_{\node_i}} = \frac{1}{\period^2} \sum_{j \in \nodeindexactive} \executiontime_j^2 \: \variance{\spower_{\task_j}} \equlabel{power-variance}
+\end{align}
+The components of the temperature vector $\svtemperature_{\node}$, in their turn, are linear combinations of the components of $\svpower_{\node}$:
+\[
+  \stemperature_{\node_i}(\outcome) = \sum_{j \in \nodeindex} \resistance_{ij} \spower_{\node_j}(\outcome)
+\]
+Therefore, $\stemperature_{\node_i}$ have normal distributions:
+\begin{align*}
+  & \stemperature_{\node_i}(\outcome) \sim \normal(\mean{\stemperature_{\node_i}}, \variance{\stemperature_{\node_i}}), \sep i \in \nodeindex \\
+  & \mean{\stemperature_{\node_i}} = \sum_{j \in \nodeindex} \resistance_{ij} \: \mean{\spower_{\node_j}} \\
+  & \variance{\stemperature_{\node_i}} = \sum_{j \in \nodeindex} \resistance^2_{ij} \: \variance{\spower_{\node_j}}
+\end{align*}
+Using \equref{power-mean} and \equref{power-variance}:
+\begin{align*}
+  & \mean{\stemperature_{\node_i}} = \frac{1}{\period} \sum_{j \in \nodeindex} \resistance_{ij} \sum_{k \in \nodeindexactive} \executiontime_k \mean{\spower_{\task_k}} \\
+  & \variance{\stemperature_{\node_i}} = \frac{1}{\period^2} \sum_{j \in \nodeindex} \resistance^2_{ij} \sum_{k \in \nodeindexactive} \executiontime^2_k \variance{\spower_{\node_k}}
+\end{align*}
