@@ -4,50 +4,66 @@ Given:
   \item A multiprocessor system $\system = (\platform, \application)$.
   \item Physical characteristics the platform and ambience $\physics$.
   \item The mapping $\mapping$ and schedule $\schedule$ of the application.
-  \item The execution time $\executiontime_i$ of each task $\task_i \in \taskset$ running on the corresponding core $\core_j \in \coreset, \mapping(i) = j$.
-  \item The probability density function $\pdf_{\spower_{\task_i}}(\spower)$ of the power dissipation $\spower_{\task_i}(\outcome)$ of each task $\task_i \in \taskset$.
+  \item Execution times $\executiontime_i$ of tasks $\task_i \in \taskset$ with respect to $\mapping$.
+  \item Probability distributions of the dynamic power dissipation $\spower_{\task_i}(\outcome)$ of tasks $\task_i \in \taskset$ with respect to $\mapping$.
 \end{itemize}
 
 Find:
 \begin{itemize}
-  \item The probability density function $\pdf_{\stemperature_{\node_i}}(\stemperature)$ of the temperature $\stemperature_{\node_i}(\outcome)$ of each thermal node $\node_i \in \nodeset$ in the static steady state of the system.
+  \item Probability distributions of the temperature variation $\stemperature_{\node_i}(\outcome)$ of each thermal node $\node_i \in \nodeset$ in the static steady state of the system.
 \end{itemize}
 
+\subsection{Model: Fixed Power} \seclabel{sss-fixed}
 Assumptions:
 \begin{itemize}
-  \item Normal distribution of $\spower_{\task_i}(\outcome) \sim \normal(\mean{\spower_{\task_i}}, \variance{\spower_{\task_i}})$.
-  \item Independence of $\spower_{\task_i}(\outcome)$.
+  \item $\spower^{(k)}_{\task_i}(\outcome) = \spower_{\task_i}(\outcome) \sim \normal(\mean{\spower_{\task_i}})$, i.e., the power dissipation of a task does not change between actuations and is a single normally distributed random variable.
+  \item $\spower_{\task_i}(\outcome)$ are independent for $\forall i \in \taskindex$, i.e., tasks do not influence each other.
 \end{itemize}
 
-\subsection{Model}
 In the steady-state case, \equref{stochastic-fourier} does not depend on time and drops the derivative term:
 \[
   \svtemperature_\node(\outcome) = \mconductance^{-1} \svpower_\node(\outcome) = \mresistance \svpower_\node(\outcome)
 \]
 where $\svpower_\node(\outcome)$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\svtemperature_\node(\outcome)$ is a random vector that corresponds to temperature.
 
-The average power dissipation of active thermal nodes is modeled using the following equation:
+Since the power dissipation of a task does not change between actuations, it is sufficient to analyse just one period of the application. The average power dissipation of active thermal nodes is modeled using the following equation:
+\begin{equation} \equlabel{node-power}
+  \spower_{\node_i}(\outcome) = \frac{1}{\period} \sum_{j \in \taskindex^{\node_i}} \executiontime_j \spower_{\task_j}(\outcome)
+\end{equation}
+where $\taskindex^{\node_i}$ denotes the index set of tasks mapped onto the core $\circuit^{-1}(\node_i)$.
+
+The temperature $\stemperature_{\node_i}(\outcome)$ of the node $\node_i$ is a linear combination of the components of $\svpower_{\node}(\outcome)$ (\equref{node-power}):
 \[
-  \spower_{\node_i}(\outcome) = \frac{1}{\period} \sum_{j \in \taskindex^{\node_i}} \executiontime_j \spower_{\task_j}(\outcome), \sep i \in \nodeindexactive
+  \stemperature_{\node_i}(\outcome) = \sum_{j \in \nodeindexactive} \resistance_{ij} \spower_{\node_j}(\outcome) = \frac{1}{\period} \sum_{j \in \nodeindexactive} \resistance_{ij} \sum_{k \in \taskindex^{\node_j}} \executiontime_k \spower_{\task_k}(\outcome)
 \]
-Since $\spower_{\task_j}$ are normally distributed and $\spower_{\node_i}$ are linear combinations of $\spower_{\task_j}$, $\spower_{\node_i}$ are also distributed normally:
-\begin{align}
-  & \spower_{\node_i}(\outcome) \sim \normal(\mean{\spower_{\node_i}}, \variance{\spower_{\node_i}}), \sep i \in \nodeindex \nonumber \\
-  & \mean{\spower_{\node_i}} = \frac{1}{\period} \sum_{j \in \nodeindexactive} \executiontime_j \: \mean{\spower_{\task_j}} \equlabel{power-mean} \\
-  & \variance{\spower_{\node_i}} = \frac{1}{\period^2} \sum_{j \in \nodeindexactive} \executiontime_j^2 \: \variance{\spower_{\task_j}} \equlabel{power-variance}
-\end{align}
-The components of the temperature vector $\svtemperature_{\node}$, in their turn, are linear combinations of the components of $\svpower_{\node}$:
-\[
-  \stemperature_{\node_i}(\outcome) = \sum_{j \in \nodeindex} \resistance_{ij} \spower_{\node_j}(\outcome)
-\]
-Therefore, $\stemperature_{\node_i}$ have normal distributions:
+Since $\spower_{\task_k}(\outcome)$ are independent normally distributed random variables, $\stemperature_{\node_i}(\outcome)$ are also distributed normally:
 \begin{align*}
-  & \stemperature_{\node_i}(\outcome) \sim \normal(\mean{\stemperature_{\node_i}}, \variance{\stemperature_{\node_i}}), \sep i \in \nodeindex \\
-  & \mean{\stemperature_{\node_i}} = \sum_{j \in \nodeindex} \resistance_{ij} \: \mean{\spower_{\node_j}} \\
-  & \variance{\stemperature_{\node_i}} = \sum_{j \in \nodeindex} \resistance^2_{ij} \: \variance{\spower_{\node_j}}
+  & \stemperature_{\node_i}(\outcome) \sim \normal(\mean{\stemperature_{\node_i}}, \deviation{\stemperature_{\node_i}}^2), \sep i \in \nodeindex \\
+  & \mean{\stemperature_{\node_i}} = \frac{1}{\period} \sum_{j \in \nodeindexactive} \resistance_{ij} \sum_{k \in \taskindex^{\node_j}} \executiontime_k \mean{\spower_{\task_k}} \\
+  & \deviation{\stemperature_{\node_i}}^2 = \frac{1}{\period^2} \sum_{j \in \nodeindexactive} \resistance^2_{ij} \sum_{k \in \taskindex^{\node_j}} \executiontime^2_k \deviation{\spower_{\task_k}}^2
 \end{align*}
-Using \equref{power-mean} and \equref{power-variance}:
+
+\subsection{Model: Alternating Power} \seclabel{sss-alternating}
+Assumptions:
+\begin{itemize}
+  \item The power dissipation of a task over actuations of the application is a set $\{ \spower^{(k)}_{\task_i} \}_{k \in \positivenatural}$ of identically distributed random variables with means $\mean{\spower_{\task_i}}$ and variances $\deviation{\spower_{\task_i}}^2$.
+  \item $\spower_{\task_i}(\outcome)$ are independent for $\forall i \in \taskindex$, i.e., tasks do not influence each other.
+  \item $\spower^{(k)}_{\task_i}(\outcome)$ are independent for $\forall i \in \taskindex, \; \forall k \in \positivenatural$, i.e., executions of a task do not impact each other.
+\end{itemize}
+
+The average power dissipation of active thermal nodes over $\periodcount$ periods of the application is modeled using the following equation:
 \begin{align*}
-  & \mean{\stemperature_{\node_i}} = \frac{1}{\period} \sum_{j \in \nodeindex} \resistance_{ij} \sum_{k \in \nodeindexactive} \executiontime_k \mean{\spower_{\task_k}} \\
-  & \variance{\stemperature_{\node_i}} = \frac{1}{\period^2} \sum_{j \in \nodeindex} \resistance^2_{ij} \sum_{k \in \nodeindexactive} \executiontime^2_k \variance{\spower_{\node_k}}
+  \spower_{\node_i}(\outcome) & = \frac{1}{\periodcount \period} \sum_{j \in \taskindex^{\node_i}} \executiontime_j \sum_{k = 1}^{\periodcount} \spower^{(k)}_{\task_j}(\outcome) \\
+  & = \frac{1}{\period} \sum_{j \in \taskindex^{\node_i}} \executiontime_j \: \a{\spower}_{\task_j}(\outcome), \sep i \in \nodeindexactive
 \end{align*}
+where $\a{\spower}_{\task_i} = \frac{1}{\periodcount} \sum_{k = 1}^{\periodcount} \spower^{(k)}_{\task_j}(\outcome)$ means the average power dissipation of a task over $\periodcount$ periods. Therefore, \equref{node-power} sums up all power dissipations, multiplied by the corresponding execution times, of all tasks mapped onto the specific core $\circuit^{-1}(\node_i)$ in all $\periodcount$ periods and divides the result by the total time.
+
+For a fixed task $\task_i \in \taskset$, $\{ \spower^{(k)}_{\task_i} \}_{k \in \positivenatural}$ is a set of independent identically distributed random variables with $\expectation{\spower^{(k)}_{\task_i}} = \mean{\spower_{\task_i}}$ and $\variance{\spower^{(k)}_{\task_i}} = \deviation{\spower_{\task_i}}^2$. Hence, the conditions of the central limit theorem in the common form are satisfied. Therefore, the average power dissipation of a task, $\a{\spower}_{\task_i}$, can be approximated with a normal distribution:
+\begin{align*}
+  & \a{\spower}_{\task_i} \sim \normal(\mean{\a{\spower}_{\task_i}}, \deviation{\a{\spower}_{\task_i}}^2), \sep i \in \taskindex \\
+  & \mean{\a{\spower}_{\task_i}} = \mean{\spower_{\task_i}} \\
+  & \deviation{\a{\spower}_{\task_i}}^2 = \frac{\deviation{\spower_{\task_i}}^2}{\periodcount}
+\end{align*}
+$\a{\spower}_{\task_i}$ are independent due to the first assumption. The rest is similar to \secref{sss-fixed}.
+
+It should be noted, when modeling a periodic application that is being run for a long time, $\periodcount$ approach infinity and the variance becomes zero. In this case, the only thing that matters is the mean $\mean{\spower_{\task_i}}$. Since it is an input, there is no point to construct this probabilistic model.

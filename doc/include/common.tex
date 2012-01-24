@@ -46,8 +46,11 @@
 \newcommand{\schedule}{\psi}
 \newcommand{\real}{\mathbb{R}}
 \newcommand{\positivereal}{\real^{+}}
+\renewcommand{\natural}{\mathbb{N}}
+\newcommand{\positivenatural}{\natural_{1}}
 
 \newcommand{\period}{\mathcal{T}}
+\newcommand{\periodcount}{N_{\tau}}
 \newcommand{\executiontime}{\tau}
 
 % Circuit
@@ -61,12 +64,13 @@
 
 \newcommand{\pspace}{(\outcomeset, \salgebra, \pmeasure)}
 
-\newcommand{\pdf}{f}
-
 \newcommand{\normal}{N}
 
-\newcommand{\mean}[1]{\text{E}(#1)}
-\newcommand{\variance}[1]{\text{Var}(#1)}
+\newcommand{\mean}[1]{\mu_{#1}}
+\newcommand{\deviation}[1]{\sigma_{#1}}
+
+\newcommand{\expectation}[1]{E(#1)}
+\newcommand{\variance}[1]{var(#1)}
 
 % Time
 \newcommand{\timeset}{T}
@@ -76,7 +80,8 @@
 
 \newcommand{\m}[1]{\mathbf{#1}}
 \renewcommand{\v}[1]{\mathbf{#1}}
-\newcommand{\s}[1]{\mbox{#1}}
+\newcommand{\s}[1]{\textrm{#1}}
+\renewcommand{\a}[1]{\bar{#1}}
 
 \newcommand{\sep}{\hspace{10pt}}
 
