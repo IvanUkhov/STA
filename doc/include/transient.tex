@@ -1,0 +1,75 @@
+\subsection{Problem Formulation}
+Consider a multiprocessor system affected by a random noise. The nominal parameters of the platform, application, and ambience are assumed to be known. However, due to the noise (caused by, for instance, the process variation, various ambience conditions, etc.) the actual dynamic power dissipation and, consequently, temperature fluctuations are uncertain. Suppose the noise has different effect of each of the thermal nodes. Let $\noisedeviation_i$ be the standard deviation of the $i$th component of the noise affecting the $i$th thermal node. Denote $\mnoisedeviation$ a diagonal matrix with $\noisedeviation_i$ on the diagonal, i.e., $\mnoisedeviation = \diag{ \noisedeviation_0, \dots, \noisedeviation_{\nodecount - 1} }$.
+
+Given:
+\begin{itemize}
+  \item A multiprocessor platform $\platform$.
+  \item Nominal physical parameters $\physics$.
+  \item A nominal dynamic power profile $\powerprofile$.
+  \item The standard deviation of the noise $\mnoisedeviation$.
+\end{itemize}
+
+Find:
+\begin{itemize}
+  \item The probability distribution of the (stochastic) temperature profile $\temperatureprofile$ of the platform with respect to $\powerprofile$.
+\end{itemize}
+
+\subsection{Model}
+Since the input to the analysis is a discrete power profile, the nominal power is assumed to be fixed within each of the time intervals $\timepartition$. Therefore, when modeling one time interval, $\vpower(t)$ is constant in \equref{fourier}, i.e., $\vpower(t) = \vpower$:
+\[
+  \mcapacitance \frac{d\vtemperature(\time)}{d\time} + \mconductance \vtemperature(\time) = \vpower
+\]
+In order to model the presence of noise, we introduce an additional term in the equation above and denote time-dependent (stochastic) processes with the subscript $\time$:
+\begin{equation} \equlabel{fourier-noise}
+  \mcapacitance \frac{d\vtemperature_\time}{d\time} + \mconductance \vtemperature_\time = \vpower + \mnoisedeviation \vnoise_t
+\end{equation}
+where $\mnoisedeviation$ is the standard deviation of the noise and $\vnoise_\time$ is a vector of independent standard normal random variables, i.e., $\vnoise_\time \sim \normal(\vzero, \mone)$. The stochastic process $\{ \vnoise_\time \}_{\time \in \timeset}$ is known as the white noise \cite{oksendal2003}, in this case, multidimensional. Note that $\mnoisedeviation \vnoise_t \sim \normal(\vzero, \mnoisedeviation^2)$ which explains the name of $\mnoisedeviation$. \equref{fourier-noise} can be rewritten in the differential form:
+\begin{equation} \equlabel{fourier-wiener}
+  d\vtemperature_\time = \mcapacitance^{-1}(\vpower - \mconductance \vtemperature_\time)d\time + \mcapacitance^{-1} \mnoisedeviation \vnoise_t d\time
+\end{equation}
+Note that $\vnoise_\time d\time = d\m{W}_\time$ where $\{ \m{W}_\time \}_{\time \in \timeset}$ is the Wiener process \cite{oksendal2003}. The It\^{o} interpretation \cite{oksendal2003} of the last equations is a stochastic process $\{ \vtemperature_\time \}_{\time \in \timeset}$ that satisfies the following integral equation:
+\[
+  \vtemperature_\time = \vtemperature_0 + \int_0^\time a(s, \vtemperature_s)ds + \int_0^\time b(s, \vtemperature_s) d\m{W}_\time
+\]
+In order to solve \equref{fourier-wiener} and find $\vtemperature_\time$, we multiply \equref{fourier-wiener} by $\ecg{}{t}$, where $e^\m{A}$ is the matrix exponential, and obtain:
+\[
+  d(\ecgt \mtemperature_\time) = \ecgt \mcapacitance^{-1} (\vpower + \mnoisedeviation \vnoise_\time) d\time
+\]
+The solution can be found by taking integrals on both sides:
+\begin{align} \equlabel{solution-full}
+  \vtemperature_\time = & \emcgt \vtemperature_0 - \\
+    & (\cg)^{-1}(\emcgt - \mone) \mconductance^{-1} \vpower + \nonumber \\
+    & \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \; d\m{W}_s \nonumber
+\end{align}
+To simplify the further derivation, we introduce the following notation:
+\begin{align}
+  & \m{A}(\time) = \emcg{\time} \equlabel{a} \\
+  & \m{B}(\time) = -(\cg)^{-1}(\emcg{\time} - \mone) \mcapacitance^{-1} \equlabel{b} \\
+  & \v{D}_\time = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \: d\m{W}_s \equlabel{d}
+\end{align}
+Therefore, \equref{solution-full} can be rewritten:
+\[
+  \vtemperature_\time = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower + \v{D}_\time
+\]
+Since the Wiener process has independent normally distributed increments, an integration with respect to it, i.e., $\int_0^\time f(s) dW_s$, is a normal random variable. It can also be shown that in this case the mean is zero and variance is equal to $\int_0^\time f^2(s) ds$. Hence, $\v{D}_\time \sim \normal(\vzero, \covariance{\v{D}_\time})$ is a multivariate normal random variable with a zero mean vector and the following covariance matrix:
+\begin{align}
+  \covariance{\v{D}_\time} & = \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \; ds \nonumber \\
+    & = (\cg)^{-1} (\mone - \emcgt) \mcapacitance^{-1} \mnoisedeviation \equlabel{covariance-d}
+\end{align}
+The components of $\v{D}_\time$ in general are not independent. Consequently, $\m{B}(\time) \vpower + \v{D}_\time \sim \normal(\m{B}(\time) \vpower, \: \covariance{\v{D}_\time})$.
+
+The solution given by \equref{solution-full} is applicable for one time interval with constant $\vpower$. Therefore, it should be computed for each of the time intervals $\timepartition$. Consequently, we obtain a recurrent expression:
+\begin{equation} \equlabel{recurrence}
+  \vtemperature_{\time_{i + 1}} = \m{A}(\timeinterval_i) \vtemperature_{\time_i} + \m{B}(\timeinterval_i) \vpower_{\time_i} + \m{D}_{\timeinterval_i}
+\end{equation}
+Here $\vtemperature_{\time_i}$ is the multivariate normal random variable obtained in the previous step of the iterative process. Thus, $\m{A}(\timeinterval_i) \vtemperature_{\time_i}$ is a multivariate normal variable as well with:
+\begin{align*}
+  & \mean{\m{A}(\timeinterval_i) \vtemperature_{\time_i}} = \m{A}(\timeinterval_i)\mean{\vtemperature_{\time_i}} \\
+  & \covariance{\m{A}(\timeinterval_i) \vtemperature_{\time_i}} = \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}} \m{A}^T(\timeinterval_i)
+\end{align*}
+Due to the properties of the Wiener process, $\vtemperature_{\time_i}$ is independent of $\m{D}_{\timeinterval_i}$. Therefore, $\vtemperature_{\time_{i+1}}$ is a multivariate normal random variable with the following mean and covariance:
+\begin{align*}
+  & \mean{\vtemperature_{\time_{i+1}}} = \m{A}(\timeinterval_i)\mean{\vtemperature_{\time_i}} + \m{B}(\timeinterval_i) \vpower_{\time_i} \\
+  & \covariance{\vtemperature_{\time_{i+1}}} = \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}} \m{A}^T(\timeinterval_i) + \covariance{\m{D}_{\timeinterval_i}}
+\end{align*}
+\equref{a}, \equref{b}, and \equref{covariance-d} can be used to perform the computations.

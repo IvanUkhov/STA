@@ -16,7 +16,7 @@ Find:
 \subsection{Model: Fixed Power} \seclabel{sss-fixed}
 Assumptions:
 \begin{itemize}
-  \item $\spower^{(k)}_{\task_i}(\outcome) = \spower_{\task_i}(\outcome) \sim \normal(\mean{\spower_{\task_i}})$, i.e., the power dissipation of a task does not change between actuations and is a single normally distributed random variable.
+  \item $\spower^{(k)}_{\task_i}(\outcome) = \spower_{\task_i}(\outcome) \sim \normal(\mean{\spower_{\task_i}}, \deviation{\spower_{\task_i}}^2)$, i.e., the power dissipation of a task does not change between actuations and is a single normally distributed random variable.
   \item $\spower_{\task_i}(\outcome)$ are independent for $\forall i \in \taskindex$, i.e., tasks do not influence each other.
 \end{itemize}
 

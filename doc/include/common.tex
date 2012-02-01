@@ -5,7 +5,16 @@
 
 \usepackage{multibib}
 
+% Utils
+\newcommand{\sep}{\hspace{10pt}}
+
 % Math
+\newcommand{\m}[1]{\mathbf{#1}}
+\renewcommand{\v}[1]{\mathbf{#1}}
+\newcommand{\diag}[1]{\text{diag}\{#1\}}
+\newcommand{\vzero}{\v{0}}
+\newcommand{\mone}{\m{I}}
+
 \newcommand{\injection}{\rightarrowtail}
 \newcommand{\surjection}{\twoheadrightarrow}
 \newcommand{\bijection}{\to}
@@ -66,11 +75,15 @@
 
 \newcommand{\normal}{N}
 
-\newcommand{\mean}[1]{\mu_{#1}}
 \newcommand{\deviation}[1]{\sigma_{#1}}
 
-\newcommand{\expectation}[1]{E(#1)}
-\newcommand{\variance}[1]{var(#1)}
+\newcommand{\vnoise}{\v{\Xi}}
+\newcommand{\noisedeviation}{\sigma}
+\newcommand{\mnoisedeviation}{\m{\Lambda}}
+
+\newcommand{\mean}[1]{E[#1]}
+\newcommand{\variance}[1]{\Sigma[#1]}
+\newcommand{\covariance}[1]{\Sigma[#1]}
 
 % Time
 \newcommand{\timeset}{T}
@@ -78,30 +91,44 @@
 \newcommand{\timeindex}{I_\time}
 \newcommand{\timecount}{N_\time}
 
-\newcommand{\m}[1]{\mathbf{#1}}
-\renewcommand{\v}[1]{\mathbf{#1}}
-\newcommand{\s}[1]{\textrm{#1}}
-\renewcommand{\a}[1]{\bar{#1}}
+\newcommand{\timepartition}{\Delta \mathcal{T}}
+\newcommand{\totaltimeinterval}{\mathcal{T}}
+\newcommand{\timeinterval}{\Delta t}
+\newcommand{\stepcount}{N_t}
 
-\newcommand{\sep}{\hspace{10pt}}
-
+% Power
 \newcommand{\powerset}{U}
 \newcommand{\power}{U}
 \newcommand{\vpower}{\v{U}}
+\newcommand{\mpower}{\m{U}}
 \newcommand{\spower}{\s{U}}
 \newcommand{\svpower}{\v{U}}
 
+\newcommand{\powerprofile}{\mpower^\star}
+
+% Temperature
 \newcommand{\temperatureset}{\Theta}
 \newcommand{\temperature}{\Theta}
 \newcommand{\vtemperature}{\v{\Theta}}
+\newcommand{\mtemperature}{\m{\Theta}}
 \newcommand{\stemperature}{\Theta}
 \newcommand{\svtemperature}{\v{\Theta}}
 
+\newcommand{\temperatureprofile}{\mtemperature^\star}
+
+% Thermal RC circuit
 \newcommand{\mcapacitance}{\m{C}}
 \newcommand{\mconductance}{\m{G}}
 \newcommand{\resistance}{R}
 \newcommand{\mresistance}{\m{\resistance}}
 
+\newcommand{\cg}{\mcapacitance^{-1} \mconductance}
+\newcommand{\ecg}[2]{e^{#1 \cg #2}}
+\newcommand{\emcg}[1]{e^{- \cg #1}}
+\newcommand{\ecgt}{e^{\cg t}}
+\newcommand{\emcgt}{e^{- \cg t}}
+
+% Thermal nodes
 \newcommand{\nodeset}{\mathcal{N}}
 \newcommand{\node}{n}
 \newcommand{\nodeindex}{I_\node}
