@@ -1,9 +1,7 @@
 \subsection{Architecture Model}
-Let $\platform = \{ \core_i: i = 0, \dots, \corecount - 1 \}$ be a multiprocessor platform modeled as a set of processing elements referenced to as cores.
+Let $\platform = \{ \core_i: i = 0, \dots, \corecount - 1 \}$ be a multiprocessor platform modeled as a set of processing elements referenced to as cores. Let $\physics$ be a set of physical parameters of the platform and ambience. $\physics$ include the floorplan of the chip, geometry of the die and thermal package, thermal characteristics the ambience and materials of the die and package.
 
 \subsection{Power and Thermal Models}
-Let $\physics$ be a set of physical parameters of the platform and ambience. $\physics$ include the floorplan of the chip, geometry of the die and thermal package, thermal characteristics the ambience and materials of the die and package.
-
 Given $\physics$, an equivalent thermal RC circuit of the system is constructed \cite{kreith2000}. The circuit is composed of a set of thermal nodes denoted by $\nodeset = \{ \node_i: i = 0, \dots, \nodecount - 1 \}$ is an index set. Each processing element is mapped onto a set of thermal nodes. The nodes that belong to processing elements are called active, otherwise, passive.
 
 The dynamic power dissipation of the system is denoted by a vector $\vpower = (\power_0, \dots, \power_{\nodecount - 1})^T$, where $\power_i$ is the power of the $i$th node. Passive nodes dissipate no power. The corresponding temperature variation is denoted by $\vtemperature = (\temperature_0, \dots, \temperature_{\nodecount - 1})^T$, where $\temperature_i$ is the temperature of the $i$th node.
