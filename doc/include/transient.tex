@@ -1,12 +1,11 @@
-\subsection{Problem Formulation}
-Consider a multiprocessor system affected by a random noise. The nominal parameters of the platform, application, and ambience are assumed to be known. However, due to the noise (caused by, for instance, the process variation, various ambience conditions, etc.) the actual dynamic power dissipation and, consequently, temperature fluctuations are uncertain. The noise is represented by a multivariate normal random variable, symbolically denoted as $\noise$, with $\nodecount$ components corresponding to each of the thermal node, i.e., $\noise \sim \normal(\vzero, \covariance{\noise})$.
+In the transient case, one is interested in the evolution of temperature within a specific time horizon, denoted by $\totaltimeinterval$.
 
+\subsection{Problem Formulation}
 Given:
 \begin{itemize}
   \item A multiprocessor platform $\platform$.
-  \item Nominal physical parameters $\physics$.
+  \item Nominal physical characteristics $\physics$.
   \item A nominal dynamic power profile $\powerprofile$.
-  \item The covariance matrix of the noise $\covariance{\noise}$.
 \end{itemize}
 
 Find:
@@ -14,11 +13,19 @@ Find:
   \item The probability distribution of the (stochastic) temperature profile $\temperatureprofile$ of the platform with respect to $\powerprofile$.
 \end{itemize}
 
-\subsection{Model}
+\subsection{Noise Model}
+Suppose the system at each moment of time is affected by a random noise, symbolically denoted by $\noise$. The nominal parameters of the platform, application, and ambience are assumed to be known. However, due to the noise (caused by, for instance, the process variation, various ambience conditions, etc.) the actual dynamic power dissipation and, consequently, temperature fluctuations are uncertain.
+
+Assumptions:
+\begin{itemize}
+  \item $\noise$ is the white noise, i.e., $\noise$ is described as a multivariate normal random variable with $\nodecount$ components corresponding to each of the thermal node, i.e., $\noise \sim \normal(\vzero, \covariance{\noise})$.
+  \item The covariance matrix of the noise $\covariance{\noise}$ is known.
+\end{itemize}
+
 Since the input to the analysis is a discrete power profile, the nominal power is assumed to be fixed within each of the time intervals $\timepartition$. Therefore, when modeling one time interval, $\vpower(t)$ is constant in \equref{fourier}, i.e., $\vpower(t) = \vpower$:
-\[
+\begin{equation} \equlabel{fourier-constant-power}
   \mcapacitance \frac{d\vtemperature(\time)}{d\time} + \mconductance \vtemperature(\time) = \vpower
-\]
+\end{equation}
 In order to model the presence of noise, we introduce an additional term, $\noise$, in the right-hand side of the equation above. $\noise$ is decomposed into $\mnoisedeviation \vnoise_t$, where $\vnoise_t$ is a vector of independent standard normal random variables, i.e., $\vnoise_\time \sim \normal(\vzero, \mone)$, and  $\mnoisedeviation = \m{U} \m{\Lambda}^{1/2}$. The matrices $\m{U}$ and $\m{\Lambda}$ are found using the eigenvalue decomposition of the covariance matrix, i.e., $\covariance{\noise} = \m{U} \m{\Lambda} \m{U}^T$. Note that $\mnoisedeviation \mone \mnoisedeviation^T = \covariance{\noise}$, therefore, $\m{U} \m{\Lambda}^{1/2} \vnoise_t \sim \normal(\vzero, \covariance{\noise})$. Hence, denoting time-dependent (stochastic) processes with the subscript $\time$, we have:
 \begin{equation} \equlabel{fourier-noise}
   \mcapacitance \frac{d\vtemperature_\time}{d\time} + \mconductance \vtemperature_\time = \vpower + \mnoisedeviation \vnoise_t
@@ -29,7 +36,7 @@ The stochastic process $\{ \vnoise_\time \}_{\time \in \timeset}$ is known as th
 \end{equation}
 Note that $\vnoise_\time d\time = d\m{W}_\time$ where $\{ \m{W}_\time \}_{\time \in \timeset}$ is the Wiener process \cite{oksendal2003}. Also it can be seen that the stochastic process $\{ \vtemperature_\time \}$ resembles the Ornstein-Uhlenbeck process \cite{kloeden1992}. The It\^{o} interpretation \cite{oksendal2003} of the last equations is a stochastic process $\{ \vtemperature_\time \}_{\time \in \timeset}$ that satisfies the following integral equation:
 \[
-  \vtemperature_\time = \vtemperature_0 + \int_0^\time a(s, \vtemperature_s)ds + \int_0^\time b(s, \vtemperature_s) d\m{W}_\time
+  \vtemperature_\time = \vtemperature_0 + \int_0^\time a(s, \vtemperature_s)ds + \int_0^\time b(s, \vtemperature_s) d\m{W}_s
 \]
 In order to solve \equref{fourier-wiener} and find $\vtemperature_\time$, we apply the It\^{o} formula to the function $\ecg{}{t} \vtemperature_\time$, where $e^\m{A}$ is the matrix exponential of $\m{A}$, and obtain:
 \begin{align*}
@@ -65,12 +72,58 @@ The solution given by \equref{solution-full} is applicable for one time interval
 \end{equation}
 Here $\vtemperature_{\time_i}$ is the multivariate normal random variable obtained in the previous step of the iterative process. Thus, $\m{A}(\timeinterval_i) \vtemperature_{\time_i}$ is a multivariate normal variable as well with:
 \begin{align*}
-  & \mean{\m{A}(\timeinterval_i) \vtemperature_{\time_i}} = \m{A}(\timeinterval_i)\mean{\vtemperature_{\time_i}} \\
+  & \expectation{\m{A}(\timeinterval_i) \vtemperature_{\time_i}} = \m{A}(\timeinterval_i)\expectation{\vtemperature_{\time_i}} \\
   & \covariance{\m{A}(\timeinterval_i) \vtemperature_{\time_i}} = \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}} \m{A}^T(\timeinterval_i)
 \end{align*}
 Due to the properties of the Wiener process, $\vtemperature_{\time_i}$ is independent of $\m{D}_{\timeinterval_i}$. Therefore, $\vtemperature_{\time_{i+1}}$ is a multivariate normal random variable with the following mean and covariance:
 \begin{align*}
-  & \mean{\vtemperature_{\time_{i+1}}} = \m{A}(\timeinterval_i)\mean{\vtemperature_{\time_i}} + \m{B}(\timeinterval_i) \vpower_{\time_i} \\
+  & \expectation{\vtemperature_{\time_{i+1}}} = \m{A}(\timeinterval_i)\expectation{\vtemperature_{\time_i}} + \m{B}(\timeinterval_i) \vpower_{\time_i} \\
   & \covariance{\vtemperature_{\time_{i+1}}} = \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}} \m{A}^T(\timeinterval_i) + \covariance{\m{D}_{\timeinterval_i}}
 \end{align*}
 \equref{a}, \equref{b}, and \equref{covariance-d} can be used to perform the computations.
+
+\subsection{Task Model} \seclabel{tta-task-model}
+The following model works on the application level. Therefore, we are given an application $\application$ that completes the system $\system = \{ \platform, \application, \physics \}$.
+
+Assumptions:
+\begin{itemize}
+  \item Probability distributions of the dynamic power dissipation $\power_{\task_i} \sim \normal(\mean{\power_{\task_i}}, \deviation{\power_{\task_i}}^2)$ of tasks are known and normal.
+  \item $\power_{\task_i}$ are independent for $\forall i \in \taskindex$.
+  \item The schedule of application $\schedule = (\mapping, \executiontime, \starttime)$ is fixed.
+\end{itemize}
+
+Since $\schedule$ is fixed, the total execution time of the application, denoted by $\totaltimeinterval$, is known as well as where, when, and how long each task is being executed. Therefore, a power profile $\powerprofile = (\timepartition, \mpower)$ can be constructed by an arbitrary partition $\timepartition$ (further discussed in \secref{power-partitioning}) of the overall time interval $\totaltimeinterval$ and computation of the dynamic power dissipation in each of the time intervals for each of the cores, and, consequently, for each of the thermal nodes. Due to the fact that the power consumption of a task is a random variable, the set of power vectors $\mpower = \{ \vpower_{\time_i} = \vector{ \power_{i j} }_{j \in \nodeindex}^T \}_{i \in \timeindex}$ contains probability distributions instead of having fixed values. Let us refer to $\power_{ij}$ as the $ij$th power slot, where $i$ is the index of a time interval and $j$ is the intex of a thermal node. Also let $\utilization_{ijk}$ be the portion of the $i$th time interval, called the utilization factor, that is occupied solely by the $k$th task on the $j$th thermal node.
+
+Since there can be an arbitrary number of tasks assigned to a power slot with arbitrary utilization factors, the probability distribution of $\power_{ij}$ is computed in the following way:
+\begin{align*}
+  & \power_{ij} = \sum_{k \in \taskindex^{\timeinterval_i \node_j}} \utilization_{ijk} \power_{\task_k} \sim \normal(\mean{\power_{ij}}, \deviation{\power_{ij}}^2) \\
+  & \mean{\power_{ij}} = \sum_{k \in \taskindex^{\timeinterval_i \node_j}} \utilization_{ijk} \mean{\power_{\task_k}} \\
+  & \deviation{\power_{ij}}^2 = \sum_{k \in \taskindex^{\timeinterval_i \node_j}} \utilization_{ijk}^2 \deviation{\power_{\task_k}}^2
+\end{align*}
+where $\taskindex^{\timeinterval_i \node_j} = \{ k: k \in \taskindex, \circuit(\mapping(\task_k)) = \node_j, [\starttime_k, \starttime_k + \executiontime_k) \cap [\time_{i + 1}, \time_i) \neq \emptyset \}$, i.e., the index set of tasks scheduled onto the $ij$th power slot. If there is only one task assigned to the slot, the last formulas are simplified to:
+\[
+  \power_{ij} = \utilization_{ijk} \power_{\task_k} \sim \normal(\utilization_{ijk} \mean{\power_{\task_k}}, \utilization_{ijk}^2 \deviation{\power_{\task_k}}^2)
+\]
+Finally, if the power slot has no tasks assigned to it, $\power_{ij} = 0$. It can be seen that, due to the assumptions, each vector $\vpower_{\time_i} = \vector{\power_{ij}}_{j \in \nodeindex}^T$ of $\mpower$ is a multivariate normal random variable.
+
+The solution of \equref{fourier-constant-power} with constant power is the following:
+\[
+  \vtemperature(\time) = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower
+\]
+where $\m{A}$ and $\m{B}$ are given by \equref{a} and \equref{b}, respectively. An iterative repetition of the last equation for all $\stepcount$ steps of the power profile leads to the following recurrence:
+\begin{equation} \equlabel{fourier-recurrence}
+  \vtemperature_{\time_{i + 1}} = \m{A}(\timeinterval_i) \vtemperature_{\time_i} + \m{B}(\timeinterval_i) \vpower_{\time_i}
+\end{equation}
+It can be seen that temperature depends on power linearly. Therefore, $\vtemperature_{\time_{i + 1}}$ is a linear combination of two multivariate normal random variables, namely, $\vtemperature_{\time_i}$ and $\vpower_{\time_i}$.
+
+If several successive power slots belong to the same task, they share the same random variable $\power_{\task_i}$ (although, possibly with different utilization factors). Thus, successive power vectors $\vpower_i$ can be highly correlated, resulting in correlated vectors $\vtemperature_{\time_i}$ and $\vpower_{\time_i}$. In this case, the linear transformation in \equref{fourier-recurrence} leads to a multivariate normal random variable with the following parameters:
+\begin{align*}
+  & \vtemperature_{\time_{i + 1}} \sim \normal(\expectation{\vtemperature_{\time_{i + 1}}}, \covariance{\vtemperature_{\time_{i + 1}}}) \\
+  & \expectation{\vtemperature_{\time_{i + 1}}} = \m{A}(\timeinterval_i) \expectation{\vtemperature_{\time_i}} \\
+  & \qquad \qquad {} + \m{B}(\timeinterval_i) \expectation{\vpower_{\time_i}} \\
+  & \covariance{\vtemperature_{\time_{i + 1}}} = \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}} \m{A}^T(\timeinterval_i) \\
+  & \qquad \qquad {} + \m{B}(\timeinterval_i) \covariance{\vpower_{\time_i}} \m{B}^T(\timeinterval_i) \\
+  & \qquad \qquad {} + \m{A}(\timeinterval_i) \covariance{\vtemperature_{\time_i}, \vpower_{\time_i}} \m{B}^T(\timeinterval_i) \\
+  & \qquad \qquad {} + \m{B}(\timeinterval_i) \covariance{\vtemperature_{\time_i}, \vpower_{\time_i}}^T \m{A}^T(\timeinterval_i)
+\end{align*}
+The dependency is captured by the last two term in the covariance matrix $\covariance{\vtemperature_{\time_{i + 1}}}$, where $\covariance{\vtemperature_{\time_i}, \vpower_{\time_i}}$ is a cross-covariance matrix.

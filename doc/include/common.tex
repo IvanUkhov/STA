@@ -12,7 +12,9 @@
 \renewcommand{\a}[1]{\hat{#1}}
 \newcommand{\m}[1]{\mathbf{#1}}
 \renewcommand{\v}[1]{\mathbf{#1}}
-\newcommand{\diag}[1]{\text{diag}\{#1\}}
+\newcommand{\diagonal}[1]{\text{diag}\left\{#1\right\}}
+\renewcommand{\vector}[1]{\left\{#1\right\}}
+
 \newcommand{\vzero}{\v{0}}
 \newcommand{\mone}{\m{I}}
 
@@ -78,15 +80,15 @@
 
 \newcommand{\normal}{N}
 
-\newcommand{\deviation}[1]{\sigma_{#1}}
-
 \newcommand{\noise}{Noise}
 \newcommand{\vnoise}{\v{\Xi}}
 \newcommand{\noisedeviation}{\sigma}
 \newcommand{\mnoisedeviation}{\m{\Upsilon}}
 
-\newcommand{\mean}[1]{E[#1]}
-\newcommand{\variance}[1]{\Sigma[#1]}
+\newcommand{\mean}[1]{\mu_{#1}}
+\newcommand{\deviation}[1]{\sigma_{#1}}
+
+\newcommand{\expectation}[1]{E[#1]}
 \newcommand{\covariance}[1]{\Sigma[#1]}
 
 % Time
@@ -98,6 +100,7 @@
 \newcommand{\totaltimeinterval}{\mathcal{T}}
 \newcommand{\timeinterval}{\Delta t}
 \newcommand{\stepcount}{N_t}
+\newcommand{\timeindex}{I_\time}
 
 % Power
 \newcommand{\powerset}{P}
@@ -108,6 +111,7 @@
 \newcommand{\svpower}{\v{P}}
 
 \newcommand{\powerprofile}{\mpower^\star}
+\newcommand{\utilization}{u}
 
 % Temperature
 \newcommand{\temperatureset}{\Theta}
@@ -134,7 +138,5 @@
 % Thermal nodes
 \newcommand{\nodeset}{\mathcal{N}}
 \newcommand{\nodeindex}{I_n}
-\newcommand{\nodeindexactive}{I_n^{act}}
-\newcommand{\nodeindexpassive}{I_n^{pas}}
 \newcommand{\node}{n}
 \newcommand{\nodecount}{N_\node}

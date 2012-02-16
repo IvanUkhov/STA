@@ -23,6 +23,16 @@
   \section{Transient Temperature Analysis} \seclabel{tta}
   \input{include/transient.tex}
 
+  \section{Computation Improvements}
+  \subsection{Power Profile Partitioning} \seclabel{power-partitioning}
+  As mentioned earlier in \secref{tta-task-model}, $\timepartition$ can be defined arbitrary, depending on the desired level of accuracy.
+
+  \subsubsection{Even Partitioning}
+  $\period$ can be split evenly, so that the coefficients $\m{A}$ (\equref{a}) and $\m{B}$ (\equref{b}) are constant, i.e., computed only once.
+
+  \subsubsection{Event-Driven Partitioning}
+  $\period$ can be split only in those moments where there is a change in the task placement, i.e., in the beginnings and ends of tasks. If the number of task is modest and their durations are sufficiently long, it may end up having only a few time intervals to compute.
+
   \bibliographystyle{unsrt}
   \bibliography{include/references}
 \end{document}
