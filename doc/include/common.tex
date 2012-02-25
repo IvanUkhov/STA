@@ -3,17 +3,23 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 
+\usepackage{bm}
+\bmdefine\bmu{\mu}
+
 \usepackage{multibib}
 
 % Utils
 \newcommand{\sep}{\hspace{10pt}}
+\newcommand{\definition}[1]{\emph{#1}}
 
 % Matrices and vectors
-\renewcommand{\a}[1]{\hat{#1}}
+\renewcommand{\a}[1]{\bar{#1}}
 \newcommand{\m}[1]{\mathbf{#1}}
 \renewcommand{\v}[1]{\mathbf{#1}}
-\newcommand{\diagonal}[1]{\text{diag}\left\{#1\right\}}
-\renewcommand{\vector}[1]{\left\{#1\right\}}
+\newcommand{\diagonal}[1]{\text{diag}\left[#1\right]}
+
+\renewcommand{\vector}[1]{\left[#1\right]^T}
+\renewcommand{\matrix}[1]{\left[#1\right]}
 
 \newcommand{\vzero}{\v{0}}
 \newcommand{\mone}{\m{I}}
@@ -64,9 +70,6 @@
 \newcommand{\executiontime}{\tau}
 \newcommand{\schedule}{\psi}
 
-\newcommand{\period}{\mathcal{T}}
-\newcommand{\periodcount}{N_{\tau}}
-
 % Circuit
 \newcommand{\circuit}{\zeta}
 
@@ -78,7 +81,10 @@
 
 \newcommand{\pspace}{(\outcomeset, \salgebra, \pmeasure)}
 
-\newcommand{\normal}{N}
+\newcommand{\normal}{\mathcal{N}}
+
+\newcommand{\stdnormal}{\xi}
+\newcommand{\vstdnormal}{\v{\Xi}}
 
 \newcommand{\noise}{Noise}
 \newcommand{\vnoise}{\v{\Xi}}
@@ -88,6 +94,9 @@
 \newcommand{\mean}[1]{\mu_{#1}}
 \newcommand{\deviation}[1]{\sigma_{#1}}
 
+\newcommand{\vmean}[1]{\bmu_{#1}}
+\newcommand{\ddeviation}[1]{\m{\Lambda}_{#1}}
+
 \newcommand{\expectation}[1]{E[#1]}
 \newcommand{\covariance}[1]{\Sigma[#1]}
 
@@ -96,8 +105,8 @@
 \renewcommand{\time}{t}
 \newcommand{\timecount}{N_\time}
 
-\newcommand{\timepartition}{\Delta \mathcal{T}}
-\newcommand{\totaltimeinterval}{\mathcal{T}}
+\newcommand{\timepartition}{\mathbf{T}}
+\newcommand{\period}{\mathcal{T}}
 \newcommand{\timeinterval}{\Delta t}
 \newcommand{\stepcount}{N_t}
 \newcommand{\timeindex}{I_\time}
@@ -107,8 +116,6 @@
 \newcommand{\power}{P}
 \newcommand{\vpower}{\v{P}}
 \newcommand{\mpower}{\m{P}}
-\newcommand{\spower}{\s{P}}
-\newcommand{\svpower}{\v{P}}
 
 \newcommand{\powerprofile}{\mpower^\star}
 \newcommand{\utilization}{u}
@@ -118,8 +125,6 @@
 \newcommand{\temperature}{\Theta}
 \newcommand{\vtemperature}{\v{\Theta}}
 \newcommand{\mtemperature}{\m{\Theta}}
-\newcommand{\stemperature}{\Theta}
-\newcommand{\svtemperature}{\v{\Theta}}
 
 \newcommand{\temperatureprofile}{\mtemperature^\star}
 
@@ -136,7 +141,7 @@
 \newcommand{\emcgt}{e^{- \cg t}}
 
 % Thermal nodes
-\newcommand{\nodeset}{\mathcal{N}}
-\newcommand{\nodeindex}{I_n}
-\newcommand{\node}{n}
+\newcommand{\nodeset}{\mathcal{H}}
+\newcommand{\node}{h}
+\newcommand{\nodeindex}{I_\node}
 \newcommand{\nodecount}{N_\node}
