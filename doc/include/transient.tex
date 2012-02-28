@@ -1,115 +1,24 @@
-In the transient case, one is interested in the evolution of temperature within a specific time horizon that correspond to a power profile $\powerprofile$.
+In the transient case, one is interested in the evolution of temperature through the time horizon that corresponds to a power profile $\powerprofile$.
 
 \subsection{Problem Formulation}
 Given:
 \begin{itemize}
-  \item A multiprocessor platform $\platform$.
-  \item Nominal physical characteristics $\physics$.
+  \item A multiprocessor system $\system = (\platform, \physics)$.
   \item A nominal dynamic power profile $\powerprofile$.
 \end{itemize}
 
 Find:
 \begin{itemize}
-  \item The probability distribution of the (stochastic) temperature profile $\temperatureprofile$ of the platform with respect to $\powerprofile$.
+  \item The probability distribution of the temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
 \end{itemize}
 
-\subsection{Solution with Noise}
-Suppose the system at each moment of time is affected by a random noise, symbolically denoted by $\noise$. The nominal parameters of the platform and ambience are assumed to be known, however, due to the noise (caused by, for instance, varying ambience conditions), the actual dynamic power dissipation and, consequently, temperature fluctuations are uncertain.
+Additional givens and the final solution depend on the source of the power variation. We model two sources: a random noise and the process variation.
 
-Additional assumptions:
-\begin{itemize}
-  \item $\power_{ij}$ are deterministic $\forall i \in \nodeindex, j \in \timeindex$.
-  \item $\noise$ is based on the white noise.
-  \item The covariance matrix $\covariance{\noise}$ of the noise is known.
-\end{itemize}
+\subsection{Solution with Noise} \seclabel{ta-noise}
+\input{include/transient-noise}
 
-The nominal power dissipation is assumed to be fixed within each time interval $\timeinterval_i$, resulting in the constant term $\vpower$ instead of $\vpower(t)$ in \equref{fourier} for this time interval:
-\begin{equation} \equlabel{fourier-constant-power}
-  \mcapacitance \frac{d\vtemperature(\time)}{d\time} + \mconductance \vtemperature(\time) = \vpower
-\end{equation}
-The presence of the noise is modeled by an additional term, $\noise$, in the right-hand side of the equation above. Due to the assumptions, $\noise$ is a multivariate normal random variable with $\nodecount$ components (one for each thermal node), i.e., $\noise \sim \normal(\vzero, \covariance{\noise})$. Since the covariance matrix is a real symmetric matrix, it can be diagonalized using the eigenvalue decomposition as $\covariance{\noise} = \m{U} \m{\Lambda} \m{U}^T$, where $\m{U}$ is a orthogonal matrix of the eigenvectors and $\m{\Lambda}$ is a diagonal matrix of the eigenvalues \cite{press2007}. Consequently, the noise is decomposed into $\noise = \mnoisedeviation \vnoise_\time$, where $\mnoisedeviation = \m{U} \m{\Lambda}^{1/2}$ and the stochastic process $\{ \vnoise_\time \}_{\time \in \timeset}$ is the $\nodecount$-dimensional white noise \cite{oksendal2003}, a set of vectors of independent standard normal random variables, i.e., $\vnoise_\time \sim \normal(\vzero, \mone)$\footnote{$\mnoisedeviation \mone \mnoisedeviation^T = \covariance{\noise}$, therefore, $\mnoisedeviation \vnoise_\time = \m{U} \m{\Lambda}^{1/2} \vnoise_t \sim \normal(\vzero, \covariance{\noise})$.}. Hence, we have:
-\begin{equation} \equlabel{fourier-noise}
-  \mcapacitance \frac{d\vtemperature_\time}{d\time} + \mconductance \vtemperature_\time = \vpower + \mnoisedeviation \vnoise_\time
-\end{equation}
-\equref{fourier-noise} can be rewritten in the differential form:
-\begin{equation} \equlabel{fourier-wiener}
-  d\vtemperature_\time = \mcapacitance^{-1}(\vpower - \mconductance \vtemperature_\time)d\time + \mcapacitance^{-1} \mnoisedeviation \vnoise_t d\time
-\end{equation}
-$\vnoise_\time d\time = d\m{W}_\time$, where $\{ \m{W}_\time \}_{\time \in \timeset}$ is known as the Wiener process or Brownian motion \cite{oksendal2003}. The integration of \equref{fourier-wiener} cannot be done in the regular Riemann-Stieltjes sense, since the Brownian motion is nowhere differentiable.
+\subsection{Solution with Process Variation} \seclabel{ta-process-variation}
+\input{include/transient-process-variation.tex}
 
-The It\^{o} interpretation \cite{oksendal2003} of the stochastic differential equation in \equref{fourier-wiener} is used. It can be seen that the stochastic process $\{ \vtemperature_\time \}_{\time \in \timeset}$ resembles the Ornstein-Uhlenbeck process \cite{kloeden1992}. Therefore, in order to solve \equref{fourier-wiener}, we apply the It\^{o} formula \cite{oksendal2003} to the function $\ecg{}{t} \vtemperature_\time$, where $e^\m{A}$ denotes the matrix exponential of $\m{A}$, and obtain:
-\begin{align*}
-  d(\ecgt \mtemperature_\time) & = \cg \ecgt \vtemperature_\time d\time + \ecgt d\vtemperature_\time \\
-  & = \ecgt \mcapacitance^{-1} (\vpower d\time + \mnoisedeviation d\v{W}_t)
-\end{align*}
-The solution can be found by taking integrals on both sides:
-\begin{align} \equlabel{solution-full}
-  \vtemperature_\time = & \emcgt \vtemperature_0 - \\
-    & (\cg)^{-1}(\emcgt - \mone) \mcapacitance^{-1} \vpower + \nonumber \\
-    & \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \; d\m{W}_s \nonumber
-\end{align}
-To simplify the further derivation, we introduce the following notation:
-\begin{align}
-  & \m{A}(\time) = \emcg{\time} \equlabel{a} \\
-  & \m{B}(\time) = -(\cg)^{-1}(\emcg{\time} - \mone) \mcapacitance^{-1} \equlabel{b} \\
-  & \v{D}_\time = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \: d\m{W}_s \equlabel{d}
-\end{align}
-Therefore, \equref{solution-full} can be rewritten:
-\[
-  \vtemperature_\time = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower + \v{D}_\time
-\]
-Since the Wiener process has independent normally distributed increments, an integration with respect to it, i.e., $\int_0^\time f(s) dW_s$, is a normal random variable. It can also be shown that in this case the mean is zero and variance is equal to $\int_0^\time f^2(s) ds$. Hence, $\v{D}_\time \sim \normal(\vzero, \covariance{\v{D}_\time})$ is a multivariate normal random variable with a zero mean vector and the following covariance matrix:
-\begin{align}
-  \covariance{\v{D}_\time} & = \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \; ds \nonumber \\
-    & = (\cg)^{-1} (\mone - \emcgt) \mcapacitance^{-1} \mnoisedeviation \equlabel{covariance-d}
-\end{align}
-The components of $\v{D}_\time$ in general are not independent. Consequently, $\m{B}(\time) \vpower + \v{D}_\time \sim \normal(\m{B}(\time) \vpower, \: \covariance{\v{D}_\time})$.
-
-The solution given by \equref{solution-full} is applicable for one time interval with constant $\vpower$. In order to model the whole period $\period$, the computations should be performed for each of the subintervals sequentially. Therefore, we have the following recurrent expression:
-\begin{equation} \equlabel{recurrence}
-  \vtemperature_{i + 1} = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i + \m{D}_i
-\end{equation}
-where we denote $\vtemperature_i = \vtemperature_{\time_i}$, $\vpower_i = \vpower_{\time_i}$, $\m{A}_i = \m{A}(\timeinterval_i)$, $\m{B}_i = \m{B}(\timeinterval_i)$, and $\m{D}_i = \m{D}_{\timeinterval_i}$. The temperature vector $\vtemperature_i$ is the multivariate normal random variable obtained in the previous step of the iterative process. Thus, $\m{A}_i \vtemperature_i$ is also a multivariate normal variable with the following parameters:
-\begin{align*}
-  & \expectation{\m{A}_i \vtemperature_i} = \m{A}_i \expectation{\vtemperature_i} \\
-  & \covariance{\m{A}_i \vtemperature_i} = \m{A}_i \covariance{\vtemperature_i} \m{A}^T_i
-\end{align*}
-Due to the properties of the Wiener process, $\vtemperature_i$ is independent of $\m{D}_i$. Therefore, $\vtemperature_{i+1}$ is a multivariate normal random variable with the following mean and covariance:
-\begin{align*}
-  & \expectation{\vtemperature_{i+1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vpower_i \\
-  & \covariance{\vtemperature_{i+1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}^T_i + \covariance{\m{D}_i}
-\end{align*}
-\equref{a}, \equref{b}, and \equref{covariance-d} can be used to perform the computations.
-
-\subsection{Solution without Noise}
-Additional assumptions:
-\begin{itemize}
-  \item $\power_{ij}$ are distributed normally with known variance $\deviation{ij}^2 \; \forall i \in \nodeindex, j \in \timeindex$.
-  \item $\power_{i_1 j_1}$ and $\power_{i_2 j_2}$ are independent $\forall i_1, i_2 \in \nodeindex,  i_1 \neq i_2$ and $\forall j_1, j_2 \in \timeindex$.
-\end{itemize}
-
-The solution of \equref{fourier-constant-power} with constant power is the following:
-\[
-  \vtemperature(\time) = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower
-\]
-where $\m{A}(\time)$ and $\m{B}(\time)$ are given by \equref{a} and \equref{b}, respectively. The following recurrence is used to sequentially calculate temperature for all time intervals of the power profile:
-\begin{equation} \equlabel{fourier-recurrence}
-  \vtemperature_{i + 1} = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i
-\end{equation}
-It can be seen in \equref{fourier-recurrence} that temperature depends on power linearly, when the later is assumed to be constant. An iterative repetition of the last equation leads to:
-\begin{equation} \equlabel{fourier-unfold-recurrence}
-  \vtemperature_{i + 1} = \left[ \prod_{j = 0}^{i} \m{A}_{i - j} \right] \vtemperature_0 + \sum_{j = 0}^{i} \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right] \m{B}_j \vpower_j
-\end{equation}
-
-Similar to \secref{sss-solution}, the power dissipation for all time intervals is modeled using a single multivariate standard random variable $\vstdnormal \sim \normal(\vzero, \mone)$ (see \equref{power-rv}) that takes into consideration the uniform deviation from the nominal value mentioned in \secref{process-variation}. Consequently, \equref{fourier-unfold-recurrence} is rewritten as the following:
-\begin{align}
-  & \vtemperature_{i + 1} = \left[ \prod_{j = 0}^{i} \m{A}_{i - j} \right] \vtemperature_0 + \sum_{j = 0}^{i} \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right] \m{B}_j \vmean{j} \nonumber \\
-  & {} \qquad \qquad + \sum_{j = 0}^{i} \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right] \m{B}_j \ddeviation{j} \; \vnoise \equlabel{fourier-unfold-recurrence-rv}
-\end{align}
-$\vtemperature_{i + 1}$ is a multivariate normal random variable:
-\begin{align*}
-  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}) \\
-  & \expectation{\vtemperature_{i + 1}} = \left[ \prod_{j = 0}^{i} \m{A}_{i - j} \right] \vtemperature_0 + \sum_{j = 0}^{i} \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right] \m{B}_j \vmean{j} \\
-  & \covariance{\vtemperature_{i + 1}} = \sum_{j = 0}^{i} \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right] \m{B}_j \ddeviation{j} \\
-  & {} \qquad \qquad \cdot \sum_{j = 0}^{i} \ddeviation{j} \m{B}_j^T \left[ \prod_{k = j + 1}^{i} \m{A}_{i - k} \right]^T
-\end{align*}
+\subsection{Solution with Noise and Process Variation}
+\input{include/transient-noise-process-variation.tex}

@@ -10,7 +10,7 @@ Given:
 
 Find:
 \begin{itemize}
-  \item Probability distributions of the temperature variation $\temperature_{ij} \; \forall i \in \nodeindex, j \in \timeindex$ when the static steady state is reached.
+  \item The probability distribution of the temperature profile $\temperatureprofile$ with respect to $\powerprofile$, when the static steady state is reached.
 \end{itemize}
 
 \subsection{Solution} \seclabel{sss-solution}
@@ -28,23 +28,23 @@ where $\a{\vpower}$ is a random vector that represents the average power dissipa
 \[
   \a{\vpower} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vpower_j
 \]
-where $\vpower_i$ are multivariate normal random variables.
+where $\vpower_j$ are \mnrvs.
 
-As mentioned in \secref{process-variation}, random variables $\power_{ij}$ for a fixed $i$ and $\forall j$ (a row in the power matrix $\mpower$) are required to jointly deviate from the nominal (mean) values into the same direction. A straight-forward solution to model such a behaviour is to represent the vectors of power dissipation $\vpower_j$ for each time interval $\timeinterval_j$ as linear transformations of a single multivariate standard normal random variable $\vstdnormal = \vector{\stdnormal_i}_{i \in \nodeindex} \sim \normal(\vzero, \mone)$:
+As mentioned in \secref{process-variation}, \rvs\ $\power_{ij}$ for a fixed $i$ and $\forall j$ (a row in the power matrix $\mpower$) are required to jointly deviate from the nominal (mean) values into the same direction. A straight-forward solution to model such a behaviour is to represent the vectors of the power dissipation $\vpower_j$ for each time interval $\timeinterval_j$ as linear transformations of a single \msnrv\ $\vstdnormal = \vector{\stdnormal_i}_{i \in \nodeindex} \sim \normal(\vzero, \mone)$:
 \begin{equation} \equlabel{power-rv}
   \vpower_j = \vector{\mean{ij} + \deviation{ij} \stdnormal_i}_{i \in \nodeindex} = \vmean{j} + \ddeviation{j} \vstdnormal
 \end{equation}
-where $\vmean{j} = \vector{\mean{ij}}_{i \in \nodeindex}$, i.e., the vector of the nominal power in the $i$th time interval, and $\ddeviation{j} = \diagonal{\deviation{ij}}_{i \in \nodeindex}$, a diagonal matrix. Therefore:
+where $\vmean{j} = \vector{\mean{ij}}_{i \in \nodeindex}$, i.e., the vector of the nominal power in the $j$th time interval, and $\ddeviation{j} = \diagonal{\deviation{ij}}_{i \in \nodeindex}$, i.e., a diagonal matrix. Therefore:
 \[
   \a{\vpower} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vmean{j} + \frac{1}{\stepcount} \sum_{j \in \timeindex} \ddeviation{j} \; \vstdnormal
 \]
-It can be seen that $\a{\vpower}$ is a multivariate normal random variable with independent components:
+It can be seen that $\a{\vpower}$ is a \mnrv\ with independent components:
 \begin{align}
   & \a{\vpower} \sim \normal(\expectation{\a{\vpower}}, \covariance{\a{\vpower}}) \nonumber \\
   & \expectation{\a{\vpower}} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vmean{j} \equlabel{steady-power-mean} \\
-  & \covariance{\a{\vpower}} = \frac{1}{\stepcount^2} \sum_{j \in \timeindex} \ddeviation{j}^2 \equlabel{steady-power-covariance}
+  & \covariance{\a{\vpower}} = \frac{1}{\stepcount^2} \left[ \sum_{j \in \timeindex} \ddeviation{j} \right]^2 \equlabel{steady-power-covariance}
 \end{align}
-Consequently, after the linear transformation of $\a{\mpower}$ in \equref{steady-fourier}, $\a{\mtemperature}$ also becomes a multivariate normal random variable:
+Consequently, after the linear transformation of $\a{\mpower}$ in \equref{steady-fourier}, $\a{\mtemperature}$ also becomes a \mnrv:
 \begin{align*}
   & \a{\vtemperature} \sim \normal(\expectation{\a{\vtemperature}}, \covariance{\a{\vtemperature}}) \\
   & \expectation{\a{\vtemperature}} = \mconductance^{-1} \expectation{\a{\vpower}} \\
