@@ -19,7 +19,7 @@ The presence of the noise is modeled by an additional term, $\noise$, in the rig
 \begin{equation} \equlabel{fourier-wiener}
   d\vtemperature_\time = \mcapacitance^{-1}(\vpower - \mconductance \vtemperature_\time)d\time + \mcapacitance^{-1} \mnoisedeviation \vstdnormal_t d\time
 \end{equation}
-$\vstdnormal_\time d\time = d\atwo_\time$, where $\{ \atwo_\time \}_{\time \in \timeset}$ is known as the Wiener process or Brownian motion \cite{oksendal2003}.
+$\vstdnormal_\time d\time = d\m{W}_\time$, where $\{ \m{W}_\time \}_{\time \in \timeset}$ is known as the Wiener process or Brownian motion \cite{oksendal2003}.
 
 The integration of \equref{fourier-wiener} cannot be done in the regular Riemann-Stieltjes sense, since the Brownian motion is nowhere differentiable. Therefore, the It\^{o} interpretation \cite{oksendal2003} of the stochastic differential equation in \equref{fourier-wiener} is used. It can be seen that the stochastic process $\{ \vtemperature_\time \}_{\time \in \timeset}$ resembles the Ornstein-Uhlenbeck process \cite{kloeden1992}. Thus, in order to solve \equref{fourier-wiener}, we apply the It\^{o} formula \cite{oksendal2003} to the function $\ecg{}{t} \vtemperature_\time$, where $e^\m{A}$ denotes the matrix exponential of $\m{A}$, and obtain:
 \begin{align*}
