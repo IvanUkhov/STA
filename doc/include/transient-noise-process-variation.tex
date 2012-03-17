@@ -3,7 +3,7 @@ In this section we combine models presented in \secref{ta-noise} and \secref{ta-
   \vtemperature_{i + 1} & = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i + \m{D}_i \nonumber \\
   & = \m{A}_i \vtemperature_i + \m{B}_i(\vmean{i} + \ddeviation{i} \vstdnormal) + \m{D}_i, \sep i \in \timeindex \equlabel{fourier-recurrence-noise-process-variation}
 \end{align}
-where $\m{A}_i$, $\m{B}_i$, and $\m{D}_i$ are computed using \equref{a}, \equref{b}, and $\equref{d}$, respectively. Here $\m{D}_i \; \forall i \in \timeindex$ and $\vstdnormal$ are independent \mnrvs. Thus:
+Here $\m{D}_i \; \forall i \in \timeindex$ and $\vstdnormal$ are independent \mnrvs. Thus:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
   & \expectation{\vtemperature_{i + 1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vmean{i} \\
@@ -13,14 +13,12 @@ where $\m{A}_i$, $\m{B}_i$, and $\m{D}_i$ are computed using \equref{a}, \equref
 where $\covariance{\vtemperature_i, \vpower_i}$ is computed using \equref{cross-covariance}.
 
 Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{fourier-recurrence-noise-process-variation}:
-\begin{align*}
-  & \vtemperature_{i + 1} = \aone_i \vtemperature_0 + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \vmean{j} \\
-  & {} \qquad + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \ddeviation{j} \; \vstdnormal + \sum_{j = 0}^{i} \atwo_{ij} \m{D}_j, \sep i \in \timeindex
-\end{align*}
+\begin{equation} \equlabel{fourier-non-recurrent-combined}
+  \vtemperature_{i + 1} = \am{A}_{i0} \vtemperature_0 + \v{F}_i + \v{H}_i \vstdnormal + \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{D}_j, \sep i \in \timeindex
+\end{equation}
 Therefore:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
-  & \expectation{\vtemperature_{i + 1}} = \aone_i \vtemperature_0 + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \vmean{j} \\
-  & \covariance{\vtemperature_{i + 1}} = \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \ddeviation{j} \sum_{j = 0}^{i} \ddeviation{j} \m{B}_j^T \atwo_{ij}^T \\
-  & {} \qquad + \sum_{j = 0}^{i} \atwo_{ij} \covariance{\m{D}_j} \atwo_{ij}^T
+  & \expectation{\vtemperature_{i + 1}} = \am{A}_i \vtemperature_0 + \v{F}_i \\
+  & \covariance{\vtemperature_{i + 1}} = \v{H}_i \v{H}_i^T + \sum_{j = 0}^{i} \am{A}_{i(j+1)} \covariance{\m{D}_j} \am{A}_{i(j+1)}^T
 \end{align*}

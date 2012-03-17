@@ -1,0 +1,46 @@
+As in the SSSTA (\secref{sssta}), the given power profile is assumed to be periodic. However, instead of aiming at a hypotherical thermal balance with a single constant temperature for each of the thermal nodes, the \definition{dynamic steady-state temperature analysis} (DSSTA) delivers a set of periodic curves, similar to the TTA (\secref{tta}), that describe a periodic pattern of the thermal behaviour of the system.
+
+\subsection{Problem Formulation}
+The sources of uncertainties are a random noise and the process variation.
+
+Given:
+\begin{itemize}
+  \item A multiprocessor system $\system = (\platform, \physics)$.
+  \item A nominal dynamic power profile $\powerprofile$.
+  \item Knowledge about uncertainties presented in the system (specified in the following subsections).
+\end{itemize}
+
+Find:
+\begin{itemize}
+  \item The probability distribution of the periodic temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
+\end{itemize}
+
+\subsection{Solution with Noise}
+Additional assumptions and givens are similar to those in \secref{ta-noise}.
+
+\subsection{Solution with Process Variation}
+Additional assumptions and givens are similar to those in \secref{ta-process-variation}. Since the resulting temperature curves should be periodic, the following boundary condition is to be satisfied:
+\begin{equation} \equlabel{dss-boundary}
+  \vtemperature_0 = \vtemperature_{\stepcount}
+\end{equation}
+Using \equref{ta-fourier-non-recurrent}, the temperature vector at the end of the curves can be computed as:
+\begin{align*}
+  \vtemperature_{\stepcount} & = \am{A}_{\stepcount - 1} \vtemperature_0 + \m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal
+\end{align*}
+Taking into consideration the boundary condition given by \equref{dss-boundary}, the solution of the last equation with respect to $\vtemperature_0$ is the following:
+\[
+\vtemperature_0 = (\mone - \am{A}_{\stepcount - 1})^{-1} (\m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal)
+\]
+Consequently, the mean and covariance at the beginning of the periodic power profile are:
+\begin{align*}
+  & \vtemperature_0 \sim \normal(\expectation{\vtemperature_0}, \covariance{\vtemperature_0}) \\
+  & \expectation{\vtemperature_0} = (\mone - \am{A}_{\stepcount - 1})^{-1} \v{F}_{\stepcount - 1} \\
+  & \covariance{\vtemperature_0} = (\mone - \am{A}_{\stepcount - 1})^{-1} \v{H}_{\stepcount - 1} \v{H}_{\stepcount - 1}^T (\mone - \am{A}_{\stepcount - 1}^T)^{-1}
+\end{align*}
+The rest of the temperature vectors is successively found using \equref{ta-fourier-recurrence}, hence:
+\begin{align*}
+  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
+  & \expectation{\vtemperature_{i + 1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vmean{i} \\
+  & \covariance{\vtemperature_{i + 1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}_i^T + \m{B}_i \ddeviation{i}^2 \m{B}_i^T \\
+  & {} \qquad \qquad + \m{A}_i \covariance{\vtemperature_i, \vpower_i} \m{B}_i^T + \m{B}_i \covariance{\vtemperature_i, \vpower_i}^T \m{A}_i^T
+\end{align*}

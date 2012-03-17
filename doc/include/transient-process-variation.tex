@@ -8,33 +8,36 @@ The solution of \equref{fourier-constant-power} with constant power is the follo
 \[
   \vtemperature(\time) = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower
 \]
-where $\m{A}(\time)$ and $\m{B}(\time)$ are given by \equref{a} and \equref{b}, respectively. The following recurrence is used to sequentially calculate temperature for all time intervals of the power profile:
-\begin{equation} \equlabel{fourier-recurrence}
-  \vtemperature_{i + 1} = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i, \sep i \in \timeindex
-\end{equation}
+The following recurrence is used to sequentially calculate temperature for all time intervals of the power profile:
+\begin{align}
+  \vtemperature_{i + 1} & = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i \nonumber \\
+  & = \m{A}_i \vtemperature_i + \m{B}_i (\vmean{i} + \ddeviation{i} \vstdnormal), \sep i \in \timeindex \equlabel{ta-fourier-recurrence}
+\end{align}
 
-Similar to \secref{sss-solution}, the power dissipation for all time intervals is modeled using a single \msnrv\ $\vstdnormal \sim \normal(\vzero, \mone)$ (see \equref{power-rv}) that takes into consideration the uniform deviation from the nominal value, discussed in \secref{process-variation}. In this case, $\vtemperature_i$ and $\vpower_i$ are no longer independent. It can be shown that a linear combination $\m{A} \v{X} + \m{B} \v{Y}$ of two dependent \mnrvs\ $\v{X} \sim \normal(\expectation{\v{X}}, \covariance{\v{X}})$ and $\v{Y} \sim \normal(\expectation{\v{X}}, \covariance{\v{X}})$, which is what we have in \equref{fourier-recurrence}, is a \mnrv\ $\v{Z} \sim \normal(\m{A} \expectation{\v{X}} + \m{B} \expectation{\v{X}}, \m{A} \covariance{\v{X}} \m{A}^T + \m{B} \covariance{\v{Y}} \m{B}^T + \m{A} \covariance{\v{X}, \v{Y}} \m{B}^T + \m{B} \covariance{\v{X}, \v{Y}}^T \m{A}^T)$, where $\covariance{\v{X}, \v{Y}}$ is the cross-covariance matrix of the variables $\v{X}$ and $\v{Y}$. Consequently:
+Similar to \secref{sss-solution}, the power dissipation for all time intervals is modeled using a single \msnrv\ $\vstdnormal \sim \normal(\vzero, \mone)$ (see \equref{power-rv}) that takes into consideration the uniform deviation from the nominal value, discussed in \secref{process-variation}. In this case, $\vtemperature_i$ and $\vpower_i$ are no longer independent, since they are linear transformation of the same \mrv. It can be shown that a linear combination $\m{A} \v{X} + \m{B} \v{Y}$ of two dependent \mnrvs\ $\v{X} \sim \normal(\expectation{\v{X}}, \covariance{\v{X}})$ and $\v{Y} \sim \normal(\expectation{\v{X}}, \covariance{\v{X}})$, which is what we have in \equref{ta-fourier-recurrence}, is a \mnrv\ $\v{Z} \sim \normal(\m{A} \expectation{\v{X}} + \m{B} \expectation{\v{X}}, \m{A} \covariance{\v{X}} \m{A}^T + \m{B} \covariance{\v{Y}} \m{B}^T + \m{A} \covariance{\v{X}, \v{Y}} \m{B}^T + \m{B} \covariance{\v{X}, \v{Y}}^T \m{A}^T)$, where $\covariance{\v{X}, \v{Y}}$ is the cross-covariance matrix of the variables $\v{X}$ and $\v{Y}$. Consequently:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
   & \expectation{\vtemperature_{i + 1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vmean{i} \\
   & \covariance{\vtemperature_{i + 1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}_i^T + \m{B}_i \ddeviation{i}^2 \m{B}_i^T \\
   & {} \qquad \qquad + \m{A}_i \covariance{\vtemperature_i, \vpower_i} \m{B}_i^T + \m{B}_i \covariance{\vtemperature_i, \vpower_i}^T \m{A}_i^T
 \end{align*}
-It can be shown that the cross-covariance matrix can be computed using the following expression:
-\begin{equation} \equlabel{cross-covariance}
-  \covariance{\vtemperature_i, \vpower_i} = \begin{cases}
-    \mzero & \mbox{if } i = 0 \\
-    \sum_{j = 0}^{i - 1} \atwo_{ij} \m{B}_j \ddeviation{j} \ddeviation{i} & \mbox{if } i \in \timeindex \setminus \{0\}
-  \end{cases}
-\end{equation}
+It can be shown that the cross-covariance matrix is computed according to the following expression:
+\begin{align}
+  & \covariance{\vtemperature_0, \vpower_0} = \mzero \nonumber \\
+  & \covariance{\vtemperature_i, \vpower_i} = \sum_{j = 0}^{i - 1} \am{A}_{i(j+1)} \m{B}_j \ddeviation{j} \ddeviation{i}, \sep i \in \timeindex \setminus \{0\}  \equlabel{cross-covariance}
+\end{align}
 
-Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{fourier-recurrence}:
-\begin{equation*}
-  \vtemperature_{i + 1} = \aone_i \vtemperature_0 + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \vmean{j} + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \ddeviation{j} \; \vstdnormal, \sep i \in \timeindex
-\end{equation*}
+Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{ta-fourier-recurrence}:
+\begin{equation} \equlabel{ta-fourier-non-recurrent}
+  \vtemperature_{i + 1} = \am{A}_{i0} \vtemperature_0 + \v{F}_i + \v{H}_i \vstdnormal, \sep i \in \timeindex
+\end{equation}
+where:
+\[
+  \v{F}_i = \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{B}_j \vmean{j} \sep \sep \v{H}_i = \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{B}_j \ddeviation{j}
+\]
 Therefore:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
-  & \expectation{\vtemperature_{i + 1}} = \aone_i \vtemperature_0 + \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \vmean{j} \\
-  & \covariance{\vtemperature_{i + 1}} = \sum_{j = 0}^{i} \atwo_{ij} \m{B}_j \ddeviation{j} \sum_{j = 0}^{i} \ddeviation{j} \m{B}_j^T \atwo_{ij}^T
+  & \expectation{\vtemperature_{i + 1}} = \am{A}_{i0} \vtemperature_0 + \v{F}_i \\
+  & \covariance{\vtemperature_{i + 1}} = \v{H}_i \v{H}_i^T
 \end{align*}

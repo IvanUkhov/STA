@@ -18,6 +18,12 @@
 \renewcommand{\v}[1]{\mathbf{#1}}
 \newcommand{\diagonal}[1]{\text{diag}\left[#1\right]}
 
+\newcommand{\av}[1]{\Bar{\v{#1}}}
+\newcommand{\aav}[1]{\Bar{\Bar{\v{#1}}}}
+
+\newcommand{\am}[1]{\Bar{\m{#1}}}
+\newcommand{\aam}[1]{\Bar{\Bar{\m{#1}}}}
+
 \renewcommand{\vector}[1]{\left[#1\right]^T}
 \renewcommand{\matrix}[1]{\left[#1\right]}
 
@@ -104,6 +110,7 @@
 \newcommand{\covariance}[1]{\Sigma[#1]}
 
 \newcommand{\rv}{random variable}
+\newcommand{\mrv}{multivariate \rv}
 \newcommand{\nrv}{normal \rv}
 \newcommand{\snrv}{standard \nrv}
 \newcommand{\mnrv}{multivariate \nrv}
@@ -152,7 +159,7 @@
 \newcommand{\ecg}[2]{e^{#1 \cg #2}}
 \newcommand{\emcg}[1]{e^{- \cg #1}}
 \newcommand{\ecgt}{e^{\cg t}}
-\newcommand{\emcgt}{e^{- \cg t}}
+\newcommand{\emcgt}[1]{e^{- #1 \cg t}}
 
 % Thermal nodes
 \newcommand{\nodeset}{\mathcal{H}}

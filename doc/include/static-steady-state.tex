@@ -1,6 +1,10 @@
-Suppose that a given power profile is periodic and, after a sufficiently long period of time, the system reaches a hypothetical thermal balance, where temperature does not change. This state is known as \definition{static steady state}.
+Suppose that the given power profile is periodic and we are interested in the thermal behaviour of the system in the long run. In this case, it is assumed that, after a sufficiently long period of time, the system reaches such a state, where temperature either preserves a constant value, or exhibits a periodic pattern. The state is known as the \definition{steady state}. Consequently, there are two types of this analysis: \definition{static steady-state temperature analysis} (SSSTA), discussed in this section, and \definition{dynamic steady-state temperature analysis} (DSSTA), discussed in \secref{dssta}.
+
+The SSSTA delivers a single vector of temperature values for each of the thermal nodes of the system.
 
 \subsection{Problem Formulation}
+The source of uncertainties is the process variation.
+
 Given:
 \begin{itemize}
   \item A multiprocessor system $\system = (\platform, \physics)$.
@@ -20,11 +24,11 @@ Additional assumptions:
   \item $\power_{i_1 j_1}$ and $\power_{i_2 j_2}$ are independent $\forall i_1, i_2 \in \nodeindex,  i_1 \neq i_2$ and $\forall j_1, j_2 \in \timeindex$.
 \end{itemize}
 
-In the steady-state case, \equref{fourier} does not depend on time and drops the derivative term:
+As discussed earlier, the system is supposed to reach a hypothetical thermal balance, where temperature does not change over the time. In this case, the power profile is averaged and given as a constant input to the thermal RC circuit. Therefore, \equref{fourier} does not depend on time and drops the derivative term:
 \begin{equation} \equlabel{steady-fourier}
   \a{\vtemperature} = \mconductance^{-1} \a{\vpower}
 \end{equation}
-where $\a{\vpower}$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\a{\vtemperature}$ is a random vector that corresponds to temperature. $\a{\vpower}$ is modeled with a regular equation:
+where $\a{\vpower}$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\a{\vtemperature}$ is a random vector that corresponds to the average temperature. $\a{\vpower}$ is computed with an ordinal equation:
 \[
   \a{\vpower} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vpower_j
 \]
@@ -34,7 +38,7 @@ As mentioned in \secref{process-variation}, \rvs\ $\power_{ij}$ for a fixed $i$ 
 \begin{equation} \equlabel{power-rv}
   \vpower_j = \vector{\mean{ij} + \deviation{ij} \stdnormal_i}_{i \in \nodeindex} = \vmean{j} + \ddeviation{j} \vstdnormal
 \end{equation}
-where $\vmean{j} = \vector{\mean{ij}}_{i \in \nodeindex}$, i.e., the vector of the nominal power in the $j$th time interval, and $\ddeviation{j} = \diagonal{\deviation{ij}}_{i \in \nodeindex}$, i.e., a diagonal matrix. Therefore:
+where $\vmean{j} = \vector{\mean{ij}}_{i \in \nodeindex}$, i.e., the vector of the nominal power in the $j$th time interval, and $\ddeviation{j} = \diagonal{\deviation{ij}}_{i \in \nodeindex}$, i.e., a diagonal matrix of the standard deviations in the $j$th time interval. Therefore:
 \[
   \a{\vpower} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vmean{j} + \frac{1}{\stepcount} \sum_{j \in \timeindex} \ddeviation{j} \; \vstdnormal
 \]

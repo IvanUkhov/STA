@@ -1,10 +1,13 @@
-In the transient case, one is interested in the evolution of temperature through the time horizon that corresponds to a power profile $\powerprofile$.
+The \definition{transient temperature analysis} (TTA) delivers a set of curves, one for each of the thermal nodes, that describe the thermal behaviour of the system through the time horizon of the given power profile $\powerprofile$.
 
 \subsection{Problem Formulation}
+The sources of uncertainties are a random noise and the process variation.
+
 Given:
 \begin{itemize}
   \item A multiprocessor system $\system = (\platform, \physics)$.
   \item A nominal dynamic power profile $\powerprofile$.
+  \item Knowledge about uncertainties presented in the system (specified in the following subsections).
 \end{itemize}
 
 Find:
@@ -12,7 +15,7 @@ Find:
   \item The probability distribution of the temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
 \end{itemize}
 
-Additional givens and the final solution depend on the source of the power variation. We model two sources: a random noise and the process variation.
+First, the sources of uncertainties are modeled separately (\secref{ta-noise} and \secref{ta-process-variation}), and then they are joined together into a single model (\secref{ta-noise-process-variation}).
 
 \subsection{Solution with Noise} \seclabel{ta-noise}
 \input{include/transient-noise}
@@ -20,5 +23,5 @@ Additional givens and the final solution depend on the source of the power varia
 \subsection{Solution with Process Variation} \seclabel{ta-process-variation}
 \input{include/transient-process-variation.tex}
 
-\subsection{Solution with Noise and Process Variation}
+\subsection{Solution with Noise and Process Variation} \seclabel{ta-noise-process-variation}
 \input{include/transient-noise-process-variation.tex}
