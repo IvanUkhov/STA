@@ -7,11 +7,7 @@ Additional assumptions:
   \item The covariance matrix $\covariance{\noise}$ of the noise is known.
 \end{itemize}
 
-The nominal power dissipation is assumed to be fixed within each time interval $\timeinterval_i$, resulting in the constant term $\vpower$ instead of $\vpower(t)$ in \equref{fourier} for this time interval:
-\begin{equation} \equlabel{fourier-constant-power}
-  \mcapacitance \frac{d\vtemperature(\time)}{d\time} + \mconductance \vtemperature(\time) = \vpower
-\end{equation}
-The presence of the noise is modeled with an additional term, $\noise$, in the right-hand side of the equation above. Due to the assumptions, $\noise$ is a \mnrv\ with $\nodecount$ components (one for each thermal node), i.e., $\noise \sim \normal(\vzero, \covariance{\noise})$. Since the covariance matrix is a real symmetric matrix, it can be diagonalized using the eigenvalue decomposition as $\covariance{\noise} = \m{U} \m{\Lambda} \m{U}^T$, where $\m{U}$ is a orthogonal matrix of the eigenvectors and $\m{\Lambda}$ is a diagonal matrix of the eigenvalues \cite{press2007}. Consequently, the noise is decomposed into $\noise = \mnoisedeviation \vstdnormal_\time$, where $\mnoisedeviation = \m{U} \m{\Lambda}^{1/2}$ and the stochastic process $\{ \vstdnormal_\time \}_{\time \in \timeset}$ is the standard $\nodecount$-dimensional white noise \cite{oksendal2003}, a set of vectors of independent \snrvs, i.e., $\vstdnormal_\time \sim \normal(\vzero, \mone)$\footnote{$\mnoisedeviation \vstdnormal_\time = \m{U} \m{\Lambda}^{1/2} \vstdnormal_t \sim \normal(\vzero, \m{U} \m{\Lambda} \m{U}^T = \covariance{\noise})$.}. Hence, we have the following stochastic process:
+The presence of the noise is modeled with an additional term, $\noise$, in the right-hand side of \equref{fourier-constant-power}. Due to the assumptions, $\noise$ is a \mnrv\ with $\nodecount$ components (one for each thermal node), i.e., $\noise \sim \normal(\vzero, \covariance{\noise})$. Since the covariance matrix is a real symmetric matrix, it can be diagonalized using the eigenvalue decomposition as $\covariance{\noise} = \m{U} \m{\Lambda} \m{U}^T$, where $\m{U}$ is a orthogonal matrix of the eigenvectors and $\m{\Lambda}$ is a diagonal matrix of the eigenvalues \cite{press2007}. Consequently, the noise is decomposed into $\noise = \mnoisedeviation \vstdnormal_\time$, where $\mnoisedeviation = \m{U} \m{\Lambda}^{1/2}$ and the stochastic process $\{ \vstdnormal_\time \}_{\time \in \timeset}$ is the standard $\nodecount$-dimensional white noise \cite{oksendal2003}, a set of vectors of independent \snrvs, i.e., $\vstdnormal_\time \sim \normal(\vzero, \mone)$\footnote{$\mnoisedeviation \vstdnormal_\time = \m{U} \m{\Lambda}^{1/2} \vstdnormal_t \sim \normal(\vzero, \m{U} \m{\Lambda} \m{U}^T = \covariance{\noise})$.}. Hence, we have the following stochastic process:
 \begin{equation} \equlabel{fourier-noise}
   \mcapacitance \frac{d\vtemperature_\time}{d\time} + \mconductance \vtemperature_\time = \vpower + \mnoisedeviation \vstdnormal_\time
 \end{equation}
@@ -31,12 +27,10 @@ The solution can be found by taking integrals on both sides:
     & \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \; d\m{W}_s \nonumber
 \end{align}
 To simplify the further derivation, we introduce the following notation:
-\begin{align*}
-  & \m{A}(\time) = \emcg{\time} \\
-  & \m{B}(\time) = -(\cg)^{-1}(\emcg{\time} - \mone) \mcapacitance^{-1} \\
-  & \v{D}_\time = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \: d\m{W}_s
-\end{align*}
-Therefore, \equref{solution-full} can be rewritten:
+\[
+  \v{D}_\time = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \mnoisedeviation \: d\m{W}_s
+\]
+Therefore, taking into consideration \equref{a} and \equref{b}, \equref{solution-full} can be rewritten:
 \[
   \vtemperature_\time = \m{A}(\time) \vtemperature_0 + \m{B}(\time) \vpower + \v{D}_\time
 \]
@@ -48,32 +42,33 @@ Since the Wiener process has independent normally distributed increments, an int
 Consequently, $\m{B}(\time) \vpower + \v{D}_\time \sim \normal(\m{B}(\time) \vpower, \: \covariance{\v{D}_\time})$.
 
 The solution given by \equref{solution-full} is applicable for one time interval with constant $\vpower$. In order to model the whole duration $\period$ of the power profile, the computations should be performed for each of the subintervals sequentially. Therefore, we have the following recurrent expression:
-\begin{equation} \equlabel{fourier-recurrence-noise}
+\begin{equation} \equlabel{tta-fourier-recurrence-noise}
   \vtemperature_{i + 1} = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i + \m{D}_i, \sep i \in \timeindex
 \end{equation}
-where we denote $\vtemperature_i = \vtemperature_{\time_i}$, $\vpower_i = \vpower_{\time_i}$, $\m{A}_i = \m{A}(\timeinterval_i)$, $\m{B}_i = \m{B}(\timeinterval_i)$, and $\m{D}_i = \m{D}_{\timeinterval_i}$. The initial temperature $\vtemperature_0$ is assumed to be known.
+where $\m{D}_i = \m{D}_{\timeinterval_i}$.
 
-Due to the properties of the Wiener process, $\vtemperature_i$ is independent of $\m{D}_i$. Therefore, $\vtemperature_{i+1}$ is a \mnrv:
+Taking into consideration the properties of the Wiener process, $\vtemperature_i$ is independent of $\m{D}_i$. Therefore, $\vtemperature_{i+1}$ is a \mnrv:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
   & \expectation{\vtemperature_{i+1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vpower_i \\
   & \covariance{\vtemperature_{i+1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}^T_i + \covariance{\m{D}_i}
 \end{align*}
 
-Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{fourier-recurrence-noise}:
-\begin{equation*}
-  \vtemperature_{i + 1} = \am{A}_{i0} \vtemperature_0 + \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{B}_j \vpower_j + \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{D}_j, \sep i \in \timeindex
-\end{equation*}
-where the following shorthand for the matrix product is introduced:
-\[
-  \am{A}_{ij} = \begin{cases}
-    \mone & \mbox{if } j > i \\
-    \m{A}_i \m{A}_{i - 1} \dots \m{A}_{j + 1} \m{A}_j & \mbox{otherwise}
-  \end{cases}
-\]
+Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{tta-fourier-recurrence-noise}:
+\begin{equation} \equlabel{tta-fourier-noise-non-recurrent}
+  \vtemperature_{i + 1} = \am{A}_{i0} \vtemperature_0 + \m{F}_i + \v{K}_i, \sep i \in \timeindex
+\end{equation}
+where $\m{F}_i$ is computed according to \equref{f} with $\expectation{\vpower_i} \equiv \vpower_i$ and:
+\begin{equation} \equlabel{k}
+  \v{K}_i = \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{D}_j
+\end{equation}
 Therefore:
 \begin{align*}
   & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
-  & \expectation{\vtemperature_{i + 1}} = \am{A}_{i0} \vtemperature_0 + \sum_{j = 0}^{i} \am{A}_{i(j+1)} \m{B}_j \vpower_j \\
-  & \covariance{\vtemperature_{i + 1}} = \sum_{j = 0}^{i} \am{A}_{i(j+1)} \covariance{\m{D}_j} \am{A}_{i(j+1)}^T
+  & \expectation{\vtemperature_{i + 1}} = \am{A}_{i0} \expectation{\vtemperature_0} + \m{F}_i \\
+  & \covariance{\vtemperature_{i + 1}} = \am{A}_{i0} \covariance{\vtemperature_0} \am{A}_{i0}^T + \m{M}_i
 \end{align*}
+where for convenience we denote:
+\begin{equation} \equlabel{m}
+  \m{M}_i = \sum_{j = 0}^{i} \am{A}_{i(j+1)} \covariance{\m{D}_j} \am{A}_{i(j+1)}^T
+\end{equation}

@@ -1,0 +1,25 @@
+In this section, we merge models from \secref{dssta-process-variation} and \secref{dssta-noise} together. We have the expression:
+\[
+  \vtemperature_{\stepcount} = \am{A}_{(\stepcount - 1)0} \vtemperature_0 + \m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal + \v{K}_{\stepcount - 1}
+\]
+Following the same procedure as before, the first temperature vector can be characterized using:
+\begin{align*}
+  & \vtemperature_0 = \m{Q} \; (\m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal + \v{K}_{\stepcount - 1}) \\
+  & \vtemperature_0 \sim \normal(\expectation{\vtemperature_0}, \covariance{\vtemperature_0}) \\
+  & \expectation{\vtemperature_0} = \m{Q} \; \v{F}_{\stepcount - 1} \\
+  & \covariance{\vtemperature_0} = \m{Q} (\v{H}_{\stepcount - 1} \v{H}_{\stepcount - 1}^T + \m{M}_{\stepcount - 1}) \m{Q}^T
+\end{align*}
+The rest of the temperature vectors are:
+\begin{align*}
+  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
+  & \expectation{\vtemperature_{i+1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vpower_i \\
+  & \covariance{\vtemperature_{i + 1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}_i^T + \m{B}_i \ddeviation{i}^2 \m{B}_i^T \\
+  & {} \qquad + \m{A}_i \covariance{\vtemperature_i, \vpower_i} \m{B}_i^T + \m{B}_i \covariance{\vtemperature_i, \vpower_i}^T \m{A}_i^T + \covariance{\m{D}_i}
+\end{align*}
+Alternatively:
+\begin{align*}
+  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
+  & \expectation{\vtemperature_{i + 1}} = \am{A}_{i0} \; \m{Q} \; \v{F}_{\stepcount - 1} + \v{F}_i \\
+  & \covariance{\vtemperature_{i + 1}} = [\am{A}_{i0} \; \m{Q} \; \v{H}_{\stepcount - 1} + \v{H}_i] [\am{A}_{i0} \; \m{Q} \; \v{H}_{\stepcount - 1} + \v{H}_i]^T \\
+  & { } \qquad \qquad + \am{A}_{i0} \; \m{Q} \; \m{M}_{\stepcount - 1} \m{Q}^T \am{A}_{i0}^T + \m{M}_i
+\end{align*}

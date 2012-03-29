@@ -1,13 +1,13 @@
 The \definition{transient temperature analysis} (TTA) delivers a set of curves, one for each of the thermal nodes, that describe the thermal behaviour of the system through the time horizon of the given power profile $\powerprofile$.
 
 \subsection{Problem Formulation}
-The sources of uncertainties are a random noise and the process variation.
+The sources of uncertainties are the process variation and a random noise.
 
 Given:
 \begin{itemize}
   \item A multiprocessor system $\system = (\platform, \physics)$.
   \item A nominal dynamic power profile $\powerprofile$.
-  \item Knowledge about uncertainties presented in the system (specified in the following subsections).
+  \item Additional knowledge about uncertainties as specified in the following subsections.
 \end{itemize}
 
 Find:
@@ -15,13 +15,13 @@ Find:
   \item The probability distribution of the temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
 \end{itemize}
 
-First, the sources of uncertainties are modeled separately (\secref{ta-noise} and \secref{ta-process-variation}), and then they are joined together into a single model (\secref{ta-noise-process-variation}).
+First, the sources of uncertainties are modeled separately (\secref{tta-process-variation} and \secref{tta-noise}), and then they are joined together into a single model (\secref{tta-process-variation-noise}).
 
-\subsection{Solution with Noise} \seclabel{ta-noise}
-\input{include/transient-noise}
+\subsection{Solution with Process Variation} \seclabel{tta-process-variation}
+\input{include/tta-process-variation.tex}
 
-\subsection{Solution with Process Variation} \seclabel{ta-process-variation}
-\input{include/transient-process-variation.tex}
+\subsection{Solution with Noise} \seclabel{tta-noise}
+\input{include/tta-noise}
 
-\subsection{Solution with Noise and Process Variation} \seclabel{ta-noise-process-variation}
-\input{include/transient-noise-process-variation.tex}
+\subsection{Solution with Process Variation and Noise} \seclabel{tta-process-variation-noise}
+\input{include/tta-process-variation-noise.tex}

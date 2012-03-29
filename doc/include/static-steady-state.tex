@@ -25,16 +25,16 @@ Additional assumptions:
 \end{itemize}
 
 As discussed earlier, the system is supposed to reach a hypothetical thermal balance, where temperature does not change over the time. In this case, the power profile is averaged and given as a constant input to the thermal RC circuit. Therefore, \equref{fourier} does not depend on time and drops the derivative term:
-\begin{equation} \equlabel{steady-fourier}
+\begin{equation} \equlabel{sss-fourier}
   \a{\vtemperature} = \mconductance^{-1} \a{\vpower}
 \end{equation}
-where $\a{\vpower}$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\a{\vtemperature}$ is a random vector that corresponds to the average temperature. $\a{\vpower}$ is computed with an ordinal equation:
+where $\a{\vpower}$ is a random vector that represents the average power dissipation of thermal nodes, consequently, $\a{\vtemperature}$ is a random vector that corresponds to the average temperature. As mentioned in \secref{power-thermal-models}, the ambient temperature, $\vtemperature_\amb$, should be added to the right-hand side of \equref{sss-fourier} in order to obtain the actual temperature values\footnote{All the models can be easily extended to the case where $\vtemperature_\amb$ is also a \mnrv.}.
+
+$\a{\vpower}$ is computed with an ordinal equation:
 \[
   \a{\vpower} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vpower_j
 \]
-where $\vpower_j$ are \mnrvs.
-
-As mentioned in \secref{process-variation}, \rvs\ $\power_{ij}$ for a fixed $i$ and $\forall j$ (a row in the power matrix $\mpower$) are required to jointly deviate from the nominal (mean) values into the same direction. A straight-forward solution to model such a behaviour is to represent the vectors of the power dissipation $\vpower_j$ for each time interval $\timeinterval_j$ as linear transformations of a single \msnrv\ $\vstdnormal = \vector{\stdnormal_i}_{i \in \nodeindex} \sim \normal(\vzero, \mone)$:
+where $\vpower_j$ are \mnrvs. As mentioned in \secref{process-variation}, \rvs\ $\power_{ij}$ for a fixed $i$ and $\forall j$ (a row in the power matrix $\mpower$) are required to jointly deviate from the nominal (mean) values into the same direction. A straight-forward solution to model such a behaviour is to represent the vectors of the power dissipation $\vpower_j$ for each time interval $\timeinterval_j$ as linear transformations of a single \msnrv\ $\vstdnormal = \vector{\stdnormal_i}_{i \in \nodeindex} \sim \normal(\vzero, \mone)$:
 \begin{equation} \equlabel{power-rv}
   \vpower_j = \vector{\mean{ij} + \deviation{ij} \stdnormal_i}_{i \in \nodeindex} = \vmean{j} + \ddeviation{j} \vstdnormal
 \end{equation}
@@ -48,7 +48,7 @@ It can be seen that $\a{\vpower}$ is a \mnrv\ with independent components:
   & \expectation{\a{\vpower}} = \frac{1}{\stepcount} \sum_{j \in \timeindex} \vmean{j} \equlabel{steady-power-mean} \\
   & \covariance{\a{\vpower}} = \frac{1}{\stepcount^2} \left[ \sum_{j \in \timeindex} \ddeviation{j} \right]^2 \equlabel{steady-power-covariance}
 \end{align}
-Consequently, after the linear transformation of $\a{\mpower}$ in \equref{steady-fourier}, $\a{\mtemperature}$ also becomes a \mnrv:
+Consequently, after the linear transformation of $\a{\mpower}$ in \equref{sss-fourier}, $\a{\mtemperature}$ also becomes a \mnrv:
 \begin{align*}
   & \a{\vtemperature} \sim \normal(\expectation{\a{\vtemperature}}, \covariance{\a{\vtemperature}}) \\
   & \expectation{\a{\vtemperature}} = \mconductance^{-1} \expectation{\a{\vpower}} \\
