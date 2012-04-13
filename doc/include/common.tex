@@ -16,7 +16,7 @@
 \renewcommand{\a}[1]{\bar{#1}}
 \newcommand{\m}[1]{\mathbf{#1}}
 \renewcommand{\v}[1]{\mathbf{#1}}
-\newcommand{\diagonal}[1]{\text{diag}\left[#1\right]}
+\newcommand{\diag}[1]{\text{diag}\left(#1\right)}
 
 \newcommand{\av}[1]{\Bar{\v{#1}}}
 \newcommand{\aav}[1]{\Bar{\Bar{\v{#1}}}}
@@ -24,8 +24,8 @@
 \newcommand{\am}[1]{\Bar{\m{#1}}}
 \newcommand{\aam}[1]{\Bar{\Bar{\m{#1}}}}
 
-\renewcommand{\vector}[1]{\left[#1\right]^T}
-\renewcommand{\matrix}[1]{\left[#1\right]}
+\renewcommand{\vector}[1]{\left(#1\right)^T}
+\renewcommand{\matrix}[1]{\left(#1\right)}
 
 \newcommand{\vzero}{\v{0}}
 \newcommand{\mzero}{\m{0}}
@@ -53,36 +53,7 @@
 \newcommand{\seclabel}[1]{\label{sec:#1}}
 
 % System
-\newcommand{\system}{\mathcal{S}}
-
-% Platform
-\newcommand{\platform}{\Pi}
-
-\newcommand{\coreset}{\platform}
-\newcommand{\coreindex}{I_\pi}
-\newcommand{\core}{\pi}
-\newcommand{\corecount}{N_\core}
-
-% Application
-\newcommand{\application}{\mathcal{A}}
-\newcommand{\edgeset}{\mathcal{E}}
-
-\newcommand{\taskset}{\mathcal{V}}
-\newcommand{\taskindex}{I_v}
-\newcommand{\task}{v}
-\newcommand{\taskcount}{N_\task}
-
-% Physical parameters
-\newcommand{\physics}{\mathcal{X}}
-
-% Mapping and Scheduling
-\newcommand{\mapping}{\phi}
-\newcommand{\starttime}{s}
-\newcommand{\executiontime}{\tau}
-\newcommand{\schedule}{\psi}
-
-% Circuit
-\newcommand{\circuit}{\zeta}
+\newcommand{\system}{S}
 
 % Stochastic Processes
 \newcommand{\outcomeset}{\Omega}
@@ -96,6 +67,7 @@
 
 \newcommand{\stdnormal}{\xi}
 \newcommand{\vstdnormal}{\v{\Xi}}
+\newcommand{\vnormal}{\v{\Xi}}
 
 \newcommand{\noise}{Noise}
 \newcommand{\noisedeviation}{\sigma}
@@ -110,6 +82,12 @@
 \newcommand{\expectation}[1]{E[#1]}
 \newcommand{\covariance}[1]{\Sigma[#1]}
 
+\newcommand{\correlation}[1]{\rho_{#1}}
+\newcommand{\mcorrelation}[1]{\m{R}_{#1}}
+
+\newcommand{\ratio}{k}
+\newcommand{\vratio}{\v{K}}
+
 \newcommand{\rv}{random variable}
 \newcommand{\mrv}{multivariate \rv}
 \newcommand{\nrv}{normal \rv}
@@ -121,6 +99,8 @@
 \newcommand{\nrvs}{normal \rvs}
 \newcommand{\snrvs}{standard \nrvs}
 \newcommand{\mnrvs}{multivariate \nrvs}
+
+\renewcommand{\sp}{stochastic process}
 
 % Time
 \newcommand{\timeset}{T}
@@ -140,7 +120,9 @@
 \newcommand{\mpower}{\m{P}}
 
 \newcommand{\powerprofile}{\mpower^\star}
-\newcommand{\utilization}{u}
+
+\newcommand{\dyn}{\text{dyn}}
+\newcommand{\leak}{\text{leak}}
 
 % Temperature
 \newcommand{\temperatureset}{\Theta}
@@ -151,12 +133,12 @@
 \newcommand{\temperatureprofile}{\mtemperature^\star}
 
 \newcommand{\amb}{\text{amb}}
+\newcommand{\refer}{\text{ref}}
 
 % Thermal RC circuit
 \newcommand{\mcapacitance}{\m{C}}
 \newcommand{\mconductance}{\m{G}}
-\newcommand{\resistance}{R}
-\newcommand{\mresistance}{\m{\resistance}}
+\newcommand{\amconductance}{\a{\m{G}}}
 
 \newcommand{\cg}{\mcapacitance^{-1} \mconductance}
 \newcommand{\ecg}[2]{e^{#1 \cg #2}}
@@ -165,7 +147,7 @@
 \newcommand{\emcgt}[1]{e^{- #1 \cg t}}
 
 % Thermal nodes
-\newcommand{\nodeset}{\mathcal{H}}
-\newcommand{\node}{h}
+\newcommand{\nodeset}{\Pi}
+\newcommand{\node}{\pi}
 \newcommand{\nodeindex}{I_\node}
 \newcommand{\nodecount}{N_\node}

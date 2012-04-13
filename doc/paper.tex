@@ -2,8 +2,8 @@
 \input{include/common}
 
 \begin{document}
-  \title{Stochastic Temperature Analysis}
-  \author{Ivan Ukhov}
+  \title{System-Level Stochastic Temperature Analysis}
+  \author{Ivan Ukhov, Petru Eles, and Zebo Peng}
 
   \maketitle
 
@@ -12,10 +12,16 @@
   \end{abstract}
 
   \section{Introduction} \seclabel{introduction} \seclabel{uncertain-parameters}
-  \input{include/introduction}
+  \input{include/introduction.tex}
 
   \section{Preliminaries}
-  \input{include/preliminaries}
+  \input{include/preliminaries.tex}
+
+  \section{Model of the Process Variation} \seclabel{process-variation}
+  \input{include/process-variation.tex}
+
+  \section{Model of the Environmental Noise} \seclabel{noise}
+  \input{include/noise.tex}
 
   \section{Static Steady-State Temperature Analysis} \seclabel{sssta}
   \input{include/static-steady-state.tex}
