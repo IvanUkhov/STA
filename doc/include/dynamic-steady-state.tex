@@ -1,18 +1,18 @@
-As in the SSSTA (\secref{sssta}), the given power profile is assumed to be periodic. However, instead of aiming at a hypotherical thermal balance with a single constant temperature for each of the thermal nodes, the \definition{dynamic steady-state temperature analysis} (DSSTA) delivers a set of periodic curves, similar to the TTA (\secref{tta}), that describe a periodic pattern of the thermal behaviour of the system.
+The given dynamic power profile is assumed to be periodic and, after a sufficiently long period of time, the corresponding temperature profile becomes periodic as well. The \definition{dynamic steady-state temperature analysis} (DSSTA) delivers a set of periodic curves that describe this periodic pattern.
 
 \subsection{Problem Formulation}
-The sources of uncertainties are the process variation and a random noise.
-
 Given:
 \begin{itemize}
   \item A multiprocessor system $\system$.
-  \item A nominal dynamic power profile $\powerprofile$.
-  \item Additional knowledge about uncertainties as specified in the following subsections.
+  \item A mean dynamic power profile $\mpprofile{\dyn}$.
+  \item The variation ratio vector $\vratio_\dyn$ and correlation matrix $\mcorr{\dyn}$ of the dynamic power.
+  \item A mean leakage power $\vmean{\leak}$.
+  \item The covariance matrix $\cov{\vpower_\leak}$ of the leakage power.
 \end{itemize}
 
 Find:
 \begin{itemize}
-  \item The probability distribution of the periodic temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
+  \item The probability distribution of the periodic temperature profile $\tprofile{}$ with respect to $\mpprofile{\dyn}$.
 \end{itemize}
 
 \subsection{Solution with Process Variation} \seclabel{dssta-process-variation}

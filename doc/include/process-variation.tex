@@ -1,42 +1,40 @@
 \subsection{Dynamic Power}
-We assume that the variations in the dynamic power are normally distributed and are given in terms of the ratio between the standard deviation and expected value, i.e., for the $i$th thermal node we are given a constant $\ratio_{\dyn \; i}$ such that $\deviation{}/\mean{} = \ratio_{\dyn \; i}$ for any nominal value $\mean{}$ of the dynamic power. Let $\vratio_\dyn = \vector{\ratio_{\dyn \; i}}_{i \in \nodeindex}$ be a vector of the variation ratio for all thermal nodes.
-
-Apart from the quantitative measure of variations $\vratio_\dyn$, we assume that the dependencies between different thermal nodes are also given and expressed in terms of their correlation matrix, denoted by $\mcorrelation{\dyn} = \matrix{\correlation{ij}}_{i,j \in \nodeindex}$. A correlation matrix is a normalized version of the corresponding covariance matrix, where $(i,j)$th element of the later is divided by $\deviation{X_i} \deviation{X_j}$, loosing the units of measure, but preserving the degree of linear dependencies in terms of the Person correlation coefficient\footnote{The Pearson correlation coefficient takes values from $-1$ to $1$ and is defined by $\rho_{ij} = \expectation{(X_i - \mean{X_i})(X_j - \mean{X_j})}/(\deviation{X_i}\deviation{X_j})$. If this information is not available, which is usually the case on early design stages, $\correlation{\dyn}$ can be assumed to be is equal to the identity matrix $\mone$.}.
+We assume that the variations of the dynamic power are normally distributed and are given in terms two parameters: a diagonal matrix of the variation ratio $\mratio_\dyn$ and a correlation matrix $\mcorr{\dyn}$. The $(i,i)$th element of $\mratio_\dyn$ shows the ratio between the standard deviation and expected value of the dynamic power dissipation of the $i$th thermal node, i.e., we are given a constant $\mratio_{\dyn \; ii}$ such that $\dev{}/\mean{} = \mratio_{\dyn \; ii}$ for any nominal value $\mean{}$. $\mcorr{\dyn}$ captures the dependencies between nodes; if this information is not available, especially, on early design stages, $\mcorr{\dyn}$ can be assumed to be is equal to the identity matrix $\mone$.
 
 Taking everything together, the dynamic power is modeled as the following:
 \begin{align} \equlabel{dynamic-power}
-  \vpower_\dyn(\time) & = \vmean{\dyn}(\time) + \diag{\vratio_\dyn} \diag{\vmean{\dyn}(\time)} \vnormal_\dyn \\
-  & = \vmean{\dyn}(\time) + \ddeviation{\dyn}(\time) \; \vnormal_\dyn \nonumber
+  & \vpower_\dyn = \vmean{\dyn} + \ddev{\dyn} \; \vnormal_\dyn \\
+  & \ddev{\dyn} = \diag{\vmean{\dyn}} \mratio_\dyn \factorize{\mcorr{\dyn}} \nonumber \\
+  & \vnormal_\dyn \sim \normal(\vzero, \mone) \nonumber
 \end{align}
-where $\vmean{\dyn}(\time)$ is the vector of the nominal (mean) dynamic power dissipation, $\diag{\v{X}}$ denotes a diagonal matrix with the central diagonal composed of the elements of the vector $\v{X}$, and $\vnormal_\dyn \sim \normal(\vzero, \mcorrelation{\dyn})$. Such a model with a single \mrv\ implies that the direction of the variations from the nominal values is fixed, i.e., a core always is either cold, meaning that its power always tends to be lower than the nominal value, or hot, meaning that its power always tends to be higher than the nominal value.
+where $\vmean{\dyn}$ is the vector of the mean (nominal) dynamic power dissipation, $\diag{\v{X}}$ denotes a diagonal matrix with the central diagonal composed of the elements of the vector $\v{X}$, and $\factorize{\mcorr{\dyn}}$ denotes the factorization, introduced in \secref{probability-theory}. Such a model with a single \mrv\ implies that the direction of the variations from the nominal values is fixed, i.e., a core always is either cold, meaning that its power always tends to be lower than the nominal value, or hot, meaning that its power always tends to be higher than the nominal value.
 
 \subsection{Leakage Power}
-In this paper, we assume that the leakage currents have a pure random nature and, hence, have no spacial correlations. Since the number of devices, which leak power, is considerably large in a modern processing unit, the total leakage power $\vpower_\leak$ can be well approximated with a normal distribution according to the central limit theorem \cite{durrett2010}. We assume that the nominal leakage power $\vmean{\leak}$ and covariance matrix $\covariance{\vpower_\leak}$ are given. Consequently, an intermediate version of the leakage model is the following:
-\[
-  \vpower_\leak = \vmean{\leak} + \vnormal_\leak
-\]
-where $\vnormal_\leak \sim \normal(0, \covariance{\vpower_\leak})$.
+In this paper, we assume that the leakage currents have a pure random nature and, hence, have no spacial correlations. Since the number of devices, which leak power, is considerably large in a modern processing unit, the total leakage power $\vpower_\leak$ can be well approximated with a normal distribution according to the central limit theorem \cite{durrett2010}. We assume that the nominal leakage power $\vmean{\leak}$ and covariance matrix $\cov{\vpower_\leak}$ are given. Consequently, an intermediate version of the leakage model is the following:
+\begin{align*}
+  & \vpower_\leak = \vmean{\leak} + \ddev{\leak} \vnormal_\leak \\
+  & \ddev{\leak} = \factorize{\cov{\vpower_\leak}} \\
+  & \vnormal_\leak \sim \normal(\vzero, \mone)
+\end{align*}
 
-Due to the fact that the leakage power has a strong dependency on temperature, the later should be considered in the leakage modeling. As it was shown in \cite{liu2007}, a linear approximation of the leakage current yields sufficiently accurate results. Therefore, we also employ this technique in the paper and assume that $\vmean{\leak}$ is given at the reference temperature $\vtemperature_\refer$ and the coefficient of proportionality, denoted by $\vratio_\leak$, which relates the deviation from the reference temperature and the change in the leakage power, is available\footnote{$\vratio_\leak$ can be obtained through a curve fitting using, for instance, the least squares regression \cite{press2007}.}, resulting in the following final expression for the leakage power:
-\begin{align} \equlabel{leakage-power}
-  \vpower_\leak(\time) & = \vmean{\leak} + \vnormal_\leak + \diag{\vratio_\leak}(\vtemperature(\time) - \vtemperature_\refer) \\
-  & = \vmean{\leak} + \vnormal_\leak + \ddeviation{\leak}(\vtemperature(\time) - \vtemperature_\refer) \nonumber
-\end{align}
-Note that both the current temperature $\vtemperature(\time)$ and reference one $\vtemperature_\refer$ are relative to the ambient temperature $\vtemperature_\amb$ as it was discussed in \secref{thermal-model}.
+Due to the fact that the leakage power has a strong dependency on temperature, the later should be considered in the leakage modeling. As it was shown in \cite{liu2007}, a linear approximation of the leakage current yields sufficiently accurate results. Therefore, we also employ this technique in the paper and assume that $\vmean{\leak}$ is given at the reference temperature $\vtemp_\refer$ and the coefficient of proportionality, denoted by a diagonal matrix $\mratio_\leak$, is known\footnote{$\mratio_\leak$ can be obtained through a curve fitting procedure using, for instance, the least squares regression \cite{press2007}.}. $\mratio_\leak$ relates the difference between the current temperature and the reference one to the change of the leakage power. The final expression for the leakage power is the following:
+\begin{equation} \equlabel{leakage-power}
+  \vpower_\leak(\time) = \vmean{\leak} + \ddev{\leak} \vnormal_\leak + \mratio_\leak(\vtemp(\time) - \vtemp_\refer)
+\end{equation}
+Note that both the current temperature $\vtemp(\time)$ and reference one $\vtemp_\refer$ are relative to the ambient temperature $\vtemp_\amb$ as it was discussed in \secref{thermal-model}.
 
-\subsection{Resulting Temperature}
+\subsection{Total Power and Temperature}
 Summing up \equref{dynamic-power} and \equref{leakage-power}, the total power dissipation can be computed as the following:
 \begin{align} \equlabel{total-power}
-  \vpower(\time) & = \vpower_{\dyn}(\time) + \vpower_{\leak}(\time) \\
-  & = \vmean{\dyn}(\time) + \vmean{\leak} - \ddeviation{\leak} \vtemperature_\refer + \ddeviation{\leak} \vtemperature(\time) + \nonumber \\
-  & { } \qquad + \ddeviation{\dyn}(\time) \vnormal_\dyn + \vnormal_\leak \nonumber
+  \vpower(\time) & = \vmean{\dyn} + \vmean{\leak} - \mratio_\leak \vtemp_\refer + \mratio_\leak \vtemp(\time) \nonumber \\
+  & { } \qquad + \ddev{\dyn} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak
 \end{align}
-Therefore, we rewrite \equref{fourier} as follows:
-\begin{align} \equlabel{fourier-pv}
-  \mcapacitance \frac{d\vtemperature(\time)}{d\time} + \amconductance \vtemperature(\time) = \vmean{}(\time) + \ddeviation{\dyn}(\time) \vnormal_\dyn + \vnormal_\leak
+In the following, we assume that $\vnormal_\dyn$ and $\vnormal_\leak$ are independent. However, all the models can be easily extended to the dependent case if the cross-covariance matrix $\cov{\vnormal_\dyn, \vnormal_\leak}$ is known\footnote{Another possible extension is to model $\vnormal_\dyn$ and $\vnormal_\leak$ as a single \mrv, implying the same source of the process variation of both parts of the power dissipation.}. Therefore, we rewrite \equref{fourier} as follows:
+\begin{align}
+  & \mcapacitance \frac{d\vtemp(\time)}{d\time} + (\mconductance - \mratio_\leak) \vtemp(\time) = \vmean{} \nonumber \\
+  & { } \qquad \qquad + \ddev{\dyn} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak  \equlabel{fourier-pv}
 \end{align}
 where:
-\begin{align*}
-  & \a{\mconductance} = \mconductance - \ddeviation{\leak} \\
-  & \vmean{}(\time) = \vmean{\dyn}(\time) + \vmean{\leak} - \ddeviation{\leak} \vtemperature_\refer
-\end{align*}
+\[
+  \vmean{} = \vmean{\dyn} + \vmean{\leak} - \mratio_\leak \vtemp_\refer
+\]

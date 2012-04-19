@@ -1,25 +1,29 @@
 In this section, we merge models from \secref{dssta-process-variation} and \secref{dssta-noise} together. We have the expression:
-\[
-  \vtemperature_{\stepcount} = \am{A}_{(\stepcount - 1)0} \vtemperature_0 + \m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal + \v{K}_{\stepcount - 1}
-\]
+\begin{align*}
+  & \vtemp_{\stepcount} = \am{A}_{(\stepcount - 1)0} \vtemp_0 + \m{F}_{\stepcount - 1} + \v{L}_{\stepcount - 1} \\
+  & {} \qquad + \m{H}_{\dyn, \; \stepcount - 1} \vnormal_\dyn + \m{H}_{\leak, \; \stepcount - 1} \vnormal_\leak
+\end{align*}
 Following the same procedure as before, the first temperature vector can be characterized using:
 \begin{align*}
-  & \vtemperature_0 = \m{Q} \; (\m{F}_{\stepcount - 1} + \m{H}_{\stepcount - 1} \vstdnormal + \v{K}_{\stepcount - 1}) \\
-  & \vtemperature_0 \sim \normal(\expectation{\vtemperature_0}, \covariance{\vtemperature_0}) \\
-  & \expectation{\vtemperature_0} = \m{Q} \; \v{F}_{\stepcount - 1} \\
-  & \covariance{\vtemperature_0} = \m{Q} (\v{H}_{\stepcount - 1} \v{H}_{\stepcount - 1}^T + \m{M}_{\stepcount - 1}) \m{Q}^T
+  & \vtemp_0 = \m{Q} \; (\m{F}_{\stepcount - 1} + \v{L}_{\stepcount - 1} \\
+  & {} \qquad + \m{H}_{\dyn, \; \stepcount - 1} \vnormal_\dyn + \m{H}_{\leak, \; \stepcount - 1} \vnormal_\leak) \\
+  & \vtemp_0 \sim \normal(\expect{\vtemp_0}, \cov{\vtemp_0}) \\
+  & \expect{\vtemp_0} = \m{Q} \; \v{F}_{\stepcount - 1} \\
+  & \cov{\vtemp_0} = \dbl{\m{Q} \m{H}_{\dyn, \; \stepcount - 1}, \mone} + \dbl{\m{Q} \m{H}_{\leak, \; \stepcount - 1}, \mone} \\
+  & {} \qquad + \dbl{\m{Q}, \m{M}_{\stepcount - 1}}
 \end{align*}
 The rest of the temperature vectors are:
 \begin{align*}
-  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
-  & \expectation{\vtemperature_{i+1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vpower_i \\
-  & \covariance{\vtemperature_{i + 1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}_i^T + \m{B}_i \ddeviation{i}^2 \m{B}_i^T \\
-  & {} \qquad + \m{A}_i \covariance{\vtemperature_i, \vpower_i} \m{B}_i^T + \m{B}_i \covariance{\vtemperature_i, \vpower_i}^T \m{A}_i^T + \covariance{\m{D}_i}
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
+  & \expect{\vtemp_{i+1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{i} \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \dbl{\m{B}_i, \ddev{i}^2} + \cov{\m{D}_i} \\
+  & {} + \dbl{\dbl{\m{A}_i, \cov{\vtemp_i, \vnormal_\dyn} \ddev{\dyn \; i} + \cov{\vtemp_i, \vnormal_\leak} \ddev{\leak}, \m{B}_i}}
 \end{align*}
 Alternatively:
 \begin{align*}
-  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
-  & \expectation{\vtemperature_{i + 1}} = \am{A}_{i0} \; \m{Q} \; \v{F}_{\stepcount - 1} + \v{F}_i \\
-  & \covariance{\vtemperature_{i + 1}} = [\am{A}_{i0} \; \m{Q} \; \v{H}_{\stepcount - 1} + \v{H}_i] [\am{A}_{i0} \; \m{Q} \; \v{H}_{\stepcount - 1} + \v{H}_i]^T \\
-  & { } \qquad \qquad + \am{A}_{i0} \; \m{Q} \; \m{M}_{\stepcount - 1} \m{Q}^T \am{A}_{i0}^T + \m{M}_i
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
+  & \expect{\vtemp_{i + 1}} = \am{A}_{i0} \; \m{Q} \; \v{F}_{\stepcount - 1} + \v{F}_i \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0} \; \m{Q} \; \m{H}_{\dyn, \; \stepcount - 1} + \m{H}_{\dyn \; i} \\
+  & { } \qquad \qquad + \am{A}_{i0} \; \m{Q} \; \m{H}_{\leak, \; \stepcount - 1} + \v{H}_{\leak \; i}, \mone} \\
+  & { } \qquad \qquad + \dbl{\am{A}_{i0} \; \m{Q}, \m{M}_{\stepcount - 1}} + \m{M}_i
 \end{align*}

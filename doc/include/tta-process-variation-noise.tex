@@ -1,24 +1,25 @@
-In this section we combine models presented in \secref{tta-noise} and \secref{tta-process-variation}. The starting point is the following recurrence:
-\begin{align}
-  \vtemperature_{i + 1} & = \m{A}_i \vtemperature_i + \m{B}_i \vpower_i + \m{D}_i \nonumber \\
-  & = \m{A}_i \vtemperature_i + \m{B}_i(\vmean{i} + \ddeviation{i} \vstdnormal) + \m{D}_i, \sep i \in \timeindex \equlabel{fourier-recurrence-noise-process-variation}
+In this section we combine models presented in \secref{tta-noise} and \secref{tta-process-variation}. The starting point is the following recurrence for $i \in \timeindex$:
+\begin{align} \equlabel{fourier-recurrence-noise-process-variation}
+  & \vtemp_{i + 1} = \m{A}_i \vtemp_i + \m{D}_i \nonumber \\
+  & {} \qquad + \m{B}_i (\vmean{i} + \ddev{\dyn \; i} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak)
 \end{align}
-Here $\m{D}_i \; \forall i \in \timeindex$ and $\vstdnormal$ are independent \mnrvs. Thus:
+Here $\m{D}_i, \forall i \in \timeindex$, $\vnormal_\dyn$, and $\vnormal_\leak$ are independent \mnrvs. Thus:
 \begin{align*}
-  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
-  & \expectation{\vtemperature_{i + 1}} = \m{A}_i \expectation{\vtemperature_i} + \m{B}_i \vmean{i} \\
-  & \covariance{\vtemperature_{i + 1}} = \m{A}_i \covariance{\vtemperature_i} \m{A}_i^T + \m{B}_i \ddeviation{i}^2 \m{B}_i^T \\
-  & {} \qquad + \m{A}_i \covariance{\vtemperature_i, \vpower_i} \m{B}_i^T + \m{B}_i \covariance{\vtemperature_i, \vpower_i}^T \m{A}_i^T + \covariance{\m{D}_i}
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
+  & \expect{\vtemp_{i + 1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{i} \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \dbl{\m{B}_i, \ddev{\dyn \; i}^2 + \ddev{\leak \; i}^2} + \cov{\m{D}_i} \\
+  & {} \qquad + \dbl{\dbl{\m{A}_i, \m{H}_{\dyn \; i} \ddev{\dyn \; i} + \m{H}_{\leak \; i} \ddev{\leak}, \m{B}_i}}
 \end{align*}
-where $\covariance{\vtemperature_i, \vpower_i}$ is computed using \equref{cross-covariance}.
+where $\m{H}_{\dyn \; i}$ and $\m{H}_{\leak \; i}$ are computed using \equref{h-dynamic} and \equref{h-leakage}, respectively.
 
 Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{fourier-recurrence-noise-process-variation}:
-\begin{equation} \equlabel{fourier-non-recurrent-combined}
-  \vtemperature_{i + 1} = \am{A}_{i0} \expectation{\vtemperature_0} + \v{F}_i + \v{H}_i \vstdnormal + \v{K}_i, \sep i \in \timeindex
-\end{equation}
+\begin{align} \equlabel{fourier-non-recurrent-combined}
+  & \vtemp_{i + 1} = \am{A}_{i0} \expect{\vtemp_0} + \v{F}_i + \v{L}_i \nonumber \\
+  & { } \qquad + \v{H}_{\dyn \; i} \vnormal_\dyn + \v{H}_{\leak \; i} \vnormal_\leak, \sep i \in \timeindex
+\end{align}
 Therefore:
 \begin{align*}
-  & \vtemperature_{i + 1} \sim \normal(\expectation{\vtemperature_{i + 1}}, \covariance{\vtemperature_{i + 1}}), \sep i \in \timeindex \\
-  & \expectation{\vtemperature_{i + 1}} = \am{A}_i \expectation{\vtemperature_0} + \v{F}_i \\
-  & \covariance{\vtemperature_{i + 1}} = \am{A}_{i0} \covariance{\vtemperature_0} \am{A}_{i0}^T + \v{H}_i \v{H}_i^T + \m{M}_i
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
+  & \expect{\vtemp_{i + 1}} = \am{A}_i \expect{\vtemp_0} + \v{F}_i \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0}, \cov{\vtemp_0}} + \dbl{\v{H}_{\dyn \; i}, \mone} + \dbl{\v{H}_{\leak \; i}, \mone} + \m{M}_i
 \end{align*}

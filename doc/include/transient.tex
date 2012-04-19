@@ -1,18 +1,18 @@
-The \definition{transient temperature analysis} (TTA) delivers a set of curves, one for each of the thermal nodes, that describe the thermal behaviour of the system through the time horizon of the given power profile $\powerprofile$.
+The \definition{transient temperature analysis} (TTA) delivers a set of curves, one for each of the thermal nodes, that describe the thermal behaviour of the system through the time horizon of a dynamic power profile $\pprofile{\dyn}$. Since the given power profile is a mean (nominal) profile, we denote it by $\mpprofile{\dyn}$.
 
 \subsection{Problem Formulation}
-The sources of uncertainties are the process variation and a random noise.
-
 Given:
 \begin{itemize}
   \item A multiprocessor system $\system$.
-  \item A nominal dynamic power profile $\powerprofile$.
-  \item Additional knowledge about uncertainties as specified in the following subsections.
+  \item A mean dynamic power profile $\mpprofile{\dyn}$.
+  \item The variation ratio vector $\vratio_\dyn$ and correlation matrix $\mcorr{\dyn}$ of the dynamic power.
+  \item A mean leakage power $\vmean{\leak}$.
+  \item The covariance matrix $\cov{\vpower_\leak}$ of the leakage power.
 \end{itemize}
 
 Find:
 \begin{itemize}
-  \item The probability distribution of the temperature profile $\temperatureprofile$ with respect to $\powerprofile$.
+  \item The probability distribution of the temperature profile $\tprofile{}$ with respect to $\mpprofile{\dyn}$.
 \end{itemize}
 
 First, the sources of uncertainties are modeled separately (\secref{tta-process-variation} and \secref{tta-noise}), and then they are joined together into a single model (\secref{tta-process-variation-noise}).

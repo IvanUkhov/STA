@@ -1,0 +1,18 @@
+For the clarity reasons and without loss of generality, we let $\vtemp(\time) \equiv \vtemp(\time) - \vtemp_\amb$ in \equref{fourier}, since $\vtemp_\amb$ can be easily added to the final solution afterwards. In order to handle discrete power profiles and calculate the corresponding temperature profiles (see \secref{power-model}), we assume that within each time interval $\timeinterval_i$ the power consumption is constant in the right-hand side of \equref{fourier}. In this case, for a single time interal, we have a system of ordinary differential equations:
+\begin{equation} \equlabel{fourier-constant-power}
+  \mcapacitance \frac{d\vtemp(\time)}{d\time} + \mconductance \vtemp(\time) = \vpower
+\end{equation}
+The solution of \equref{fourier-constant-power} is the following:
+\[
+  \vtemp(\time) = \m{A}(\time) \vtemp(0) + \m{B}(\time) \vpower
+\]
+where:
+\begin{align}
+  & \m{A}(\time) = \emcg{\time} \equlabel{a} \\
+  & \m{B}(\time) = -(\cg)^{-1}(\emcg{\time} - \mone) \mcapacitance^{-1} \equlabel{b}
+\end{align}
+Here $e^\m{M}$ denotes the matrix exponential of $\m{M}$. Consequently, the following recurrence can be applied in order to calculate temperature vectors for all $\timeinterval_i$ of the power profile:
+\begin{equation} \equlabel{fourier-recurrence}
+  \vtemp_{i + 1} = \m{A}_i \vtemp_i + \m{B}_i \vpower_i, \sep i \in \timeindex
+\end{equation}
+where we denote $\m{A}_i = \m{A}(\timeinterval_i)$ and $\m{B}_i = \m{B}(\timeinterval_i)$.
