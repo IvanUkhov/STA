@@ -1,28 +1,21 @@
-Using \equref{tta-fourier-noise-non-recurrent}, the temperature vector at the end of the curves can be computed as:
+Using \equref{tta-fourier-non-recurrent-noise}, the temperature vector at the end of the curves can be computed as:
 \begin{align*}
   \vtemp_{\stepcount} & = \am{A}_{(\stepcount - 1)0} \vtemp_0 + \m{F}_{\stepcount - 1} + \v{L}_{\stepcount - 1}
 \end{align*}
 Note, as in \secref{tta-noise}, $\m{F}_i$ is computed according to \equref{f} with $\vmean{i} \equiv \vmean{\dyn \; i}$. Following the same procedure as in \secref{dssta-process-variation}, the vector of the initial temperature can be derived:
-\begin{align*}
-  & \vtemp_0 = \m{Q} \; (\m{F}_{\stepcount - 1} + \v{L}_{\stepcount - 1}) \\
-  & \vtemp_0 \sim \normal(\expect{\vtemp_0}, \cov{\vtemp_0}) \\
-  & \expect{\vtemp_0} = \m{Q} \; \v{F}_{\stepcount - 1} \\
-  & \cov{\vtemp_0} = \dbl{\m{Q}, \m{M}_{\stepcount - 1}}
-\end{align*}
-The rest of the temperature vectors are found using:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
-  & \expect{\vtemp_{i+1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{\dyn \; i} \\
-  & \cov{\vtemp_{i+1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \cov{\m{D}_i}
-\end{align*}
+\[
+  \vtemp_0 = \m{Q} \; (\m{F}_{\stepcount - 1} + \v{L}_{\stepcount - 1})
+\]
+where:
+\begin{align}
+  & \vtemp_0 \sim \normal(\expect{\vtemp_0}, \cov{\vtemp_0}) \equlabel{dssta-initial-temperature-noise} \\
+  & \expect{\vtemp_0} = \m{Q} \; \v{F}_{\stepcount - 1} \nonumber \\
+  & \cov{\vtemp_0} = \dbl{\m{Q}, \m{M}_{\stepcount - 1}} \nonumber
+\end{align}
+The rest of the temperature vectors are found using \equref{tta-fourier-recurrence-noise} and \equref{tta-probabilistic-recurrence-noise} with the initial temperature given above.
 
-Alternatively, non-recurrent expressions, similar to \equref{tta-fourier-noise-non-recurrent}, can be obtained:
-\begin{equation*}
-  \vtemp_{i + 1} = \am{A}_{i0} \vtemp_0 + \m{F}_i + \v{L}_i, \sep i \in \timeindex \setminus \{\stepcount - 1\}
-\end{equation*}
-Therefore:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
-  & \expect{\vtemp_{i + 1}} = \am{A}_{i0} \; \m{Q} \; \v{F}_{\stepcount - 1} + \m{F}_i \\
-  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0} \; \m{Q}, \m{M}_{\stepcount - 1}} + \m{M}_i
-\end{align*}
+Alternatively, the non-recurrent expressions in \equref{tta-fourier-non-recurrent-noise} can be employed, where:
+\[
+  \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0} \; \m{Q}, \m{M}_{\stepcount - 1}} + \m{M}_i
+\]
+and $\expect{\vtemp_0}$ is calculated according to \equref{dssta-initial-temperature-noise}.

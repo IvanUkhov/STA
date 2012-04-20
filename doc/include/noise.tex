@@ -14,18 +14,12 @@ where $d\m{W}(\time) = \vnormal_\noisy(\time) d\time$ with $\{ \m{W}(\time) \}_{
   & = \ecgt \mcapacitance^{-1} (\vpower d\time + \ddev{\noisy} d\v{W}(\time))
 \end{align*}
 The solution can be found by taking integrals on both sides:
-\begin{align*}
-  \vtemp(\time) = & \emcgt{} \vtemp(0) - \\
-    & (\cg)^{-1}(\emcgt{} - \mone) \mcapacitance^{-1} \vpower + \\
-    & \int_0^\time \ecg{}{(s - \time)} \mcapacitance^{-1} \ddev{\noisy} \; d\m{W}(s)
-\end{align*}
-To simplify the further derivation, we introduce the following notation:
-\begin{equation} \equlabel{d}
-  \v{D}(\time) = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \ddev{\noisy} \: d\m{W}(s)
-\end{equation}
-Therefore, taking into consideration \equref{a} and \equref{b}, \equref{solution-full} can be rewritten:
 \begin{equation} \equlabel{solution-full}
   \vtemp(\time) = \m{A}(\time) \vtemp(0) + \m{B}(\time) \vpower + \v{D}(\time)
+\end{equation}
+where, to simplify the further derivation, we introduce the following notation:
+\begin{equation} \equlabel{d}
+  \v{D}(\time) = \int_0^{\time} \ecg{}{(s - \time)} \mcapacitance^{-1} \ddev{\noisy} \: d\m{W}(s)
 \end{equation}
 Since the Wiener process has independent normally distributed increments, an integration with respect to it, i.e., $\int_0^\time f(s) dW(s)$, is a \nrv. It can also be shown that in this case the mean is zero and variance is equal to $\int_0^\time f^2(s) ds$. Hence, $\v{D}(\time) \sim \normal(\vzero, \cov{\v{D}(\time)})$, i.e., $\v{D}(\time)$ is a \mnrv\ with a zero mean vector and the following covariance matrix:
 \begin{align}

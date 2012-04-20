@@ -2,7 +2,7 @@ Since the resulting temperature curves should be periodic, the following boundar
 \begin{equation} \equlabel{dss-boundary}
   \vtemp_0 = \vtemp_{\stepcount}
 \end{equation}
-Using \equref{tta-fourier-process-variation-non-recurrent}, the temperature vector at the end of the curves can be computed as:
+Using \equref{tta-fourier-non-recurrent-process-variation}, the temperature vector at the end of the curves can be computed as:
 \begin{align*}
   & \vtemp_{\stepcount} = \am{A}_{(\stepcount - 1)0} \vtemp_0 + \m{F}_{\stepcount - 1} \\
   & { } \qquad + \m{H}_{\dyn, \; \stepcount - 1} \vnormal_\dyn + \m{H}_{\leak, \; \stepcount - 1} \vnormal_\leak
@@ -16,34 +16,20 @@ where:
   \m{Q} = (\mone - \am{A}_{(\stepcount - 1)0})^{-1}
 \end{equation}
 Consequently, the mean and covariance at the beginning of the periodic power profile are:
-\begin{align*}
-  & \vtemp_0 \sim \normal(\expect{\vtemp_0}, \cov{\vtemp_0}) \\
-  & \expect{\vtemp_0} = \m{Q} \; \v{F}_{\stepcount - 1} \\
-  & \cov{\vtemp_0} = \dbl{\m{Q} \; \v{H}_{\dyn, \; \stepcount - 1}, \mone} + \dbl{\m{Q} \; \v{H}_{\leak, \; \stepcount - 1}, \mone}
-\end{align*}
-The rest of the temperature vectors are successively found using \equref{tta-fourier-recurrence}, hence:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
-  & \expect{\vtemp_{i + 1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{i} \\
-  & \cov{\vtemp_{i + 1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \dbl{\m{B}_i, \ddev{i}^2} \\
-  & {} + \dbl{\dbl{\m{A}_i, \cov{\vtemp_i, \vnormal_\dyn} \ddev{\dyn \; i} + \cov{\vtemp_i, \vnormal_\leak} \ddev{\leak}, \m{B}_i}}
-\end{align*}
-where the covariance matrix is found using the following expression for $i \in \timeindex \setminus \{0, \stepcount - 1\}$:
+\begin{align}
+  & \vtemp_0 \sim \normal(\expect{\vtemp_0}, \cov{\vtemp_0}) \equlabel{dssta-initial-temperature-process-variation} \\
+  & \expect{\vtemp_0} = \m{Q} \; \v{F}_{\stepcount - 1} \nonumber \\
+  & \cov{\vtemp_0} = \dbl{\m{Q} \; \v{H}_{\dyn, \; \stepcount - 1}, \mone} + \dbl{\m{Q} \; \v{H}_{\leak, \; \stepcount - 1}, \mone} \nonumber
+\end{align}
+The rest of the temperature vectors are successively found using \equref{tta-fourier-recurrence}. Therefore, the recurrence in \equref{tta-process-variation-probabilistic-recurrence} holds with the initial temperature vectors given above and the initial coveriance matrices as follows:
 \begin{align*}
   & \cov{\vtemp_0, \vnormal_\dyn} = \m{Q} \; \m{H}_{\dyn, \; \stepcount - 1} \\
-  & \cov{\vtemp_i, \vnormal_\dyn} = \am{A}_{(i - 1)0} \; \m{Q} \; \m{H}_{\dyn, \; \stepcount - 1} + \v{H}_{\dyn, \; i - 1} \\
-  & \cov{\vtemp_0, \vnormal_\leak} = \m{Q} \; \m{H}_{\leak, \; \stepcount - 1} \\
-  & \cov{\vtemp_i, \vnormal_\leak} = \am{A}_{(i - 1)0} \; \m{Q} \; \m{H}_{\leak, \; \stepcount - 1} + \v{H}_{\leak, \; i - 1}
+  & \cov{\vtemp_0, \vnormal_\leak} = \m{Q} \; \m{H}_{\leak, \; \stepcount - 1}
 \end{align*}
 
-Alternatively, non-recurrent expressions, similar to \equref{tta-fourier-process-variation-non-recurrent}, can be obtained for $i \in \timeindex \setminus \{\stepcount - 1\}$:
-\[
-\vtemp_{i + 1} = \am{A}_{i0} \vtemp_0 + \v{F}_i + \m{H}_{\dyn \; i} \vnormal_\dyn + \m{H}_{\leak \; i} \vnormal_\leak
-\]
-where:
+Alternatively, the non-recurrent expressions in \equref{tta-fourier-non-recurrent-process-variation} and \equref{tta-probabilistic-non-recurrent-process-variation} can be employed, where:
 \begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \setminus \{\stepcount - 1\} \\
-  & \expect{\vtemp_{i + 1}} = \am{A}_{i0} \m{Q} \v{F}_{\stepcount - 1} + \v{F}_i \\
-  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0} \; \m{Q} \; \m{H}_{\dyn, \; \stepcount - 1} + \m{H}_{\dyn \; i} \\
-  & { } \qquad \qquad + \am{A}_{i0} \; \m{Q} \; \m{H}_{\leak, \; \stepcount - 1} + \v{H}_{\leak \; i}, \mone}
+  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0} \; \m{Q} \; \m{H}_{\dyn, \; \stepcount - 1} + \m{H}_{\dyn \; i}, \mone} \\
+  & { } \qquad \qquad + \dbl{\am{A}_{i0} \; \m{Q} \; \m{H}_{\leak, \; \stepcount - 1} + \v{H}_{\leak \; i}, \mone}
 \end{align*}
+and $\expect{\vtemp_0}$ is calculated according to \equref{dssta-initial-temperature-process-variation}.

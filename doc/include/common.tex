@@ -13,37 +13,32 @@
 \newcommand{\definition}[1]{\emph{#1}}
 
 % Matrices and vectors
-\renewcommand{\a}[1]{\bar{#1}}
+\renewcommand{\a}[1]{\Bar{#1}}
+
 \newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\am}[1]{\a{\m{#1}}}
+
 \renewcommand{\v}[1]{\mathbf{#1}}
+\newcommand{\av}[1]{\a{\v{#1}}}
+
 \newcommand{\diag}[1]{\text{diag}\left(#1\right)}
-
-\newcommand{\av}[1]{\Bar{\v{#1}}}
-\newcommand{\aav}[1]{\Bar{\Bar{\v{#1}}}}
-
-\newcommand{\am}[1]{\Bar{\m{#1}}}
 
 \renewcommand{\vector}[1]{\left(#1\right)^T}
 \renewcommand{\matrix}[1]{\left(#1\right)}
 
 \newcommand{\vzero}{\v{0}}
 \newcommand{\mzero}{\m{0}}
+
 \newcommand{\mone}{\m{I}}
 \newcommand{\vone}{\v{1}}
 
 \newcommand{\factorize}[1]{\Gamma[#1]}
 
 \newcommand{\dbl}[1]{\langle #1 \rangle}
+\newcommand{\ddbl}[1]{\langle \langle #1 \rangle \rangle}
 
 % Sets
 \newcommand{\real}{\mathbb{R}}
-\newcommand{\positivereal}{\real^{+}}
-\newcommand{\nonnegativereal}{\real^{+}}
-
-\renewcommand{\natural}{\mathbb{N}}
-\newcommand{\positivenatural}{\natural_{1}}
-
-\newcommand{\injection}{\rightarrowtail}
 
 % References
 \newcommand{\equref}[1]{Eq.~(\ref{eq:#1})}
@@ -52,16 +47,10 @@
 \newcommand{\equlabel}[1]{\label{eq:#1}}
 \newcommand{\seclabel}[1]{\label{sec:#1}}
 
-% System
-\newcommand{\system}{S}
-
 % Stochastic Processes
 \newcommand{\outcomeset}{\Omega}
-\newcommand{\outcome}{\omega}
 \newcommand{\salgebra}{\mathcal{F}}
-\newcommand{\pmeasure}{\mathcal{P}}
-
-\newcommand{\pspace}{(\outcomeset, \salgebra, \pmeasure)}
+\newcommand{\pmeasure}{P}
 
 \newcommand{\normal}{\mathcal{N}}
 
@@ -71,19 +60,16 @@
 \newcommand{\noisy}{\text{ns}}
 
 \newcommand{\mean}[1]{\mu_{#1}}
-\newcommand{\dev}[1]{\sigma_{#1}}
-
 \newcommand{\vmean}[1]{\bmu_{#1}}
+
+\newcommand{\dev}[1]{\sigma_{#1}}
 \newcommand{\ddev}[1]{\m{\Lambda}_{#1}}
 
 \newcommand{\expect}[1]{E[#1]}
 \newcommand{\cov}[1]{\Sigma[#1]}
-
-\newcommand{\corr}[1]{\rho_{#1}}
-\newcommand{\mcorr}[1]{\m{R}_{#1}}
+\newcommand{\corr}[1]{\mathcal{S}[{#1}]}
 
 \newcommand{\ratio}{k}
-\newcommand{\vratio}{\v{K}}
 \newcommand{\mratio}{\m{K}}
 
 \newcommand{\rv}{random variable}
@@ -100,6 +86,11 @@
 
 \renewcommand{\sp}{stochastic process}
 
+% System
+\newcommand{\system}{\Pi}
+
+\newcommand{\profile}[1]{(\timepartition, #1)}
+
 % Time
 \newcommand{\timeset}{T}
 \renewcommand{\time}{t}
@@ -107,10 +98,9 @@
 \newcommand{\timepartition}{\mathbf{T}}
 \newcommand{\period}{\mathcal{T}}
 \newcommand{\timeinterval}{\Delta t}
-\newcommand{\stepcount}{m}
-\newcommand{\timeindex}{I_\time}
 
-\newcommand{\profile}[1]{(\timepartition, #1)}
+\newcommand{\stepcount}{m}
+\newcommand{\timeindex}{I_m}
 
 % Power
 \newcommand{\powerset}{P}
@@ -147,7 +137,5 @@
 \newcommand{\emcgt}[1]{e^{- #1 \cg t}}
 
 % Thermal nodes
-\newcommand{\nodeset}{\Pi}
-\newcommand{\node}{\pi}
-\newcommand{\nodeindex}{I_\node}
+\newcommand{\nodeindex}{I_n}
 \newcommand{\nodecount}{n}

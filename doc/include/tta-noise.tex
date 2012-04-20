@@ -5,14 +5,14 @@ The solution given by \equref{solution-full} is applicable for one time interval
 where $\m{D}_i = \m{D}(\timeinterval_i)$ according to \equref{d}.
 
 Taking into consideration the properties of the Wiener process, $\vtemp_i$ is independent of $\m{D}_i$. Therefore, $\vtemp_{i+1}$ is a \mnrv:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
-  & \expect{\vtemp_{i+1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{\dyn \; i} \\
-  & \cov{\vtemp_{i+1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \cov{\m{D}_i}
-\end{align*}
+\begin{align}
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \equlabel{tta-probabilistic-recurrence-noise} \\
+  & \expect{\vtemp_{i+1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{\dyn \; i} \nonumber \\
+  & \cov{\vtemp_{i+1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \cov{\m{D}_i} \nonumber
+\end{align}
 
 Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{tta-fourier-recurrence-noise}:
-\begin{equation} \equlabel{tta-fourier-noise-non-recurrent}
+\begin{equation} \equlabel{tta-fourier-non-recurrent-noise}
   \vtemp_{i + 1} = \am{A}_{i0} \vtemp_0 + \m{F}_i + \v{L}_i, \sep i \in \timeindex
 \end{equation}
 where $\m{F}_i$ is computed according to \equref{f} with the only difference that $\vmean{i} \equiv \vmean{\dyn \; i}$ and:

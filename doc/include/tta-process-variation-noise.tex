@@ -1,25 +1,25 @@
-In this section we combine models presented in \secref{tta-noise} and \secref{tta-process-variation}. The starting point is the following recurrence for $i \in \timeindex$:
+In this section we combine models presented in \secref{tta-noise} and \secref{tta-process-variation}. The starting point is the following recurrence:
 \begin{align} \equlabel{fourier-recurrence-noise-process-variation}
   & \vtemp_{i + 1} = \m{A}_i \vtemp_i + \m{D}_i \nonumber \\
-  & {} \qquad + \m{B}_i (\vmean{i} + \ddev{\dyn \; i} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak)
+  & {} \qquad + \m{B}_i (\vmean{i} + \ddev{\dyn \; i} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak), \sep i \in \timeindex
 \end{align}
 Here $\m{D}_i, \forall i \in \timeindex$, $\vnormal_\dyn$, and $\vnormal_\leak$ are independent \mnrvs. Thus:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
-  & \expect{\vtemp_{i + 1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{i} \\
-  & \cov{\vtemp_{i + 1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \dbl{\m{B}_i, \ddev{\dyn \; i}^2 + \ddev{\leak \; i}^2} + \cov{\m{D}_i} \\
-  & {} \qquad + \dbl{\dbl{\m{A}_i, \m{H}_{\dyn \; i} \ddev{\dyn \; i} + \m{H}_{\leak \; i} \ddev{\leak}, \m{B}_i}}
-\end{align*}
-where $\m{H}_{\dyn \; i}$ and $\m{H}_{\leak \; i}$ are computed using \equref{h-dynamic} and \equref{h-leakage}, respectively.
+\begin{align}
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \equlabel{tta-process-variation-noise-probabilistic-recurrence} \\
+  & \expect{\vtemp_{i + 1}} = \m{A}_i \expect{\vtemp_i} + \m{B}_i \vmean{i} \nonumber \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\m{A}_i, \cov{\vtemp_i}} + \dbl{\m{B}_i, \ddev{\dyn \; i}^2 + \ddev{\leak \; i}^2} + \cov{\m{D}_i} \nonumber \\
+  & {} + \ddbl{\m{A}_i, \cov{\vtemp_i, \vnormal_\dyn} \ddev{\dyn \; i} + \cov{\vtemp_i, \vnormal_\leak} \ddev{\leak}, \m{B}_i} \nonumber
+\end{align}
+where the coveriance matrices $\cov{\vtemp_i, \vnormal_\dyn}$ and $\cov{\vtemp_i, \vnormal_\leak}$ are computed using \equref{cross-covariance-dynamic} and \equref{cross-covariance-leakage}, respectively.
 
 Alternatively, non-recurrent expressions can be obtained by performing an iterative repetition of \equref{fourier-recurrence-noise-process-variation}:
-\begin{align} \equlabel{fourier-non-recurrent-combined}
+\begin{align} \equlabel{tta-fourier-non-recurrent-combined}
   & \vtemp_{i + 1} = \am{A}_{i0} \expect{\vtemp_0} + \v{F}_i + \v{L}_i \nonumber \\
   & { } \qquad + \v{H}_{\dyn \; i} \vnormal_\dyn + \v{H}_{\leak \; i} \vnormal_\leak, \sep i \in \timeindex
 \end{align}
 Therefore:
-\begin{align*}
-  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \\
-  & \expect{\vtemp_{i + 1}} = \am{A}_i \expect{\vtemp_0} + \v{F}_i \\
-  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0}, \cov{\vtemp_0}} + \dbl{\v{H}_{\dyn \; i}, \mone} + \dbl{\v{H}_{\leak \; i}, \mone} + \m{M}_i
-\end{align*}
+\begin{align}
+  & \vtemp_{i + 1} \sim \normal(\expect{\vtemp_{i + 1}}, \cov{\vtemp_{i + 1}}), \sep i \in \timeindex \equlabel{tta-probabilistic-non-recurrent-combined} \\
+  & \expect{\vtemp_{i + 1}} = \am{A}_i \expect{\vtemp_0} + \v{F}_i \nonumber \\
+  & \cov{\vtemp_{i + 1}} = \dbl{\am{A}_{i0}, \cov{\vtemp_0}} + \dbl{\v{H}_{\dyn \; i}, \mone} + \dbl{\v{H}_{\leak \; i}, \mone} + \m{M}_i \nonumber
+\end{align}
