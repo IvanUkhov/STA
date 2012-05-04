@@ -10,7 +10,7 @@ extern "C" {
 
 #include "matrix.h"
 
-class Hotspot
+class HotSpot
 {
 	protected:
 
@@ -26,10 +26,10 @@ class Hotspot
 
 	public:
 
-	Hotspot(const std::string &floorplan_filename,
+	HotSpot(const std::string &floorplan_filename,
 		const std::string &config_filename,
-		const std::string &config_line);
-	virtual ~Hotspot();
+		const std::string &config_line = "");
+	virtual ~HotSpot();
 
 	inline double get_sampling_interval() const
 	{

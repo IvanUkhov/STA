@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
-#include <string.h>
 
 class CommandLine
 {

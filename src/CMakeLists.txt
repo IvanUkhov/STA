@@ -1,9 +1,10 @@
 set(TUNING_FLAGS "-DSHALLOW_CHECK")
 
 set(COMMON_SRCS
-	HotSpot.cpp
-	EigenvalueDecomposition.cpp
 	matrix.cpp
+	configuration.cpp
+	EigenvalueDecomposition.cpp
+	HotSpot.cpp
 )
 
 add_executable(analyze analyze.cpp ${COMMON_SRCS})

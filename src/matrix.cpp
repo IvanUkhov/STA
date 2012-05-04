@@ -139,3 +139,33 @@ void multiply_matrix_vector(
 			R[i] += M[i][j] * V[j];
 	}
 }
+
+std::ostream &operator<< (std::ostream &o, const vector_t &vector)
+{
+	size_t size = vector.size();
+
+	for (size_t i = 0; i < size; i++) {
+		if (i > 0) o << '\t';
+		o << vector[i];
+	}
+
+	o << std::endl;
+
+	return o;
+}
+
+std::ostream &operator<< (std::ostream &o, const matrix_t &matrix)
+{
+	size_t rows = matrix.rows();
+	size_t cols = matrix.cols();
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+			if (j > 0) o << '\t';
+			o << matrix[i][j];
+		}
+		o << std::endl;
+	}
+
+	return o;
+}

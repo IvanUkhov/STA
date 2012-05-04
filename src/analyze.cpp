@@ -2,30 +2,36 @@
 #include <sstream>
 
 #include "File.h"
+#include "HotSpot.h"
 #include "CommandLine.h"
+#include "configuration.h"
 
-using namespace std;
+class AnalyzeCommandLine;
 
 class AnalyzeCommandLine: public CommandLine
 {
 	public:
 
-	string floorplan;
-	string hotspot;
-	stringstream param_stream;
+		std::string floorplan;
+		std::string power_profile;
+		std::string hotspot_config;
+		std::string variation_config;
+		std::stringstream param_stream;
 
 	AnalyzeCommandLine() : CommandLine() {}
 
 	void usage() const
 	{
-		cout
-			<< "Usage: analyze [-<param name> <param value>]" << endl
-			<< endl
-			<< "  Available parameters:" << endl
-			<< "  * f, floorplan   - a floorplan for the PEs" << endl
-			<< "  * h, hotspot     - the Hotspot configuration" << endl
-			<< endl
-			<< "  (* required parameters)" << endl;
+		std::cout
+			<< "Usage: analyze [-<param name> <param value>]" << std::endl
+			<< std::endl
+			<< "  Available parameters:" << std::endl
+			<< "  * f, floorplan  - a floorplan of the die," << std::endl
+			<< "  * p, power      - a power profile," << std::endl
+			<< "  * h, hotspot    - a configuration file of HotSpot," << std::endl
+			<< "  * v, variation  - a configuration file of variations." << std::endl
+			<< std::endl
+			<< "  (* required parameters)" << std::endl;
 	}
 
 	protected:
@@ -33,23 +39,33 @@ class AnalyzeCommandLine: public CommandLine
 	void verify() const
 	{
 		if (floorplan.empty())
-			throw runtime_error("The floorplan configuration file is not specified.");
+			throw std::runtime_error("The floorplan is not specified.");
+		else if (!File::exist(floorplan))
+			throw std::runtime_error("The floorplan does not exist.");
 
-		if (!File::exist(floorplan))
-			throw runtime_error("The floorplan configuration file does not exist.");
+		if (power_profile.empty())
+			throw std::runtime_error("The power profile is not specified.");
+		else if (!File::exist(power_profile))
+			throw std::runtime_error("The power profile does not exist.");
 
-		if (hotspot.empty())
-			throw runtime_error("The configuration file of HotSpot is not specified.");
+		if (hotspot_config.empty())
+			throw std::runtime_error("The configuration file of HotSpot is not specified.");
+		else if (!File::exist(hotspot_config))
+			throw std::runtime_error("The configuration file of HotSpot does not exist.");
 
-		if (!File::exist(hotspot))
-			throw runtime_error("The configuration file of HotSpot does not exist.");
+		if (variation_config.empty())
+			throw std::runtime_error("The configuration of variations is not specified.");
+		else if (!File::exist(variation_config))
+			throw std::runtime_error("The configuration of variations does not exist.");
 	}
 
-	void process(const string &name, const string &value)
+	void process(const std::string &name, const std::string &value)
 	{
 		if (name == "f" || name == "floorplan") floorplan = value;
-		else if (name == "h" || name == "hotspot") hotspot = value;
-		else param_stream << name << " " << value << endl;
+		else if (name == "p" || name == "power") power_profile = value;
+		else if (name == "h" || name == "hotspot") hotspot_config = value;
+		else if (name == "v" || name == "variation") variation_config = value;
+		else param_stream << name << " " << value << std::endl;
 	}
 };
 
@@ -59,9 +75,13 @@ int main(int argc, char **argv)
 
 	try {
 		arguments.parse(argc, (const char **)argv);
+
+		HotSpot hotspot(arguments.floorplan, arguments.hotspot_config);
+
+		parameters_t variations(arguments.variation_config);
 	}
-	catch (exception &e) {
-		cerr << e.what() << endl;
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 		arguments.usage();
 		return EXIT_FAILURE;
 	}

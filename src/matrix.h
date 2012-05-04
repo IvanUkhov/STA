@@ -101,7 +101,7 @@ struct vector_t
 	{
 #ifndef SHALLOW_CHECK
 		if (_size < __size)
-			throw std::runtime_error("Cannot shrink.");
+			throw std::runtime_error("Cannot shrink the vector.");
 #endif
 
 		_size = __size;
@@ -249,5 +249,8 @@ void multiply_matrix_matrix_vector(
 	const matrix_t &M, const matrix_t &N, const double *V, double *R);
 void multiply_matrix_vector(
 	const matrix_t &M, const double *V, double *R);
+
+std::ostream &operator<< (std::ostream &o, const vector_t &vector);
+std::ostream &operator<< (std::ostream &o, const matrix_t &matrix);
 
 #endif

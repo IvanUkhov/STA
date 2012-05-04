@@ -13,6 +13,7 @@ doc/*.pdf
 doc/*.bib
 
 *.o
+tags
 
 build/*
 

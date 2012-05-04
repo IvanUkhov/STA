@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include "Hotspot.h"
+#include "HotSpot.h"
 
 size_t read_config_line(str_pair *table, size_t max, const std::string &line)
 {
@@ -31,7 +31,7 @@ size_t read_config_line(str_pair *table, size_t max, const std::string &line)
 	return count;
 }
 
-Hotspot::Hotspot(const std::string &floorplan_filename,
+HotSpot::HotSpot(const std::string &floorplan_filename,
 	const std::string &config_filename, const std::string &config_line)
 {
 	config = default_thermal_config();
@@ -63,13 +63,13 @@ Hotspot::Hotspot(const std::string &floorplan_filename,
 	ambient_temperature = config.ambient;
 }
 
-Hotspot::~Hotspot()
+HotSpot::~HotSpot()
 {
 	delete_RC_model(model);
 	free_flp(floorplan, FALSE);
 }
 
-void Hotspot::get_conductance(matrix_t &conductance) const
+void HotSpot::get_conductance(matrix_t &conductance) const
 {
 	conductance.resize(node_count, node_count);
 
@@ -80,7 +80,7 @@ void Hotspot::get_conductance(matrix_t &conductance) const
 			conductance[i][j] = b[i][j];
 }
 
-void Hotspot::get_capacitance(vector_t &capacitance) const
+void HotSpot::get_capacitance(vector_t &capacitance) const
 {
 	capacitance.resize(node_count);
 
