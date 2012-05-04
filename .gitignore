@@ -1,12 +1,13 @@
 *.swp
 .DS_Store
 *.*~
+
 *.log
 *.out
 *.aux
-doc/*.pdf
-doc/*.bib
 *.blg
 *.run.xml
 *.bbl
 *.dvi
+doc/*.pdf
+doc/*.bib
