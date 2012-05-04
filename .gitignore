@@ -11,3 +11,12 @@
 *.dvi
 doc/*.pdf
 doc/*.bib
+
+*.o
+
+build/*
+
+vendor/hotspot
+vendor/*/hotfloorplan
+vendor/*/hotspot
+vendor/*/libhotspot.a
