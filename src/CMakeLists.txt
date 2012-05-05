@@ -16,13 +16,14 @@ target_link_libraries(analyze libhotspot)
 
 set(DEPLOY_SRCS
 	deploy.cpp
-	Task.cpp
-	Graph.cpp
 	Processor.cpp
 	Platform.cpp
+	Task.cpp
+	Graph.cpp
 	Priority.cpp
 	GraphAnalysis.cpp
 	Schedule.cpp
+	DynamicPower.cpp
 )
 
 add_executable(deploy ${DEPLOY_SRCS} ${COMMON_SRCS})

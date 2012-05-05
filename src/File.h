@@ -17,12 +17,12 @@ class File
 
 	static void dump(const matrix_t &matrix, const char *filename)
 	{
-		dump(matrix.pointer(), matrix.rows(), matrix.cols(), filename);
+		dump(matrix.point(), matrix.rows(), matrix.cols(), filename);
 	}
 
 	static void dump(const matrix_t &matrix, const std::string &filename)
 	{
-		dump(matrix.pointer(), matrix.rows(), matrix.cols(), filename.c_str());
+		dump(matrix.point(), matrix.rows(), matrix.cols(), filename.c_str());
 	}
 
 	static void dump(const double *matrix, size_t rows, size_t cols,

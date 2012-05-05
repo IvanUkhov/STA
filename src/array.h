@@ -127,12 +127,12 @@ struct array_t
 		return _data;
 	}
 
-	inline T *pointer()
+	inline T *point()
 	{
 		return _data;
 	}
 
-	inline const T *pointer() const
+	inline const T *point() const
 	{
 		return _data;
 	}
