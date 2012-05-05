@@ -4,6 +4,8 @@
 #include "File.h"
 #include "CommandLine.h"
 #include "configuration.h"
+#include "Platform.h"
+#include "Graph.h"
 
 class MyCommandLine: public CommandLine
 {
@@ -68,6 +70,12 @@ int main(int argc, char **argv)
 				param.to_matrix(execution_time);
 			}
 		}
+
+		Platform platform(dynamic_power, execution_time);
+		Graph graph(types, arcs);
+
+		std::cout << &platform;
+		std::cout << &graph;
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;

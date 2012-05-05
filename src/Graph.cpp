@@ -17,7 +17,7 @@ Graph::Graph(const vector_t &types, const matrix_t &arcs) : task_count(0)
 	size_t i, j;
 
 	for (i = 0; i < task_count; i++) {
-		Task *task = new Task(task_count, types[i]);
+		Task *task = new Task(this->task_count, types[i]);
 		tasks.push_back(task);
 		this->task_count++;
 	}

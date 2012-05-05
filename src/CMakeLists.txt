@@ -1,4 +1,4 @@
-set(TUNING_FLAGS "-DSHALLOW_CHECK")
+set(TUNING_FLAGS "")
 
 set(COMMON_SRCS
 	matrix.cpp

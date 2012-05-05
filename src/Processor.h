@@ -24,7 +24,8 @@ class Processor
 	public:
 
 	Processor(processor_id_t _id, size_t _type_count) :
-		id(_id), type_count(_type_count) {}
+		id(_id), type_count(_type_count),
+		dynamic_power(_type_count), execution_time(_type_count) {}
 
 	void set_type(task_type_t type, double power, double time)
 	{
