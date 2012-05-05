@@ -2,22 +2,5 @@
 .DS_Store
 *.*~
 
-*.log
-*.out
-*.aux
-*.blg
-*.run.xml
-*.bbl
-*.dvi
-doc/*.pdf
-doc/*.bib
-
 *.o
 tags
-
-build/*
-
-vendor/hotspot
-vendor/*/hotfloorplan
-vendor/*/hotspot
-vendor/*/libhotspot.a

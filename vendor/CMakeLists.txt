@@ -1,5 +1,5 @@
-set(HOTSPOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/HotSpot-${HOTSPOT_VER})
-
+set(HOTSPOT_VERSION 5.02)
+set(HOTSPOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/HotSpot-${HOTSPOT_VERSION})
 add_custom_target(hotspot
 	COMMAND ${CMAKE_BUILD_TOOL} -C ${HOTSPOT_DIR}
 )
@@ -8,4 +8,16 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ln -fs ${HOTSPOT_DIR}/hotspot ${CMAKE_CURRENT_BINARY_DIR}/hotspot
 	COMMAND ln -sfn ${HOTSPOT_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/hotspot
+)
+
+set(TGFF_VERSION 3.5)
+set (TGFF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tgff-${TGFF_VERSION})
+add_custom_target(tgff
+	COMMAND ${CMAKE_BUILD_TOOL} -C ${TGFF_DIR}
+)
+add_custom_command(
+	TARGET tgff
+	POST_BUILD
+	COMMAND ln -fs ${TGFF_DIR}/tgff ${CMAKE_CURRENT_BINARY_DIR}/tgff
+	COMMAND ln -sfn ${TGFF_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tgff
 )
