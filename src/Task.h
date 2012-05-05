@@ -1,20 +1,20 @@
 #ifndef __TASK_H__
 #define __TASK_H__
 
-#include <vector>
-#include <ostream>
-
-typedef size_t task_id_t;
-typedef size_t task_type_t;
-
-class Task;
-
-typedef std::vector<Task *> task_vector_t;
+#include "System.h"
+#include "GraphAnalysis.h"
 
 class Task
 {
+	template<class PT> friend class ListScheduler;
+	friend class GraphAnalysis;
+
+	public:
+
 	const task_id_t id;
 	const task_type_t type;
+
+	private:
 
 	task_vector_t parents;
 	task_vector_t children;
@@ -41,16 +41,6 @@ class Task
 	inline bool is_root() const
 	{
 		return parents.empty();
-	}
-
-	inline task_id_t get_id() const
-	{
-		return id;
-	}
-
-	inline task_type_t get_type() const
-	{
-		return type;
 	}
 
 	inline const task_vector_t &get_children() const

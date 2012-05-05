@@ -1,6 +1,7 @@
 #include <iomanip>
 
 #include "Platform.h"
+#include "Processor.h"
 
 Platform::Platform(const matrix_t &dynamic_power,
 	const matrix_t &execution_time) : processor_count(0)
@@ -34,9 +35,9 @@ Platform::~Platform()
 		delete processors[i];
 }
 
-std::ostream &operator<< (std::ostream &o, const Platform *platform)
+std::ostream &operator<< (std::ostream &o, const Platform &platform)
 {
-	const processor_vector_t &processors = platform->get_processors();
+	const processor_vector_t &processors = platform.get_processors();
 	size_t size = processors.size();
 
 	o	<< "Platform:" << std::endl
@@ -47,4 +48,9 @@ std::ostream &operator<< (std::ostream &o, const Platform *platform)
 		o << "  " << processors[i];
 
 	return o;
+}
+
+std::ostream &operator<< (std::ostream &o, const Platform *platform)
+{
+	return o << &platform;
 }

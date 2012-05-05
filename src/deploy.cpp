@@ -6,6 +6,8 @@
 #include "configuration.h"
 #include "Platform.h"
 #include "Graph.h"
+#include "Priority.h"
+#include "ListScheduler.h"
 
 class MyCommandLine: public CommandLine
 {
@@ -74,8 +76,15 @@ int main(int argc, char **argv)
 		Platform platform(dynamic_power, execution_time);
 		Graph graph(types, arcs);
 
-		std::cout << &platform;
-		std::cout << &graph;
+		std::cout << platform << std::endl;
+		std::cout << graph << std::endl;
+
+		priority_t priority = Priority::mobile(platform, graph);
+
+		EarliestProcessorListScheduler scheduler(platform, graph);
+		Schedule schedule = scheduler.process(layout_t(), priority);
+
+		std::cout << schedule;
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;

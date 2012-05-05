@@ -7,6 +7,7 @@
 #define __EIGENVALUE_DECOMPOSITION_H__
 
 #include "matrix.h"
+#include <float.h>
 
 class EigenvalueDecomposition
 {

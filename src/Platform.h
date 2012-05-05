@@ -1,12 +1,12 @@
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
-#include <ostream>
-
-#include "Processor.h"
+#include "System.h"
 
 class Platform
 {
+	template<class PT> friend class ListScheduler;
+
 	processor_vector_t processors;
 	size_t processor_count;
 
@@ -32,6 +32,7 @@ class Platform
 	}
 };
 
+std::ostream &operator<< (std::ostream &, const Platform &);
 std::ostream &operator<< (std::ostream &, const Platform *);
 
 #endif

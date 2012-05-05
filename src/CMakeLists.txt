@@ -20,6 +20,9 @@ set(DEPLOY_SRCS
 	Graph.cpp
 	Processor.cpp
 	Platform.cpp
+	Priority.cpp
+	GraphAnalysis.cpp
+	Schedule.cpp
 )
 
 add_executable(deploy ${DEPLOY_SRCS} ${COMMON_SRCS})

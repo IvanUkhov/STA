@@ -1,6 +1,7 @@
 #include <iomanip>
 
 #include "Graph.h"
+#include "Task.h"
 
 Graph::Graph(const vector_t &types, const matrix_t &arcs) : task_count(0)
 {
@@ -39,9 +40,9 @@ Graph::~Graph()
 		delete tasks[i];
 }
 
-std::ostream &operator<< (std::ostream &o, const Graph *graph)
+std::ostream &operator<< (std::ostream &o, const Graph &graph)
 {
-	const task_vector_t &tasks = graph->get_tasks();
+	const task_vector_t &tasks = graph.get_tasks();
 	size_t size = tasks.size();
 
 	o	<< "Task graph:" << std::endl
@@ -52,4 +53,9 @@ std::ostream &operator<< (std::ostream &o, const Graph *graph)
 		o << "  " << tasks[i];
 
 	return o;
+}
+
+std::ostream &operator<< (std::ostream &o, const Graph *graph)
+{
+	return o << &graph;
 }

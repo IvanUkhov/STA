@@ -1,22 +1,18 @@
 #ifndef __PROCESSOR_H__
 #define __PROCESSOR_H__
 
-#include <vector>
-#include <ostream>
-
-#include "matrix.h"
-#include "Task.h"
-
-typedef size_t processor_id_t;
-
-class Processor;
-
-typedef std::vector<Processor *> processor_vector_t;
+#include "System.h"
 
 class Processor
 {
+	template<class PT> friend class ListScheduler;
+
+	public:
+
 	const processor_id_t id;
 	const size_t type_count;
+
+	private:
 
 	vector_t dynamic_power;
 	vector_t execution_time;
@@ -34,16 +30,6 @@ class Processor
 
 		dynamic_power[type] = power;
 		execution_time[type] = time;
-	}
-
-	inline processor_id_t get_id() const
-	{
-		return id;
-	}
-
-	inline size_t get_size() const
-	{
-		return type_count;
 	}
 
 	inline double get_dynamic_power(task_type_t type) const

@@ -1,13 +1,12 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
-#include <ostream>
-
-#include "matrix.h"
-#include "Task.h"
+#include "System.h"
 
 class Graph
 {
+	template<class PT> friend class ListScheduler;
+
 	task_vector_t tasks;
 	size_t task_count;
 
@@ -32,6 +31,7 @@ class Graph
 	}
 };
 
+std::ostream &operator<< (std::ostream &, const Graph &);
 std::ostream &operator<< (std::ostream &, const Graph *);
 
 #endif

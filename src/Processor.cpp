@@ -4,8 +4,8 @@
 
 std::ostream &operator<< (std::ostream &o, const Processor *processor)
 {
-	o	<< std::setw(4) << processor->get_id()
-		<< " ( " << std::setw(8) << processor->get_size() << " )" << std::endl;
+	o	<< std::setw(4) << processor->id
+		<< " ( " << std::setw(8) << processor->type_count << " )" << std::endl;
 
 	return o;
 }
