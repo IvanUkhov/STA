@@ -46,6 +46,28 @@ int main(int argc, char **argv)
 		arguments.parse(argc, (const char **)argv);
 
 		parameters_t parameters(arguments.system_config);
+
+		vector_t types;
+		matrix_t arcs, dynamic_power, execution_time;
+
+		size_t size = parameters.size();
+
+		for (size_t i = 0; i < size; i++) {
+			const parameter_t &param = parameters[i];
+
+			if (param.name == "types") {
+				param.to_vector(types);
+			}
+			else if (param.name == "arcs") {
+				param.to_matrix(arcs);
+			}
+			else if (param.name == "dynamic_power") {
+				param.to_matrix(dynamic_power);
+			}
+			else if (param.name == "execution_time") {
+				param.to_matrix(execution_time);
+			}
+		}
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;

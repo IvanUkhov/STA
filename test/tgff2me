@@ -53,7 +53,7 @@ types.keys.each do |graph_id|
 
   task_count = entries.count
 
-  puts "@tasks vector #{ task_count }"
+  puts "@types vector #{ task_count }"
   puts entries.keys.sort.map{ |task_id| entries[task_id] }.join("\t")
   puts
 

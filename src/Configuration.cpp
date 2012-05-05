@@ -84,7 +84,6 @@ void parameter_t::to_matrix(matrix_t &matrix) const
 				throw std::runtime_error("The format of the relation is invalid.");
 
 			matrix[left][right] = 1;
-			matrix[right][left] = 1;
 		}
 	}
 	else if (token == "matrix") {
