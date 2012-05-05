@@ -6,32 +6,28 @@
 #include "CommandLine.h"
 #include "configuration.h"
 
-class AnalyzeCommandLine;
-
-class AnalyzeCommandLine: public CommandLine
+class MyCommandLine: public CommandLine
 {
 	public:
 
-		std::string floorplan;
-		std::string power_profile;
-		std::string hotspot_config;
-		std::string variation_config;
-		std::stringstream param_stream;
+	std::string floorplan;
+	std::string power_profile;
+	std::string hotspot_config;
+	std::string variation_config;
+	std::stringstream param_stream;
 
-	AnalyzeCommandLine() : CommandLine() {}
+	MyCommandLine() : CommandLine() {}
 
 	void usage() const
 	{
 		std::cout
-			<< "Usage: analyze [-<param name> <param value>]" << std::endl
+			<< "Usage: analyze [-<argument name> <argument value>]" << std::endl
 			<< std::endl
-			<< "  Available parameters:" << std::endl
-			<< "  * f, floorplan  - a floorplan of the die," << std::endl
-			<< "  * p, power      - a power profile," << std::endl
-			<< "  * h, hotspot    - a configuration file of HotSpot," << std::endl
-			<< "  * v, variation  - a configuration file of variations." << std::endl
-			<< std::endl
-			<< "  (* required parameters)" << std::endl;
+			<< "Required arguments:" << std::endl
+			<< "  - floorplan (f)  - a floorplan of the die," << std::endl
+			<< "  - power (p)      - a power profile," << std::endl
+			<< "  - hotspot (h)    - a configuration file of HotSpot," << std::endl
+			<< "  - variation (v)  - a configuration file of variations." << std::endl;
 	}
 
 	protected:
@@ -71,7 +67,7 @@ class AnalyzeCommandLine: public CommandLine
 
 int main(int argc, char **argv)
 {
-	AnalyzeCommandLine arguments;
+	MyCommandLine arguments;
 
 	try {
 		arguments.parse(argc, (const char **)argv);

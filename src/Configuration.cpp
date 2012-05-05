@@ -35,18 +35,19 @@ void parameter_t::to_matrix(matrix_t &matrix) const
 {
 	std::stringstream stream(value);
 	std::string token;
-	size_t size, i;
 	double one;
 
 	stream >> token;
 
 	if (token == "diagonal_matrix") {
+		size_t size;
+
 		stream >> size;
 
 		matrix.resize(size, size);
 		matrix.nullify();
 
-		i = 0;
+		size_t i = 0;
 
 		/* Read what is available */
 		while (i < size && stream >> one) {
@@ -57,6 +58,45 @@ void parameter_t::to_matrix(matrix_t &matrix) const
 		/* Fill in the rest with the last one */
 		for (; i < size; i++)
 			matrix[i][i] = one;
+	}
+	else if (token == "relation") { /* A symmetric matrix of 0s and 1s */
+		size_t size;
+
+		stream >> size;
+
+		matrix.resize(size, size);
+		matrix.nullify();
+
+		size_t left, right;
+		std::string token;
+
+		/* Read pairwise */
+		while (true) {
+			if (!(stream >> token) ||
+				!(std::istringstream(token) >> left)) break;
+
+			if (!(stream >> token)) break; /* Delimiter */
+
+			if (!(stream >> token) ||
+				!(std::istringstream(token) >> right)) break;
+
+			if (left >= size || right >= size)
+				throw std::runtime_error("The format of the relation is invalid.");
+
+			matrix[left][right] = 1;
+			matrix[right][left] = 1;
+		}
+	}
+	else if (token == "matrix") {
+		size_t rows, cols;
+
+		stream >> rows >> cols;
+
+		matrix.resize(rows, cols);
+
+		for (size_t i = 0; i < rows; i++)
+			for (size_t j = 0; j < cols; j++)
+				stream >> matrix[i][j];
 	}
 	else
 		throw std::runtime_error("The matrix format is unknown.");

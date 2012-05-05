@@ -3,12 +3,23 @@ set(TUNING_FLAGS "-DSHALLOW_CHECK")
 set(COMMON_SRCS
 	matrix.cpp
 	configuration.cpp
+)
+
+set(ANALYZE_SRCS
+	analyze.cpp
 	EigenvalueDecomposition.cpp
 	HotSpot.cpp
 )
 
-add_executable(analyze analyze.cpp ${COMMON_SRCS})
+add_executable(analyze ${ANALYZE_SRCS} ${COMMON_SRCS})
 target_link_libraries(analyze libhotspot)
+
+set(DEPLOY_SRCS
+	deploy.cpp
+)
+
+add_executable(deploy ${DEPLOY_SRCS} ${COMMON_SRCS})
+target_link_libraries(deploy libhotspot)
 
 include_directories(
 	${VENDOR_DIR}

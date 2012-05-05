@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+if ARGV.empty?
+  puts 'Need a TGFF input file.'
+  exit 1
+end
+
+current_id = nil
+
+types = {}
+arcs = {}
+power = {}
+time = {}
+
+file = File.open ARGV[0]
+
+while line = file.gets
+  line.strip!
+
+  case line
+  when /^$/, /^#/; next
+  when /^@(\w+)\s+(\d+)\s{$/
+    label, id = $1, $2.to_i
+    case label
+    when 'GRAPH'
+      current_id = nil
+    when 'PROCESSOR'
+      current_id = id
+    end
+  when /^}$/
+  when /^TASK\s+t(\d+)_(\d+)\s+TYPE\s+(\d+)$/
+    graph_id, task_id, type = $1.to_i, $2.to_i, $3.to_i
+    types[graph_id] ||= {}
+    types[graph_id][task_id] = type
+  when /^ARC\s+a(\d+)_\d+\s+FROM\s+t\d+_(\d+)\s+TO\s+t\d+_(\d+)\s+TYPE\s+\d+$/
+    graph_id, one_id, another_id = $1.to_i, $2.to_i, $3.to_i
+    arcs[graph_id] ||= {}
+    arcs[graph_id][one_id] ||= []
+    arcs[graph_id][one_id] << another_id
+  when /^(\d+)\s+0\s+([\d\.]+)\s+([\d\.]+)$/
+    type, one, another = $1.to_i, $2.to_f, $3.to_f
+    power[current_id] ||= {}
+    power[current_id][type] = one
+    time[current_id] ||= {}
+    time[current_id][type] = another
+  end
+end
+
+file.close
+
+types.keys.each do |graph_id|
+  entries = types[graph_id]
+
+  task_count = entries.count
+
+  puts "@tasks vector #{ task_count }"
+  puts entries.keys.sort.map{ |task_id| entries[task_id] }.join("\t")
+  puts
+
+  entries = arcs[graph_id]
+
+  links = Array.new(task_count) { |i| Array.new(task_count, 0) }
+
+  puts "@arcs relation #{ task_count }"
+  entries.each_pair do |one_id, other_ids|
+    puts other_ids.map { |other_id| "#{ one_id } -> #{ other_id }" }.join("\t")
+  end
+  puts
+end
+
+processor_count = power.keys.count
+type_count = types.values.map(&:values).flatten.uniq.max + 1 # Starting from 0
+
+puts "@dynamic_power matrix #{ type_count } #{ processor_count }"
+(0...type_count).each do |type|
+  puts (0...processor_count).map { |processor_id| power[processor_id][type] }.join("\t")
+end
+puts
+
+puts "@execution_time matrix #{ type_count } #{ processor_count }"
+(0...type_count).each do |type|
+  puts (0...processor_count).map { |processor_id| time[processor_id][type] }.join("\t")
+end
+
+# vim: ft=ruby
