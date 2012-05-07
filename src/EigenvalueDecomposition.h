@@ -18,8 +18,8 @@ class EigenvalueDecomposition
 
 	public:
 
-	EigenvalueDecomposition(const matrix_t &M, matrix_t &U, vector_t &L) :
-		n(M.rows()), z(U), d(L), e(n)
+	EigenvalueDecomposition(const matrix_t &M, matrix_t &U, vector_t &L)
+		: n(M.rows()), z(U), d(L), e(n)
 	{
 		z = M;
 		tred2();

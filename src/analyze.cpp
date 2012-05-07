@@ -2,9 +2,10 @@
 #include <sstream>
 
 #include "File.h"
-#include "HotSpot.h"
 #include "CommandLine.h"
 #include "configuration.h"
+#include "HotSpot.h"
+#include "TemperatureAnalysis.h"
 
 class MyCommandLine: public CommandLine
 {
@@ -73,6 +74,8 @@ int main(int argc, char **argv)
 		arguments.parse(argc, (const char **)argv);
 
 		HotSpot hotspot(arguments.floorplan, arguments.hotspot_config);
+
+		TransientTemperatureAnalysis analysis(hotspot);
 
 		parameters_t variations(arguments.variation_config);
 	}

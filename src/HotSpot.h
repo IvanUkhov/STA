@@ -31,6 +31,16 @@ class HotSpot
 		const std::string &config_line = "");
 	virtual ~HotSpot();
 
+	inline size_t get_node_count() const
+	{
+		return node_count;
+	}
+
+	inline size_t get_processor_count() const
+	{
+		return processor_count;
+	}
+
 	inline double get_sampling_interval() const
 	{
 		return sampling_interval;
