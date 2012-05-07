@@ -25,8 +25,8 @@ class MyCommandLine: public CommandLine
 			<< std::endl
 			<< "Required arguments:" << std::endl
 			<< "  - floorplan (f)  - a floorplan of the die," << std::endl
-			<< "  - power (p)      - a power profile," << std::endl
-			<< "  - hotspot (h)    - a configuration file of HotSpot," << std::endl
+			<< "  - power     (p)  - a power profile," << std::endl
+			<< "  - hotspot   (h)  - a configuration file of HotSpot," << std::endl
 			<< "  - variation (v)  - a configuration file of variations." << std::endl;
 	}
 

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 #include "File.h"
 #include "CommandLine.h"

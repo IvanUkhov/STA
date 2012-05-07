@@ -27,7 +27,14 @@ set(DEPLOY_SRCS
 )
 
 add_executable(deploy ${DEPLOY_SRCS} ${COMMON_SRCS})
-target_link_libraries(deploy libhotspot)
+target_link_libraries(deploy)
+
+set(DESIGN_SRCS
+	design.cpp
+)
+
+add_executable(design ${DESIGN_SRCS})
+target_link_libraries(design)
 
 include_directories(
 	${VENDOR_DIR}
