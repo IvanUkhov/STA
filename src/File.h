@@ -25,11 +25,24 @@ class File
 		dump(matrix.point(), matrix.rows(), matrix.cols(), filename.c_str());
 	}
 
+	static void dump(const matrix_t &matrix, std::ostream &stream)
+	{
+		dump(matrix.point(), matrix.rows(), matrix.cols(), stream);
+	}
+
 	static void dump(const double *matrix, size_t rows, size_t cols,
 		const char *filename)
 	{
 		std::ofstream stream(filename);
 
+		dump(matrix, rows, cols, stream);
+
+		stream.close();
+	}
+
+	static void dump(const double *matrix, size_t rows, size_t cols,
+		std::ostream &stream)
+	{
 		for (size_t i = 0; i < rows; i++) {
 			for (size_t j = 0; j < cols; j++) {
 				stream << matrix[i * cols + j];
@@ -37,8 +50,6 @@ class File
 			}
 			stream << std::endl;
 		}
-
-		stream.close();
 	}
 };
 

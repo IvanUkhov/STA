@@ -1,8 +1,7 @@
 #ifndef __COMMAND_LINE_H__
 
-#include <stdexcept>
-#include <iostream>
 #include <string>
+#include <stdexcept>
 
 class CommandLine
 {
@@ -14,28 +13,48 @@ class CommandLine
 
 	void parse(int argc, const char **argv)
 	{
-		const char *name, *value;
-		size_t i, pair_count = (argc - 1) / 2;
+		std::string name;
+		bool found = false;
 
-		for (i = 0; i < pair_count; i++) {
-			name = argv[1 + 2 * i];
-			value = argv[1 + 2 * i + 1];
+		for (size_t i = 1; i < argc; i++) {
+			std::string token(argv[i]);
 
-			if (strlen(name) == 0 || strlen(value) == 0)
-				throw std::runtime_error("A wrong length of the input argument.");
+			bool empty = token.empty();
 
-			process(std::string(name + 1), std::string(value));
+			if (!empty && token[0] == '-') {
+				if (found) process(name, "");
+
+				name = token.substr(1);
+
+				if (name.empty())
+					throw std::runtime_error("The name of one of the arguments is empty.");
+
+				found = true;
+			}
+			else if (empty && !found) continue;
+			else {
+				process(name, token);
+
+				found = false;
+			}
 		}
+
+		if (found) process(name, "");
 
 		verify();
 	}
 
-	virtual void usage() const = 0;
+	virtual void usage() const
+	{
+	}
 
 	protected:
 
-	virtual void verify() const = 0;
 	virtual void process(const std::string &name, const std::string &value) = 0;
+
+	virtual void verify() const
+	{
+	}
 };
 
 #endif

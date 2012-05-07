@@ -18,14 +18,14 @@ class MyCommandLine: public CommandLine
 	void usage() const
 	{
 		std::cout
-			<< "Usage: floorplan [-<argument name> <argument value>]" << std::endl
+			<< "Usage: floorplan <arguments>" << std::endl
 			<< std::endl
 			<< "Required arguments:" << std::endl
-			<< "  -count (c)  - the number of processors on the die." << std::endl
+			<< "  -count, -c <value>       -- the number of processors on the die." << std::endl
 			<< std::endl
 			<< "Optional arguments:" << std::endl
-			<< "  -area  (a)  - the area of a single processor (4e-6 m^2 by default)," << std::endl
-			<< "  -label (l)  - the label of the processors ('core' by default)." << std::endl;
+			<< "  -area,  -a <value=4e-6>  -- the area of a single processor," << std::endl
+			<< "  -label, -l <value=core>  -- the label of the processors." << std::endl;
 	}
 
 	protected:

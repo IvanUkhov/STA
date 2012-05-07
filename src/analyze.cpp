@@ -21,13 +21,13 @@ class MyCommandLine: public CommandLine
 	void usage() const
 	{
 		std::cout
-			<< "Usage: analyze [-<argument name> <argument value>]" << std::endl
+			<< "Usage: analyze <arguments>" << std::endl
 			<< std::endl
 			<< "Required arguments:" << std::endl
-			<< "  - floorplan (f)  - a floorplan of the die," << std::endl
-			<< "  - power     (p)  - a power profile," << std::endl
-			<< "  - hotspot   (h)  - a configuration file of HotSpot," << std::endl
-			<< "  - variation (v)  - a configuration file of variations." << std::endl;
+			<< "  -floorplan, -f <value>  -- a floorplan of the die," << std::endl
+			<< "  -power,     -p <value>  -- a power profile," << std::endl
+			<< "  -hotspot,   -h <value>  -- a configuration file of HotSpot," << std::endl
+			<< "  -variation, -v <value>  -- a configuration file of variations." << std::endl;
 	}
 
 	protected:
