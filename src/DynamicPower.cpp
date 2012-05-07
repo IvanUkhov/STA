@@ -34,7 +34,7 @@ void DynamicPower::compute(const Schedule &schedule, matrix_t &_dynamic_power) c
 	_dynamic_power.resize(step_count, processor_count);
 	_dynamic_power.nullify();
 
-	double *dynamic_power = _dynamic_power.point();
+	double *dynamic_power = _dynamic_power;
 
 	/* Here we build a profile for the whole time period of the graph
 	 * including its actual duration (only tasks) plus the gap to

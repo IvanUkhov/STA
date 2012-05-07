@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 			matrix_t dynamic_power;
 			heater.compute(schedule, dynamic_power);
 
-			File::dump(dynamic_power, std::cout);
+			File::store(dynamic_power, std::cout);
 		}
 	}
 	catch (std::exception &e) {

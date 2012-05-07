@@ -34,7 +34,7 @@ class TemperatureAnalysis
 
 	TemperatureAnalysis(const HotSpot &hotspot);
 
-	virtual void compute(const matrix_t &dynamic_power, matrix_t &temperature) const = 0;
+	virtual void perform(const matrix_t &dynamic_power, matrix_t &temperature) const = 0;
 };
 
 class TransientTemperatureAnalysis: public TemperatureAnalysis
@@ -46,7 +46,7 @@ class TransientTemperatureAnalysis: public TemperatureAnalysis
 	{
 	}
 
-	void compute(const matrix_t &dynamic_power, matrix_t &temperature) const;
+	void perform(const matrix_t &dynamic_power, matrix_t &temperature) const;
 };
 
 #endif

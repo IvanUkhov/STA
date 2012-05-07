@@ -2,6 +2,7 @@
 #define __MATRIX_H__
 
 #include <iostream>
+#include <stdexcept>
 #include <math.h>
 #include <stdlib.h>
 
@@ -63,10 +64,16 @@ struct matrix_t: public vector_t
 		vector_t::extend(_rows * _cols);
 	}
 
-	inline void shrink(size_t __rows)
+	inline void clone(const array_t<double> &array,
+		size_t __rows, size_t __cols)
 	{
+		if (array.size() < __rows * __cols)
+			throw std::runtime_error("The array to clone is too small.");
+
+		vector_t::clone(array);
+
 		_rows = __rows;
-		vector_t::shrink(_rows * _cols);
+		_cols = __cols;
 	}
 
 	inline size_t rows() const

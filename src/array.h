@@ -76,7 +76,7 @@ struct array_t
 			return;
 		}
 		else if (__size < _size) {
-			shrink(__size);
+			_size = __size; /* Shrink without changing anything */
 			return;
 		}
 
@@ -89,9 +89,15 @@ struct array_t
 		_data = new_data;
 	}
 
-	inline void shrink(size_t __size)
+	inline void clone(const array_t<T> &another)
 	{
-		_size = __size;
+		__FREE(_data);
+
+		_data = __ALLOC(T, another._size);
+
+		__MEMCPY(_data, another._data, T, another._size);
+
+		_size = another._size;
 	}
 
 	inline T &operator[](unsigned int i)
@@ -123,16 +129,6 @@ struct array_t
 	}
 
 	inline operator const T *() const
-	{
-		return _data;
-	}
-
-	inline T *point()
-	{
-		return _data;
-	}
-
-	inline const T *point() const
 	{
 		return _data;
 	}

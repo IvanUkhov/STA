@@ -77,16 +77,18 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	multiply_matrix_matrix_diagonal_matrix(m_temp, UT, Cm12, B);
 }
 
-void TransientTemperatureAnalysis::compute(const matrix_t &dynamic_power,
+void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 	matrix_t &temperature) const
 {
-	size_t step_count = dynamic_power.rows();
-	size_t node_count = dynamic_power.cols();
+	if (dynamic_power.cols() != processor_count)
+		throw std::runtime_error("The power profile has an invalid size.");
 
-	const double *P = dynamic_power.point();
+	size_t step_count = dynamic_power.rows();
+
+	const double *P = dynamic_power;
 
 	temperature.resize(dynamic_power);
-	double *Tt = temperature.point();
+	double *Tt = temperature;
 
 	vector_t BP(node_count);
 
