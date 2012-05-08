@@ -10,27 +10,27 @@ class Pool: public std::list<task_id_t>
 
 	protected:
 
-	const size_t processor_count;
-	const size_t task_count;
+	const size_t _processor_count;
+	const size_t _task_count;
 
-	vector_t processor_time;
-	vector_t task_time;
+	vector_t _processor_time;
+	vector_t _task_time;
 
-	bit_string_t processed;
-	bit_string_t scheduled;
+	bit_string_t _processed;
+	bit_string_t _scheduled;
 
-	const layout_t &layout;
-	const priority_t &priority;
+	const layout_t &_layout;
+	const priority_t &_priority;
 
 	public:
 
-	Pool(const processor_vector_t &_processors, const task_vector_t &_tasks,
-		const layout_t &_layout, const priority_t &_priority, void *_data = NULL) :
+	Pool(const processor_vector_t &processors, const task_vector_t &tasks,
+		const layout_t &layout, const priority_t &priority, void *data = NULL) :
 
-		processor_count(_processors.size()), task_count(_tasks.size()),
-		processor_time(processor_count, 0), task_time(task_count, 0),
-		processed(task_count, false), scheduled(task_count, false),
-		layout(_layout), priority(_priority)
+		_processor_count(processors.size()), _task_count(tasks.size()),
+		_processor_time(_processor_count, 0), _task_time(_task_count, 0),
+		_processed(_task_count, false), _scheduled(_task_count, false),
+		_layout(layout), _priority(priority)
 	{
 	}
 
@@ -42,18 +42,19 @@ class EarliestProcessorPool: public Pool
 {
 	public:
 
-	EarliestProcessorPool(const processor_vector_t &_processors, const task_vector_t &_tasks,
-		const layout_t &_layout, const priority_t &_priority, void *_data = NULL) :
+	EarliestProcessorPool(const processor_vector_t &processors,
+		const task_vector_t &tasks, const layout_t &layout,
+		const priority_t &priority, void *data = NULL) :
 
-		Pool(_processors, _tasks, _layout, _priority, _data) {}
+		Pool(processors, tasks, layout, priority, data) {}
 
 	virtual inline void push(task_id_t id)
 	{
 		iterator it;
-		rank_t new_priority = priority[id];
+		rank_t new_priority = _priority[id];
 
 		for (it = begin(); it != end(); it++)
-			if (new_priority < priority[*it]) break;
+			if (new_priority < _priority[*it]) break;
 
 		insert(it, id);
 	}
@@ -62,8 +63,8 @@ class EarliestProcessorPool: public Pool
 	{
 		processor_id_t earliest = 0;
 
-		for (size_t i = 1; i < processor_count; i++)
-			if (processor_time[earliest] > processor_time[i])
+		for (size_t i = 1; i < _processor_count; i++)
+			if (_processor_time[earliest] > _processor_time[i])
 				earliest = i;
 
 		id = front();

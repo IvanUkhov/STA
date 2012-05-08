@@ -5,10 +5,8 @@
 
 class Platform
 {
-	template<class PT> friend class ListScheduler;
-
-	processor_vector_t processors;
-	size_t processor_count;
+	processor_vector_t _processors;
+	size_t _processor_count;
 
 	public:
 
@@ -16,19 +14,19 @@ class Platform
 		const matrix_t &execution_time);
 	~Platform();
 
-	inline size_t get_size() const
+	inline size_t size() const
 	{
-		return processor_count;
+		return _processor_count;
 	}
 
 	inline const Processor *operator[] (processor_id_t id) const
 	{
-		return processors[id];
+		return _processors[id];
 	}
 
-	inline const processor_vector_t &get_processors() const
+	inline const processor_vector_t &processors() const
 	{
-		return processors;
+		return _processors;
 	}
 };
 

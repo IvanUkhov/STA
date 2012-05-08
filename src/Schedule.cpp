@@ -7,7 +7,7 @@ std::ostream &operator<< (std::ostream &o, const Schedule &schedule)
 	o
 		<< std::setprecision(6) << std::setiosflags(std::ios::fixed)
 
-		<< "  Duration: " << schedule.get_duration() << std::endl
+		<< "  Duration: " << schedule.duration() << std::endl
 		<< "  "
 			<< std::setw(4) << "id" << " ( "
 			<< std::setw(4) << "proc" << " : "
@@ -15,8 +15,8 @@ std::ostream &operator<< (std::ostream &o, const Schedule &schedule)
 			<< std::setw(10) << "duration" << " )" << std::endl;
 
 	size_t i, count;
-	size_t task_count = schedule.get_task_count();
-	size_t processor_count = schedule.get_processor_count();
+	size_t task_count = schedule.task_count();
+	size_t processor_count = schedule.processor_count();
 
 	for (task_id_t id = 0; id < task_count; id++) {
 		processor_id_t pid = schedule.map(id);

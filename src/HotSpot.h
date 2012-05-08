@@ -10,15 +10,17 @@ extern "C" {
 
 #include "matrix.h"
 
+#define KELVIN 273.15
+
 class HotSpot
 {
 	protected:
 
-	size_t node_count;
-	size_t processor_count;
+	size_t _node_count;
+	size_t _processor_count;
 
-	double sampling_interval;
-	double ambient_temperature;
+	double _sampling_interval;
+	double _ambient_temperature;
 
 	thermal_config_t config;
 	flp_t *floorplan;
@@ -31,28 +33,28 @@ class HotSpot
 		const std::string &config_line = "");
 	virtual ~HotSpot();
 
-	inline size_t get_node_count() const
+	inline size_t node_count() const
 	{
-		return node_count;
+		return _node_count;
 	}
 
-	inline size_t get_processor_count() const
+	inline size_t processor_count() const
 	{
-		return processor_count;
+		return _processor_count;
 	}
 
-	inline double get_sampling_interval() const
+	inline double sampling_interval() const
 	{
-		return sampling_interval;
+		return _sampling_interval;
 	}
 
-	inline double get_ambient_temperature() const
+	inline double ambient_temperature() const
 	{
-		return ambient_temperature;
+		return _ambient_temperature;
 	}
 
-	void get_conductance(matrix_t &conductance) const;
-	void get_capacitance(vector_t &capacitance) const;
+	void fill_conductance(matrix_t &conductance) const;
+	void fill_capacitance(vector_t &capacitance) const;
 };
 
 #endif

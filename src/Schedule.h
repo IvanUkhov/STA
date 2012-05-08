@@ -17,56 +17,56 @@ typedef std::vector<ScheduleItem> LocalSchedule;
 
 class Schedule
 {
-	const size_t processor_count;
-	const size_t task_count;
+	const size_t _processor_count;
+	const size_t _task_count;
 
-	size_t append_count;
-	double duration;
+	size_t _append_count;
+	double _duration;
 
-	mapping_t mapping;
+	mapping_t _mapping;
 
-	std::vector<LocalSchedule> schedules;
+	std::vector<LocalSchedule> _schedules;
 
 	public:
 
-	Schedule(size_t _processor_count, size_t _task_count) :
-		processor_count(_processor_count), task_count(_task_count),
-		append_count(0), duration(0), mapping(_task_count),
-		schedules(std::vector<LocalSchedule>(processor_count)) {}
+	Schedule(size_t processor_count, size_t task_count) :
+		_processor_count(processor_count), _task_count(task_count),
+		_append_count(0), _duration(0), _mapping(task_count),
+		_schedules(std::vector<LocalSchedule>(processor_count)) {}
 
-	inline size_t get_processor_count() const
+	inline size_t processor_count() const
 	{
-		return processor_count;
+		return _processor_count;
 	}
 
-	inline size_t get_task_count() const
+	inline size_t task_count() const
 	{
-		return task_count;
+		return _task_count;
 	}
 
 	inline void append(processor_id_t pid, task_id_t tid, double start, double duration)
 	{
-		schedules[pid].push_back(ScheduleItem(tid, start, duration));
+		_schedules[pid].push_back(ScheduleItem(tid, start, duration));
 
-		mapping[tid] = pid;
+		_mapping[tid] = pid;
 
 		double end = start + duration;
-		if (this->duration < end) this->duration = end;
+		if (_duration < end) _duration = end;
 	}
 
 	inline const LocalSchedule &operator[](processor_id_t pid) const
 	{
-		return schedules[pid];
+		return _schedules[pid];
 	}
 
 	inline processor_id_t map(task_id_t id) const
 	{
-		return mapping[id];
+		return _mapping[id];
 	}
 
-	inline double get_duration() const
+	inline double duration() const
 	{
-		return duration;
+		return _duration;
 	}
 };
 

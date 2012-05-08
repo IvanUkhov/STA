@@ -1,44 +1,39 @@
 #include "TemperatureAnalysis.h"
 #include "EigenvalueDecomposition.h"
+#include "File.h"
 
 TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
-	: processor_count(hotspot.get_processor_count()),
-	node_count(hotspot.get_node_count()),
-	sampling_interval(hotspot.get_sampling_interval()),
-	ambient_temperature(hotspot.get_ambient_temperature())
+	: _processor_count(hotspot.processor_count()),
+	_node_count(hotspot.node_count()),
+	_sampling_interval(hotspot.sampling_interval()),
+	_ambient_temperature(hotspot.ambient_temperature())
 {
-	matrix_t conductance;
-	vector_t capacitance;
+	A.resize(_node_count, _node_count);
+	B.resize(_node_count, _node_count);
 
-	hotspot.get_conductance(conductance);
-	hotspot.get_capacitance(capacitance);
+	Cm12.resize(_node_count);
 
-	size_t i, j;
+	V.resize(_node_count);
+	U.resize(_node_count, _node_count);
+	UT.resize(_node_count, _node_count);
 
-	A.resize(node_count, node_count);
-	B.resize(node_count, node_count);
-
-	Cm12.resize(node_count);
-
-	V.resize(node_count);
-	U.resize(node_count, node_count);
-	UT.resize(node_count, node_count);
-
-	m_temp.resize(node_count, node_count);
-	v_temp.resize(node_count);
+	Mtemp.resize(_node_count, _node_count);
+	Vtemp.resize(_node_count);
 
 	/* We have:
 	 * C * dT/dt + G * T = P
 	 */
+
 	matrix_t &G = A;
+	vector_t &C = Cm12;
 
-	for (i = 0; i < node_count; i++) {
-		for (j = 0; j < node_count; j++)
-			G[i][j] = conductance[i][j];
-		Cm12[i] = sqrt(1.0 / capacitance[i]);
-	}
+	hotspot.fill_conductance(G);
+	hotspot.fill_capacitance(C);
 
-	matrix_t &Gt = G;
+	size_t i;
+
+	for (i = 0; i < _node_count; i++)
+		Cm12[i] = sqrt(1.0 / C[i]);
 
 	/* We want to get rid of everything in front of dT/dt,
 	 * but at the same time we want to keep the matrix in front of X
@@ -50,8 +45,9 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	 * Eventually, we have:
 	 * dT'/dt + G'T' = P'
 	 */
-	multiply_diagonal_matrix_matrix(Cm12, G, m_temp);
-	multiply_matrix_diagonal_matrix(m_temp, Cm12, Gt);
+	matrix_t &Gt = G;
+	multiply_diagonal_matrix_matrix(Cm12, G, Mtemp);
+	multiply_matrix_diagonal_matrix(Mtemp, Cm12, Gt);
 
 	/* Eigenvalue decomposition:
 	 * G' = U * V * U^T
@@ -64,23 +60,25 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	 * A = exp(- Gt * t)
 	 *   = - U * exp(V * t) * U^T
 	 */
-	for (i = 0; i < node_count; i++) v_temp[i] = - exp(sampling_interval * V[i]);
-	multiply_matrix_diagonal_matrix(U, v_temp, m_temp);
-	multiply_matrix_matrix(m_temp, UT, A);
+	for (i = 0; i < _node_count; i++)
+		Vtemp[i] = exp(- _sampling_interval * V[i]);
+	multiply_matrix_diagonal_matrix(U, Vtemp, Mtemp);
+	multiply_matrix_matrix(Mtemp, UT, A);
 
 	/* The second coefficient:
 	 * B = - Gt^(-1) * (exp(- Gt * t) - I) * C^(-1/2) =
-	 *   = U * diag((exp(t * l0) + 1) / l0, ...) * U^T * C^(-1/2)
+	 *   = U * diag(- (exp(- t * l0) - 1) / l0, ...) * U^T * C^(-1/2)
 	 */
-	for (i = 0; i < node_count; i++) v_temp[i] = (v_temp[i] + 1) / V[i];
-	multiply_matrix_diagonal_matrix(U, v_temp, m_temp);
-	multiply_matrix_matrix_diagonal_matrix(m_temp, UT, Cm12, B);
+	for (i = 0; i < _node_count; i++)
+		Vtemp[i] = - (Vtemp[i] - 1) / V[i];
+	multiply_matrix_diagonal_matrix(U, Vtemp, Mtemp);
+	multiply_matrix_matrix_diagonal_matrix(Mtemp, UT, Cm12, B);
 }
 
 void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
-	matrix_t &temperature) const
+	matrix_t &temperature)
 {
-	if (dynamic_power.cols() != processor_count)
+	if (dynamic_power.cols() != _processor_count)
 		throw std::runtime_error("The power profile has an invalid size.");
 
 	size_t step_count = dynamic_power.rows();
@@ -88,9 +86,10 @@ void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 	const double *P = dynamic_power;
 
 	temperature.resize(dynamic_power);
-	double *Tt = temperature;
 
-	vector_t BP(node_count);
+	double *T = temperature;
+
+	size_t i, j, k;
 
 	/* The initial temperature is always zero.
 	 * Let us treat this case separately.
@@ -98,26 +97,32 @@ void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 	 * BP(0) = B * P(0)
 	 * T'(0) = K * 0 + BP(0)
 	 */
-	multiply_matrix_incomplete_vector(B, P, processor_count, Tt);
+	multiply_matrix_incomplete_vector(B, P, _processor_count, Tlast);
 
-	for (size_t i = 1; i < step_count; i++) {
-		/* BP(i) = B * P(i) */
-		multiply_matrix_incomplete_vector(B, P + i * processor_count,
-			processor_count, BP);
-
-		/* T'(i) = A * T'(i-1) + Q(i) */
-		multiply_matrix_vector_plus_vector(A, Tt + (i - 1) * processor_count,
-			BP, Tt + i * processor_count);
-	}
-
-	double *T = Tt;
-
-	/* Return back to T' from T:
+	/* Return back form T from T':
 	 * T = C^(-1/2) * T'
 	 *
 	 * ... and do not forget about the ambience.
 	 */
-	for (size_t i = 0, k = 0; i < step_count; i++)
-		for (size_t j = 0; j < processor_count; j++, k++)
-			T[k] = Tt[k] * Cm12[j] + ambient_temperature;
+	for (j = 0, k = 0; j < _processor_count; j++, k++)
+		T[k] = Tlast[j] * Cm12[j] + _ambient_temperature - KELVIN;
+
+	/* Repeat for the rest */
+	for (i = 1; i < step_count; i++) {
+		/* BP(i) = B * P(i) */
+		multiply_matrix_incomplete_vector(B, P + i * _processor_count,
+			_processor_count, BP);
+
+		/* T'(i) = A * T'(i-1) + Q(i) */
+		multiply_matrix_vector_plus_vector(A, Tlast, BP, Tnext);
+
+		/* Return back */
+		for (j = 0; j < _processor_count; j++, k++)
+			T[k] = Tnext[j] * Cm12[j] + _ambient_temperature - KELVIN;
+
+		/* Swap */
+		double *_ = Tlast;
+		Tlast = Tnext;
+		Tnext = _;
+	}
 }

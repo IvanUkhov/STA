@@ -25,7 +25,7 @@ class MyCommandLine: public CommandLine
 			<< std::endl
 			<< "Optional arguments:" << std::endl
 			<< "  -area,  -a <value=4e-6>  -- the area of a single processor," << std::endl
-			<< "  -label, -l <value=core>  -- the label of the processors." << std::endl;
+			<< "  -label, -l <value=core>  -- the name prefix of the processors." << std::endl;
 	}
 
 	protected:
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 			y = (int)(i / cols) * processor_width;
 
 			std::cout
-				<< arguments.label << i + 1 << '\t'
+				<< arguments.label << i << '\t'
 				<< processor_width << '\t'
 				<< processor_width << '\t'
 				<< x << '\t'

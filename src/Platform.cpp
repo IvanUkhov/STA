@@ -4,7 +4,7 @@
 #include "Processor.h"
 
 Platform::Platform(const matrix_t &dynamic_power,
-	const matrix_t &execution_time) : processor_count(0)
+	const matrix_t &execution_time) : _processor_count(0)
 {
 	size_t processor_count = dynamic_power.cols();
 	size_t type_count = dynamic_power.rows();
@@ -21,8 +21,8 @@ Platform::Platform(const matrix_t &dynamic_power,
 
 	for (i = 0; i < processor_count; i++) {
 		Processor *processor = new Processor(processor_count, type_count);
-		processors.push_back(processor);
-		this->processor_count++;
+		_processors.push_back(processor);
+		_processor_count++;
 
 		for (j = 0; j < type_count; j++)
 			processor->set_type(j, dynamic_power[i][j], execution_time[i][j]);
@@ -31,13 +31,13 @@ Platform::Platform(const matrix_t &dynamic_power,
 
 Platform::~Platform()
 {
-	for (size_t i = 0; i < processor_count; i++)
-		delete processors[i];
+	for (size_t i = 0; i < _processor_count; i++)
+		delete _processors[i];
 }
 
 std::ostream &operator<< (std::ostream &o, const Platform &platform)
 {
-	const processor_vector_t &processors = platform.get_processors();
+	const processor_vector_t &processors = platform.processors();
 	size_t size = processors.size();
 
 	o	<< "Platform:" << std::endl

@@ -67,10 +67,7 @@ struct matrix_t: public vector_t
 	inline void clone(const array_t<double> &array,
 		size_t __rows, size_t __cols)
 	{
-		if (array.size() < __rows * __cols)
-			throw std::runtime_error("The array to clone is too small.");
-
-		vector_t::clone(array);
+		vector_t::clone(array, __rows * __cols);
 
 		_rows = __rows;
 		_cols = __cols;

@@ -4,12 +4,12 @@
 
 class DynamicPower
 {
-	const processor_vector_t &processors;
-	const size_t processor_count;
-	const double sampling_interval;
-	const size_t step_count;
+	const processor_vector_t &_processors;
+	const size_t _processor_count;
+	const double _sampling_interval;
+	const size_t _step_count;
 
-	array_t<task_type_t> types;
+	array_t<task_type_t> _types;
 
 	public:
 

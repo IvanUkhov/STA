@@ -10,17 +10,17 @@
 template<class PT>
 class ListScheduler
 {
-	const processor_vector_t &processors;
-	const size_t processor_count;
+	const processor_vector_t &_processors;
+	const size_t _processor_count;
 
-	const task_vector_t &tasks;
-	const size_t task_count;
+	const task_vector_t &_tasks;
+	const size_t _task_count;
 
 	public:
 
 	ListScheduler(const Platform &platform, const Graph &graph) :
-		processors(platform.processors), processor_count(processors.size()),
-		tasks(graph.tasks), task_count(tasks.size()) {}
+		_processors(platform.processors()), _processor_count(platform.size()),
+		_tasks(graph.tasks()), _task_count(graph.size()) {}
 
 	Schedule process(const layout_t &layout, const priority_t &priority,
 		void *data = NULL) const;

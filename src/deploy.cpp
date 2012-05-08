@@ -19,11 +19,13 @@ class MyCommandLine: public CommandLine
 	bool relative_deadline;
 	double deadline;
 	double sampling_interval;
+	std::string label;
 	bool pretend;
 
 	MyCommandLine() : CommandLine(),
 		relative_deadline(true), deadline(105),
-		sampling_interval(1e-3), pretend(false) {}
+		sampling_interval(1e-3), label("core"),
+		pretend(false) {}
 
 	void usage() const
 	{
@@ -31,12 +33,13 @@ class MyCommandLine: public CommandLine
 			<< "Usage: deploy <arguments>" << std::endl
 			<< std::endl
 			<< "Required arguments:" << std::endl
-			<< "  -system,   -s <value>       -- a system configuration file." << std::endl
+			<< "  -system,   -s <value>       -- the configuration file of the system." << std::endl
 			<< std::endl
 			<< "Optional arguments:" << std::endl
-			<< "  -deadline, -d <value=105%>  -- a deadline relative to the schedule or absolute," << std::endl
-			<< "  -sample,   -i <value=1e-3>  -- a sampling interval," << std::endl
-			<< "  -pretend,  -p               -- display diagnostic information instead of the power profile." << std::endl;
+			<< "  -deadline, -d <value=105%>  -- the deadline either relative to the schedule or absolute," << std::endl
+			<< "  -sample,   -i <value=1e-3>  -- the sampling interval of the power profile," << std::endl
+			<< "  -label,    -l <value=core>  -- the name prefix of the processors," << std::endl
+			<< "  -pretend,  -0               -- display diagnostic information instead of computing the power profile." << std::endl;
 	}
 
 	protected:
@@ -58,7 +61,9 @@ class MyCommandLine: public CommandLine
 		}
 		else if (name == "sample" || name == "i")
 			std::istringstream(value) >> sampling_interval;
-		else if (name == "pretend" || name == "p")
+		else if (name == "label" || name == "l")
+			label = value;
+		else if (name == "pretend" || name == "0")
 			pretend = true;
 	}
 
@@ -127,14 +132,14 @@ int main(int argc, char **argv)
 			double deadline = arguments.deadline;
 
 			if (arguments.relative_deadline)
-				deadline = (deadline / 100.0) * schedule.get_duration();
+				deadline = (deadline / 100.0) * schedule.duration();
 
 			DynamicPower heater(platform, graph, deadline, arguments.sampling_interval);
 
 			matrix_t dynamic_power;
 			heater.compute(schedule, dynamic_power);
 
-			File::store(dynamic_power, std::cout);
+			File::store(dynamic_power, std::cout, arguments.label);
 		}
 	}
 	catch (std::exception &e) {

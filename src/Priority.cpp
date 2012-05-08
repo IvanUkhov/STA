@@ -20,17 +20,17 @@ class Comparator
 priority_t Priority::mobile(const Platform &platform,
 	const Graph &graph, const mapping_t &mapping)
 {
-	size_t i, task_count = graph.get_size();
+	size_t i, task_count = graph.size();
 
 	priority_t priority(task_count);
 	vector_t mobility;
 
 	if (mapping.empty())
 		mobility = GraphAnalysis::average_mobility(
-			platform.get_processors(), graph.get_tasks());
+			platform.processors(), graph.tasks());
 	else
 		mobility = GraphAnalysis::precise_mobility(
-			platform.get_processors(), graph.get_tasks(), mapping);
+			platform.processors(), graph.tasks(), mapping);
 
 	if (mobility.size() != task_count)
 		throw std::runtime_error("The mobility vector is invalid.");

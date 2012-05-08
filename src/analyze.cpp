@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 #include "File.h"
 #include "CommandLine.h"
@@ -26,13 +27,13 @@ class MyCommandLine: public CommandLine
 			<< "Usage: analyze <arguments>" << std::endl
 			<< std::endl
 			<< "Required arguments:" << std::endl
-			<< "  -floorplan, -f <value>  -- a floorplan of the die," << std::endl
-			<< "  -power,     -w <value>  -- a power profile," << std::endl
-			<< "  -hotspot,   -h <value>  -- a configuration file of HotSpot," << std::endl
-			<< "  -variation, -v <value>  -- a configuration file of variations." << std::endl
+			<< "  -floorplan, -f <value>  -- the floorplan of the die," << std::endl
+			<< "  -power,     -p <value>  -- the power profile," << std::endl
+			<< "  -hotspot,   -h <value>  -- the configuration file of HotSpot," << std::endl
+			<< "  -variation, -v <value>  -- the configuration file of variations." << std::endl
 			<< std::endl
 			<< "Optional arguments:" << std::endl
-			<< "  -pretend,   -p          -- display diagnostic information instead of computing the temperature profile." << std::endl;
+			<< "  -pretend,   -0          -- display diagnostic information without computing the temperature profile." << std::endl;
 	}
 
 	protected:
@@ -63,10 +64,10 @@ class MyCommandLine: public CommandLine
 	void process(const std::string &name, const std::string &value)
 	{
 		if (name == "f" || name == "floorplan") floorplan = value;
-		else if (name == "w" || name == "power") power_profile = value;
+		else if (name == "p" || name == "power") power_profile = value;
 		else if (name == "h" || name == "hotspot") hotspot_config = value;
 		else if (name == "v" || name == "variation") variation_config = value;
-		else if (name == "p" || name == "pretend") pretend = true;
+		else if (name == "0" || name == "pretend") pretend = true;
 		else param_stream << name << " " << value << std::endl;
 	}
 };
@@ -82,8 +83,8 @@ int main(int argc, char **argv)
 
 		if (arguments.pretend)
 			std::cout << "Loaded floorplan:" << std::endl
-				<< "  Cores: " << hotspot.get_processor_count() << std::endl
-				<< "  Nodes: " << hotspot.get_node_count() << std::endl;
+				<< "  Cores: " << hotspot.processor_count() << std::endl
+				<< "  Nodes: " << hotspot.node_count() << std::endl;
 
 		matrix_t dynamic_power;
 
@@ -100,6 +101,7 @@ int main(int argc, char **argv)
 			TransientTemperatureAnalysis analysis(hotspot);
 			analysis.perform(dynamic_power, temperature);
 
+			std::cout << std::fixed << std::setprecision(2);
 			File::store(temperature, std::cout);
 		}
 	}

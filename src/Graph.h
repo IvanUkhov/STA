@@ -5,29 +5,27 @@
 
 class Graph
 {
-	template<class PT> friend class ListScheduler;
-
-	task_vector_t tasks;
-	size_t task_count;
+	task_vector_t _tasks;
+	size_t _task_count;
 
 	public:
 
 	Graph(const vector_t &types, const matrix_t &arcs);
 	~Graph();
 
-	inline size_t get_size() const
+	inline size_t size() const
 	{
-		return task_count;
+		return _task_count;
 	}
 
 	inline const Task *operator[] (task_id_t id) const
 	{
-		return tasks[id];
+		return _tasks[id];
 	}
 
-	inline const task_vector_t &get_tasks() const
+	inline const task_vector_t &tasks() const
 	{
-		return tasks;
+		return _tasks;
 	}
 };
 

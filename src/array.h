@@ -89,15 +89,18 @@ struct array_t
 		_data = new_data;
 	}
 
-	inline void clone(const array_t<T> &another)
+	inline void clone(const array_t<T> &another, size_t __size)
 	{
+		if (another._size < __size)
+			throw std::runtime_error("The array to clone is too small.");
+
 		__FREE(_data);
 
-		_data = __ALLOC(T, another._size);
+		_data = __ALLOC(T, __size);
 
-		__MEMCPY(_data, another._data, T, another._size);
+		__MEMCPY(_data, another._data, T, __size);
 
-		_size = another._size;
+		_size = __size;
 	}
 
 	inline T &operator[](unsigned int i)

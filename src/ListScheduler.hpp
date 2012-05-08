@@ -4,21 +4,21 @@ template<class PT>
 Schedule ListScheduler<PT>::process(const layout_t &layout,
 	const priority_t &priority, void *data) const
 {
-	PT pool(processors, tasks, layout, priority, data);
+	PT pool(_processors, _tasks, layout, priority, data);
 
-	bit_string_t &processed = pool.processed;
-	bit_string_t &scheduled = pool.scheduled;
+	bit_string_t &processed = pool._processed;
+	bit_string_t &scheduled = pool._scheduled;
 
-	vector_t &processor_time = pool.processor_time;
-	vector_t &task_time = pool.task_time;
+	vector_t &processor_time = pool._processor_time;
+	vector_t &task_time = pool._task_time;
 
-	Schedule schedule(processor_count, task_count);
+	Schedule schedule(_processor_count, _task_count);
 
 	size_t i, count;
 	double start, duration, finish;
 
-	for (i = 0; i < task_count; i++)
-		if (tasks[i]->is_root()) {
+	for (i = 0; i < _task_count; i++)
+		if (_tasks[i]->is_root()) {
 			pool.push(i);
 			processed[i] = true;
 		}
@@ -33,12 +33,12 @@ Schedule ListScheduler<PT>::process(const layout_t &layout,
 		/* Get the next task */
 		pool.pull(pid, id);
 
-		task = tasks[id];
-		processor = processors[pid];
+		task = _tasks[id];
+		processor = _processors[pid];
 
 		/* Calculate its start time and duration */
 		start = std::max(processor_time[pid], task_time[id]);
-		duration = processor->get_execution_time(task->type);
+		duration = processor->execution_time(task->type);
 		finish = start + duration;
 
 		processor_time[pid] = finish;

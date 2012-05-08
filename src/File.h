@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
+#include <cmath>
 
 #include "matrix.h"
 
@@ -27,15 +29,31 @@ class File
 		stream.close();
 	}
 
-	static void store(const matrix_t &matrix, std::ostream &stream)
+	static void store(const matrix_t &matrix, std::ostream &stream,
+		std::string label = "")
 	{
-		const double *p = matrix;
-		size_t rows = matrix.rows();
-		size_t cols = matrix.cols();
+		store(matrix, stream, label, matrix.cols());
+	}
 
-		for (size_t i = 0; i < rows; i++) {
-			for (size_t j = 0; j < cols; j++) {
-				stream << p[i * cols + j];
+	static void store(const array_t<double> &array, std::ostream &stream,
+		std::string label = "", size_t cols = 0)
+	{
+		size_t size = array.size(), rows, i, j, k;
+
+		if (cols == 0) cols = size;
+		rows = std::ceil((double)size / (double)cols);
+
+		const double *p = array;
+
+		if (!label.empty()) {
+			for (i = 0; i < cols; i++)
+				stream << label << i << '\t';
+			stream << std::endl;
+		}
+
+		for (i = 0, k = 0; i < rows; i++) {
+			for (j = 0; j < cols && k < size; j++, k++) {
+				stream << p[k];
 				if (j + 1 < cols) stream << '\t';
 			}
 			stream << std::endl;
@@ -81,12 +99,14 @@ class File
 				read++;
 			}
 
+			/* Remember the number of the columns in the first meaningful line */
 			if (!cols) cols = i;
 
 			if (cols != i)
 				throw std::runtime_error("The matrix to load is inconsistent.");
 
-			rows++;
+			/* If there were some values found */
+			if (i) rows++;
 		}
 
 		matrix.clone(storage, rows, cols);

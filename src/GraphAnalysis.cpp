@@ -19,7 +19,7 @@ vector_t GraphAnalysis::precise_mobility(const processor_vector_t &processors,
 		if (mapping[i] >= processor_count)
 			throw std::runtime_error("The processor is invalid.");
 
-		duration[i] = processors[mapping[i]]->get_execution_time(tasks[i]->type);
+		duration[i] = processors[mapping[i]]->execution_time(tasks[i]->type);
 	}
 
 	return calculate_mobility(processors, tasks, duration);
@@ -40,9 +40,9 @@ vector_t GraphAnalysis::calculate_mobility(const processor_vector_t &processors,
 	if (task_count != duration.size())
 		throw std::runtime_error("The duration vector is invalid.");
 
-	vector_t asap = get_asap(tasks, duration);
-	double asap_duration = get_asap_duration(tasks, asap, duration);
-	vector_t alap = get_alap(tasks, duration, asap_duration);
+	vector_t asap = compute_asap(tasks, duration);
+	double asap_duration = compute_asap_duration(tasks, asap, duration);
+	vector_t alap = compute_alap(tasks, duration, asap_duration);
 	vector_t mobility(task_count);
 
 	for (size_t i = 0; i < task_count; i++) {
@@ -65,7 +65,7 @@ vector_t GraphAnalysis::average_duration(
 
 	for (i = 0; i < task_count; i++)
 		for (j = 0; j < processor_count; j++)
-			duration[i] += processors[j]->get_execution_time(tasks[i]->type);
+			duration[i] += processors[j]->execution_time(tasks[i]->type);
 
 	for (i = 0; i < task_count; i++)
 		duration[i] /= double(processor_count);
@@ -73,7 +73,7 @@ vector_t GraphAnalysis::average_duration(
 	return duration;
 }
 
-vector_t GraphAnalysis::get_asap(const task_vector_t &tasks, const vector_t &duration)
+vector_t GraphAnalysis::compute_asap(const task_vector_t &tasks, const vector_t &duration)
 {
 	size_t task_count = tasks.size();
 
@@ -87,7 +87,7 @@ vector_t GraphAnalysis::get_asap(const task_vector_t &tasks, const vector_t &dur
 	return asap;
 }
 
-vector_t GraphAnalysis::get_alap(const task_vector_t &tasks,
+vector_t GraphAnalysis::compute_alap(const task_vector_t &tasks,
 	const vector_t &duration, double asap_duration)
 {
 	size_t task_count = tasks.size();
@@ -102,7 +102,7 @@ vector_t GraphAnalysis::get_alap(const task_vector_t &tasks,
 	return alap;
 }
 
-double GraphAnalysis::get_asap_duration(const task_vector_t &tasks,
+double GraphAnalysis::compute_asap_duration(const task_vector_t &tasks,
 	const vector_t &asap, const vector_t &duration)
 {
 	size_t task_count = tasks.size();

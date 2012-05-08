@@ -8,11 +8,11 @@ class TemperatureAnalysis
 {
 	protected:
 
-	const size_t processor_count;
-	const size_t node_count;
+	const size_t _processor_count;
+	const size_t _node_count;
 
-	const double sampling_interval;
-	const double ambient_temperature;
+	const double _sampling_interval;
+	const double _ambient_temperature;
 
 	/* Capacitance^(-1/2) */
 	vector_t Cm12;
@@ -27,26 +27,31 @@ class TemperatureAnalysis
 	matrix_t UT;
 
 	/* Auxiliary space */
-	matrix_t m_temp;
-	vector_t v_temp;
+	matrix_t Mtemp;
+	vector_t Vtemp;
 
 	public:
 
 	TemperatureAnalysis(const HotSpot &hotspot);
 
-	virtual void perform(const matrix_t &dynamic_power, matrix_t &temperature) const = 0;
+	virtual void perform(const matrix_t &dynamic_power, matrix_t &temperature) = 0;
 };
 
 class TransientTemperatureAnalysis: public TemperatureAnalysis
 {
+	double *BP, *Tlast, *Tnext;
+
 	public:
 
 	TransientTemperatureAnalysis(const HotSpot &hotspot)
 		: TemperatureAnalysis(hotspot)
 	{
+		BP = Mtemp[0];
+		Tlast = Mtemp[1];
+		Tnext = Mtemp[2];
 	}
 
-	void perform(const matrix_t &dynamic_power, matrix_t &temperature) const;
+	void perform(const matrix_t &dynamic_power, matrix_t &temperature);
 };
 
 #endif

@@ -3,7 +3,7 @@
 #include "Graph.h"
 #include "Task.h"
 
-Graph::Graph(const vector_t &types, const matrix_t &arcs) : task_count(0)
+Graph::Graph(const vector_t &types, const matrix_t &arcs) : _task_count(0)
 {
 	size_t task_count = types.size();
 
@@ -18,16 +18,16 @@ Graph::Graph(const vector_t &types, const matrix_t &arcs) : task_count(0)
 	size_t i, j;
 
 	for (i = 0; i < task_count; i++) {
-		Task *task = new Task(this->task_count, types[i]);
-		tasks.push_back(task);
-		this->task_count++;
+		Task *task = new Task(_task_count, types[i]);
+		_tasks.push_back(task);
+		_task_count++;
 	}
 
 	for (i = 0; i < task_count; i++)
 		for (j = 0; j < task_count; j++)
 			if (arcs[i][j]) {
-				Task *parent = tasks[i];
-				Task *child = tasks[j];
+				Task *parent = _tasks[i];
+				Task *child = _tasks[j];
 
 				parent->add_child(child);
 				child->add_parent(parent);
@@ -36,13 +36,13 @@ Graph::Graph(const vector_t &types, const matrix_t &arcs) : task_count(0)
 
 Graph::~Graph()
 {
-	for (size_t i = 0; i < task_count; i++)
-		delete tasks[i];
+	for (size_t i = 0; i < _task_count; i++)
+		delete _tasks[i];
 }
 
 std::ostream &operator<< (std::ostream &o, const Graph &graph)
 {
-	const task_vector_t &tasks = graph.get_tasks();
+	const task_vector_t &tasks = graph.tasks();
 	size_t size = tasks.size();
 
 	o	<< "Task graph:" << std::endl

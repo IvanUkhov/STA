@@ -57,11 +57,11 @@ HotSpot::HotSpot(const std::string &floorplan_filename,
 	populate_R_model(model, floorplan);
 	populate_C_model(model, floorplan);
 
-	node_count = model->block->n_nodes;
-	processor_count = floorplan->n_units;
+	_node_count = model->block->n_nodes;
+	_processor_count = floorplan->n_units;
 
-	sampling_interval = config.sampling_intvl;
-	ambient_temperature = config.ambient;
+	_sampling_interval = config.sampling_intvl;
+	_ambient_temperature = config.ambient;
 }
 
 HotSpot::~HotSpot()
@@ -70,23 +70,23 @@ HotSpot::~HotSpot()
 	free_flp(floorplan, FALSE);
 }
 
-void HotSpot::get_conductance(matrix_t &conductance) const
+void HotSpot::fill_conductance(matrix_t &conductance) const
 {
-	conductance.resize(node_count, node_count);
+	conductance.resize(_node_count, _node_count);
 
 	double **b = model->block->b;
 
-	for (size_t i = 0; i < node_count; i++)
-		for (size_t j = 0; j < node_count; j++)
+	for (size_t i = 0; i < _node_count; i++)
+		for (size_t j = 0; j < _node_count; j++)
 			conductance[i][j] = b[i][j];
 }
 
-void HotSpot::get_capacitance(vector_t &capacitance) const
+void HotSpot::fill_capacitance(vector_t &capacitance) const
 {
-	capacitance.resize(node_count);
+	capacitance.resize(_node_count);
 
 	double *a = model->block->a;
 
-	for (size_t i = 0; i < node_count; i++)
+	for (size_t i = 0; i < _node_count; i++)
 		capacitance[i] = a[i];
 }
