@@ -4,7 +4,7 @@
 
 #include "File.h"
 #include "CommandLine.h"
-#include "configuration.h"
+#include "Variation.h"
 #include "HotSpot.h"
 #include "TemperatureAnalysis.h"
 
@@ -81,19 +81,27 @@ int main(int argc, char **argv)
 
 		HotSpot hotspot(arguments.floorplan, arguments.hotspot_config);
 
+		size_t processor_count = hotspot.processor_count();
+		size_t node_count = hotspot.node_count();
+
 		if (arguments.pretend)
 			std::cout << "Loaded floorplan:" << std::endl
-				<< "  Cores: " << hotspot.processor_count() << std::endl
-				<< "  Nodes: " << hotspot.node_count() << std::endl;
+				<< "  Cores: " << processor_count << std::endl
+				<< "  Nodes: " << node_count << std::endl;
 
 		matrix_t dynamic_power;
 
-		File::load(dynamic_power, arguments.power_profile);
+		std::vector<std::string> labels;
+		File::load(dynamic_power, arguments.power_profile, labels);
+
+		size_t step_count = dynamic_power.rows();
 
 		if (arguments.pretend)
 			std::cout << "Loaded power profile:" << std::endl
 				<< "  Cores: " << dynamic_power.cols() << std::endl
-				<< "  Steps: " << dynamic_power.rows() << std::endl;
+				<< "  Steps: " << step_count << std::endl;
+
+		Variation variation(processor_count, arguments.variation_config);
 
 		if (!arguments.pretend) {
 			matrix_t temperature;
@@ -102,7 +110,7 @@ int main(int argc, char **argv)
 			analysis.perform(dynamic_power, temperature);
 
 			std::cout << std::fixed << std::setprecision(2);
-			File::store(temperature, std::cout);
+			File::store(temperature, std::cout, labels);
 		}
 	}
 	catch (std::exception &e) {

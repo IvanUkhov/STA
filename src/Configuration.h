@@ -6,13 +6,13 @@
 
 #include "matrix.h"
 
-struct parameter_t
+struct Parameter
 {
 	std::string name;
 	std::string value;
 
-	parameter_t() {}
-	parameter_t(const std::string &_name, const std::string &_value) :
+	Parameter() {}
+	Parameter(const std::string &_name, const std::string &_value) :
 		name(_name), value(_value) {}
 
 	template<class T>
@@ -47,17 +47,19 @@ struct parameter_t
 	void to_vector(vector_t &vector) const;
 };
 
-struct parameters_t: public std::vector<parameter_t>
+class Configuration: public std::vector<Parameter>
 {
-	parameters_t() {}
-	parameters_t(const std::string &filename);
+	public:
+
+	Configuration() {}
+	Configuration(const std::string &filename);
 
 	void append(const std::string &name, const std::string &value);
 	void update(const std::string &filename);
 	void update(std::istream &main_stream);
 };
 
-std::ostream &operator<< (std::ostream &o, const parameter_t &parameter);
-std::ostream &operator<< (std::ostream &o, const parameters_t &parameters);
+std::ostream &operator<< (std::ostream &o, const Parameter &parameter);
+std::ostream &operator<< (std::ostream &o, const Configuration &parameters);
 
 #endif

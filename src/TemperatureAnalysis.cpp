@@ -78,10 +78,10 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 	matrix_t &temperature)
 {
-	if (dynamic_power.cols() != _processor_count)
-		throw std::runtime_error("The power profile has an invalid size.");
-
 	size_t step_count = dynamic_power.rows();
+
+	if (dynamic_power.cols() != _processor_count || step_count == 0)
+		throw std::runtime_error("The power profile has an invalid size.");
 
 	const double *P = dynamic_power;
 

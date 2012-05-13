@@ -6,8 +6,11 @@
 #include <sstream>
 #include <string>
 #include <cmath>
+#include <cctype>
+#include <vector>
 
 #include "matrix.h"
+#include "Utils.h"
 
 #define CHUNK_SIZE 512
 
@@ -20,23 +23,35 @@ class File
 		return std::ifstream(filename.c_str()).is_open();
 	}
 
-	static void store(const matrix_t &matrix, const char *filename)
-	{
-		std::ofstream stream(filename);
-
-		store(matrix, stream);
-
-		stream.close();
-	}
-
 	static void store(const matrix_t &matrix, std::ostream &stream,
 		std::string label = "")
 	{
 		store(matrix, stream, label, matrix.cols());
 	}
 
+	static void store(const matrix_t &matrix, std::ostream &stream,
+		std::vector<std::string> &labels)
+	{
+		store(matrix, stream, labels, matrix.cols());
+	}
+
 	static void store(const array_t<double> &array, std::ostream &stream,
 		std::string label = "", size_t cols = 0)
+	{
+		std::vector<std::string> labels;
+
+		if (!label.empty())
+			for (size_t i = 0; i < cols; i++) {
+				std::ostringstream stream;
+				stream << label << i;
+				labels.push_back(stream.str());
+			}
+
+		store(array, stream, labels, cols);
+	}
+
+	static void store(const array_t<double> &array, std::ostream &stream,
+		std::vector<std::string> &labels, size_t cols = 0)
 	{
 		size_t size = array.size(), rows, i, j, k;
 
@@ -45,9 +60,12 @@ class File
 
 		const double *p = array;
 
-		if (!label.empty()) {
-			for (i = 0; i < cols; i++)
-				stream << label << i << '\t';
+		if (!labels.empty()) {
+			if (labels.size() != cols)
+				throw std::runtime_error("The number of labels is invalid.");
+
+			for (i = 0; i < cols; i++) stream << labels[i] << '\t';
+
 			stream << std::endl;
 		}
 
@@ -62,14 +80,28 @@ class File
 
 	static void load(matrix_t &matrix, std::string &filename)
 	{
+		std::vector<std::string> labels;
+		load(matrix, filename, labels);
+	}
+
+	static void load(matrix_t &matrix, std::string &filename,
+		std::vector<std::string> &labels)
+	{
 		std::ifstream stream(filename.c_str());
 
-		load(matrix, stream);
+		load(matrix, stream, labels);
 
 		stream.close();
 	}
 
 	static void load(matrix_t &matrix, std::istream &stream)
+	{
+		std::vector<std::string> labels;
+		load(matrix, stream, labels);
+	}
+
+	static void load(matrix_t &matrix, std::istream &stream,
+		std::vector<std::string> &labels)
 	{
 		std::string line;
 
@@ -77,36 +109,46 @@ class File
 		array_t<double> storage;
 
 		while (std::getline(stream, line)) {
+			line = Utils::strip(line);
+			if (line.empty() || line[0] == '#') continue;
+
+			size_t i = 0;
 			std::stringstream line_stream(line);
 
-			double value;
-			size_t i = 0;
-
-			while (line_stream >> value) {
-				i++;
-
-				if (cols && i > cols)
-					throw std::runtime_error("The matrix to load is inconsistent.");
-
-				if ((read + 1) > CHUNK_SIZE * chunks) {
-					/* We need more space! */
-					chunks++;
-					storage.extend(chunks * CHUNK_SIZE);
+			if (rows == 0 && isalpha(line[0])) {
+				/* Reading labels */
+				std::string label;
+				while (line_stream >> label) {
+					i++;
+					labels.push_back(label);
 				}
 
-				storage[read] = value;
+				if (!i) throw std::runtime_error("The input is inconsistent.");
 
-				read++;
+				cols = i;
 			}
+			else {
+				/* Reading numbers */
+				double value;
+				while (line_stream >> value) {
+					i++;
 
-			/* Remember the number of the columns in the first meaningful line */
-			if (!cols) cols = i;
+					if ((read + 1) > CHUNK_SIZE * chunks) {
+						/* We need more space! */
+						chunks++;
+						storage.extend(chunks * CHUNK_SIZE);
+					}
 
-			if (cols != i)
-				throw std::runtime_error("The matrix to load is inconsistent.");
+					storage[read++] = value;
+				}
 
-			/* If there were some values found */
-			if (i) rows++;
+				if (!i || (cols && cols != i))
+					throw std::runtime_error("The input is inconsistent.");
+
+				rows++;
+
+				cols = i;
+			}
 		}
 
 		matrix.clone(storage, rows, cols);

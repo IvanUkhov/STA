@@ -4,7 +4,7 @@
 
 #include "File.h"
 #include "CommandLine.h"
-#include "configuration.h"
+#include "Configuration.h"
 #include "Platform.h"
 #include "Graph.h"
 #include "Priority.h"
@@ -89,15 +89,15 @@ int main(int argc, char **argv)
 	try {
 		arguments.parse(argc, (const char **)argv);
 
-		parameters_t parameters(arguments.system_config);
+		Configuration config(arguments.system_config);
 
 		vector_t types;
 		matrix_t arcs, dynamic_power, execution_time;
 
-		size_t size = parameters.size();
+		size_t size = config.size();
 
 		for (size_t i = 0; i < size; i++) {
-			const parameter_t &param = parameters[i];
+			const Parameter &param = config[i];
 
 			if (param.name == "types") {
 				param.to_vector(types);
