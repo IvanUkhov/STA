@@ -101,12 +101,12 @@ int main(int argc, char **argv)
 				<< "  Cores: " << dynamic_power.cols() << std::endl
 				<< "  Steps: " << step_count << std::endl;
 
-		Variation variation(processor_count, arguments.variation_config);
+		Variation variation(processor_count, node_count, arguments.variation_config);
 
 		if (!arguments.pretend) {
 			matrix_t temperature;
 
-			TransientTemperatureAnalysis analysis(hotspot);
+			TransientTemperatureAnalysis analysis(hotspot, variation);
 			analysis.perform(dynamic_power, temperature);
 
 			std::cout << std::fixed << std::setprecision(2);

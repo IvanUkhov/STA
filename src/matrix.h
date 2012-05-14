@@ -58,19 +58,52 @@ struct matrix_t: public vector_t
 		vector_t::resize(_rows * _cols);
 	}
 
-	inline void extend(size_t __rows)
+	inline void extend(size_t __rows, size_t __cols = 0, bool nullify = false)
 	{
+		if (!__cols || __cols == _cols) {
+			vector_t::extend(__rows * _cols, nullify);
+			_rows = __rows;
+			return;
+		}
+
+		double *__data = __ALLOC(double, __rows * __cols);
+		if (nullify) __NULLIFY(__data, double, __rows * __cols);
+
+		for (size_t i = 0; i < __rows && i < _rows; i++)
+			for (size_t j = 0; j < __cols && j < _cols; j++)
+				__data[i * __cols + j] = _data[i * _cols + j];
+
+		replace(__data, __cols * __rows);
+
 		_rows = __rows;
-		vector_t::extend(_rows * _cols);
+		_cols = __cols;
 	}
 
-	inline void clone(const array_t<double> &array,
+	inline void shape(const array_t<double> &array,
 		size_t __rows, size_t __cols)
 	{
+		if (array._size < __rows * __cols)
+			throw std::runtime_error("Cannot shape the array.");
+
 		vector_t::clone(array, __rows * __cols);
 
 		_rows = __rows;
 		_cols = __cols;
+	}
+
+	inline void copy(const matrix_t &another)
+	{
+		if (another._cols > _cols || another._rows > _rows)
+			throw std::runtime_error("Cannot copy the matrix.");
+
+		if (another._cols == _cols) {
+			vector_t::copy(another);
+			return;
+		}
+
+		for (size_t i = 0; i < another._rows; i++)
+			for (size_t j = 0; j < another._cols; j++)
+				_data[i * _cols + j] = another._data[i * another._cols + j];
 	}
 
 	inline size_t rows() const
@@ -88,6 +121,8 @@ void transpose_matrix(
 	const matrix_t &U, matrix_t &UT);
 void multiply_diagonal_matrix_matrix(
 	const vector_t &V, const matrix_t &M, matrix_t &R);
+void multiply_two_incomplete_bottom_diagonal_matrices_matrix(
+	const double *V1, const double *V2, const matrix_t &M, size_t m, matrix_t &R);
 void multiply_matrix_diagonal_matrix(
 	const matrix_t &M, const double *V, matrix_t &R);
 void multiply_matrix_matrix(
@@ -97,15 +132,19 @@ void multiply_matrix_matrix(
 void multiply_matrix_matrix_diagonal_matrix(
 	const matrix_t &M, const matrix_t &N, const double *V, matrix_t &R);
 void multiply_matrix_incomplete_vector(
-	const matrix_t &M, const double *V, int m, double *R);
+	const matrix_t &M, const double *V, size_t m, double *R);
 void multiply_matrix_vector_plus_vector(
 	const matrix_t &M, const double *V, const double *A, double *R);
-void multiply_matrix_vector_plus_vector(
-	size_t n, const double *M, const double *V, const double *A, double *R);
 void multiply_matrix_matrix_vector(
 	const matrix_t &M, const matrix_t &N, const double *V, double *R);
 void multiply_matrix_vector(
 	const matrix_t &M, const double *V, double *R);
+void multiply_two_incomplete_bottom_matrices(
+	const matrix_t &M1, const matrix_t &M2, size_t n1, size_t n2, matrix_t &R);
+void multiply_incomplete_bottom_matrix_matrix(
+	const matrix_t &M1, const matrix_t &M2, size_t n, matrix_t &R);
+void multiply_matrix_incomplete_bottom_matrix(
+	const matrix_t &M1, const matrix_t &M2, size_t n, matrix_t &R);
 
 std::ostream &operator<< (std::ostream &o, const vector_t &vector);
 std::ostream &operator<< (std::ostream &o, const matrix_t &matrix);

@@ -9,7 +9,10 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	_ambient_temperature(hotspot.ambient_temperature())
 {
 	A.resize(_node_count, _node_count);
+	AT.resize(_node_count, _node_count);
+
 	B.resize(_node_count, _node_count);
+	BT.resize(_node_count, _node_count);
 
 	Cm12.resize(_node_count);
 
@@ -52,7 +55,7 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	/* Eigenvalue decomposition:
 	 * G' = U * V * U^T
 	 */
-	EigenvalueDecomposition S(Gt, U, V);
+	EigenvalueDecomposition decomposition(Gt, U, V);
 
 	transpose_matrix(U, UT);
 
@@ -65,6 +68,8 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	multiply_matrix_diagonal_matrix(U, Vtemp, Mtemp);
 	multiply_matrix_matrix(Mtemp, UT, A);
 
+	transpose_matrix(A, AT);
+
 	/* The second coefficient:
 	 * B = - Gt^(-1) * (exp(- Gt * t) - I) * C^(-1/2) =
 	 *   = U * diag(- (exp(- t * l0) - 1) / l0, ...) * U^T * C^(-1/2)
@@ -73,6 +78,8 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 		Vtemp[i] = - (Vtemp[i] - 1) / V[i];
 	multiply_matrix_diagonal_matrix(U, Vtemp, Mtemp);
 	multiply_matrix_matrix_diagonal_matrix(Mtemp, UT, Cm12, B);
+
+	transpose_matrix(B, BT);
 }
 
 void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
@@ -93,14 +100,17 @@ void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 
 	/* The initial temperature is always zero.
 	 * Let us treat this case separately.
+	 */
+
+	/* Expectation:
 	 *
 	 * BP(0) = B * P(0)
-	 * T'(0) = K * 0 + BP(0)
+	 * E(T'(0)) = A * 0 + BP(0)
 	 */
 	multiply_matrix_incomplete_vector(B, P, _processor_count, Tlast);
 
 	/* Return back form T from T':
-	 * T = C^(-1/2) * T'
+	 * E(T) = C^(-1/2) * E(T')
 	 *
 	 * ... and do not forget about the ambience.
 	 */
@@ -113,7 +123,7 @@ void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
 		multiply_matrix_incomplete_vector(B, P + i * _processor_count,
 			_processor_count, BP);
 
-		/* T'(i) = A * T'(i-1) + Q(i) */
+		/* E(T'(i)) = A * E(T'(i-1)) + Q(i) */
 		multiply_matrix_vector_plus_vector(A, Tlast, BP, Tnext);
 
 		/* Return back */

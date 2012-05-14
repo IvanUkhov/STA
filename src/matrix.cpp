@@ -21,6 +21,21 @@ void multiply_diagonal_matrix_matrix(
 			R[i][j] = V[i] * M[i][j];
 }
 
+void multiply_two_incomplete_bottom_diagonal_matrices_matrix(
+	const double *V1, const double *V2, const matrix_t &M, size_t m, matrix_t &R)
+{
+	size_t i, j;
+	size_t n = M.rows();
+
+	for (i = 0; i < m; i++)
+		for (j = 0; j < n; j++)
+			R[i][j] = V1[i] * V2[i] * M[i][j];
+
+	for (; i < n; i++)
+		for (j = 0; j < n; j++)
+			R[i][j] = 0;
+}
+
 void multiply_matrix_diagonal_matrix(
 	const matrix_t &M, const double *V, matrix_t &R)
 {
@@ -75,7 +90,7 @@ void multiply_matrix_matrix_diagonal_matrix(
 }
 
 void multiply_matrix_incomplete_vector(
-	const matrix_t &M, const double *V, int m, double *R)
+	const matrix_t &M, const double *V, size_t m, double *R)
 {
 	int i, j;
 	int n = M.rows();
@@ -95,18 +110,6 @@ void multiply_matrix_vector_plus_vector(
 		R[i] = 0;
 		for (j = 0; j < n; j++)
 			R[i] += M[i][j] * V[j];
-		R[i] += A[i];
-	}
-}
-
-void multiply_matrix_vector_plus_vector(
-	size_t n, const double *M, const double *V, const double *A, double *R)
-{
-	int i, j;
-	for (i = 0; i < n; i++) {
-		R[i] = 0;
-		for (j = 0; j < n; j++)
-			R[i] += M[i * n + j] * V[j];
 		R[i] += A[i];
 	}
 }
@@ -138,6 +141,48 @@ void multiply_matrix_vector(
 		for (j = 0; j < n; j++)
 			R[i] += M[i][j] * V[j];
 	}
+}
+
+void multiply_two_incomplete_bottom_matrices(
+	const matrix_t &M1, const matrix_t &M2, size_t n1, size_t n2, matrix_t &R)
+{
+	int i, j, k;
+	int n = M1.cols();
+
+	R.nullify();
+
+	for (i = 0; i < n1; i++)
+		for (j = 0; j < n; j++)
+			for (k = 0; k < n2; k++)
+				R[i][j] += M1[i][k] * M2[k][j];
+}
+
+void multiply_incomplete_bottom_matrix_matrix(
+	const matrix_t &M1, const matrix_t &M2, size_t n1, matrix_t &R)
+{
+	int i, j, k;
+	int n = M1.cols();
+
+	R.nullify();
+
+	for (i = 0; i < n1; i++)
+		for (j = 0; j < n; j++)
+			for (k = 0; k < n; k++)
+				R[i][j] += M1[i][k] * M2[k][j];
+}
+
+void multiply_matrix_incomplete_bottom_matrix(
+	const matrix_t &M1, const matrix_t &M2, size_t n2, matrix_t &R)
+{
+	int i, j, k;
+	int n = M1.cols();
+
+	R.nullify();
+
+	for (i = 0; i < n; i++)
+		for (j = 0; j < n; j++)
+			for (k = 0; k < n2; k++)
+				R[i][j] += M1[i][k] * M2[k][j];
 }
 
 std::ostream &operator<< (std::ostream &o, const vector_t &vector)

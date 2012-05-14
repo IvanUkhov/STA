@@ -70,7 +70,7 @@ struct array_t
 		_data = __ALLOC(T, _size);
 	}
 
-	inline void extend(size_t __size)
+	inline void extend(size_t __size, bool nullify = false)
 	{
 		if (_size == __size) {
 			return;
@@ -80,19 +80,19 @@ struct array_t
 			return;
 		}
 
-		T *new_data = __ALLOC(T, __size);
+		T *__data = __ALLOC(T, __size);
+		if (nullify) __NULLIFY(__data, T, __size);
 
-		__MEMCPY(new_data, _data, T, _size);
+		__MEMCPY(__data, _data, T, _size);
 
 		__FREE(_data);
 		_size = __size;
-		_data = new_data;
+		_data = __data;
 	}
 
-	inline void clone(const array_t<T> &another, size_t __size)
+	inline void clone(const array_t<T> &another, size_t __size = 0)
 	{
-		if (another._size < __size)
-			throw std::runtime_error("The array to clone is too small.");
+		if (!__size) __size = another._size;
 
 		__FREE(_data);
 
@@ -100,6 +100,21 @@ struct array_t
 
 		__MEMCPY(_data, another._data, T, __size);
 
+		_size = __size;
+	}
+
+	inline void copy(const array_t<T> &another)
+	{
+		if (_size < another._size)
+			throw std::runtime_error("Cannot copy the array.");
+
+		__MEMCPY(_data, another._data, T, another._size);
+	}
+
+	inline void replace(T *__data, size_t __size)
+	{
+		__FREE(_data);
+		_data = __data;
 		_size = __size;
 	}
 

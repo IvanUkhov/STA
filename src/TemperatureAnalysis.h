@@ -3,6 +3,7 @@
 
 #include "matrix.h"
 #include "HotSpot.h"
+#include "Variation.h"
 
 class TemperatureAnalysis
 {
@@ -20,6 +21,8 @@ class TemperatureAnalysis
 	/* Coefficients A and B */
 	matrix_t A;
 	matrix_t B;
+	matrix_t AT;
+	matrix_t BT;
 
 	/* Eigenvector decomposition */
 	vector_t V;
@@ -39,16 +42,27 @@ class TemperatureAnalysis
 
 class TransientTemperatureAnalysis: public TemperatureAnalysis
 {
-	double *BP, *Tlast, *Tnext;
+	const Variation &_variation;
+
+	double *Tlast, *Tnext, *BP;
+
+	/* From the parent:
+	 *
+	 * matrix_t Mtemp;
+	 * vector_t Vtemp;
+	 */
 
 	public:
 
-	TransientTemperatureAnalysis(const HotSpot &hotspot)
-		: TemperatureAnalysis(hotspot)
+	TransientTemperatureAnalysis(const HotSpot &hotspot, const Variation &variation)
+		: TemperatureAnalysis(hotspot), _variation(variation)
 	{
-		BP = Mtemp[0];
-		Tlast = Mtemp[1];
-		Tnext = Mtemp[2];
+		if (_node_count < 3)
+			throw std::runtime_error("The circuit seems to be too small.");
+
+		Tlast = Mtemp[0];
+		Tnext = Mtemp[1];
+		BP = Mtemp[2];
 	}
 
 	void perform(const matrix_t &dynamic_power, matrix_t &temperature);

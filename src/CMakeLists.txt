@@ -10,6 +10,7 @@ set(ANALYZE_SRCS
 	EigenvalueDecomposition.cpp
 	HotSpot.cpp
 	TemperatureAnalysis.cpp
+	Variation.cpp
 )
 
 add_executable(analyze ${ANALYZE_SRCS} ${COMMON_SRCS})

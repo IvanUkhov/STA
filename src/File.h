@@ -151,7 +151,7 @@ class File
 			}
 		}
 
-		matrix.clone(storage, rows, cols);
+		matrix.shape(storage, rows, cols);
 	}
 };
 
