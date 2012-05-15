@@ -145,6 +145,7 @@ void multiply_incomplete_bottom_matrix_matrix(
 	const matrix_t &M1, const matrix_t &M2, size_t n, matrix_t &R);
 void multiply_matrix_incomplete_bottom_matrix(
 	const matrix_t &M1, const matrix_t &M2, size_t n, matrix_t &R);
+void add_matrix_matrix(const matrix_t &M1, const matrix_t &M2, matrix_t &R);
 
 std::ostream &operator<< (std::ostream &o, const vector_t &vector);
 std::ostream &operator<< (std::ostream &o, const matrix_t &matrix);

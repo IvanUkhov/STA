@@ -146,43 +146,49 @@ void multiply_matrix_vector(
 void multiply_two_incomplete_bottom_matrices(
 	const matrix_t &M1, const matrix_t &M2, size_t n1, size_t n2, matrix_t &R)
 {
-	int i, j, k;
-	int n = M1.cols();
+	size_t n = M1.cols();
 
 	R.nullify();
 
-	for (i = 0; i < n1; i++)
-		for (j = 0; j < n; j++)
-			for (k = 0; k < n2; k++)
+	for (size_t i = 0; i < n1; i++)
+		for (size_t j = 0; j < n; j++)
+			for (size_t k = 0; k < n2; k++)
 				R[i][j] += M1[i][k] * M2[k][j];
 }
 
 void multiply_incomplete_bottom_matrix_matrix(
 	const matrix_t &M1, const matrix_t &M2, size_t n1, matrix_t &R)
 {
-	int i, j, k;
-	int n = M1.cols();
+	size_t n = M1.cols();
 
 	R.nullify();
 
-	for (i = 0; i < n1; i++)
-		for (j = 0; j < n; j++)
-			for (k = 0; k < n; k++)
+	for (size_t i = 0; i < n1; i++)
+		for (size_t j = 0; j < n; j++)
+			for (size_t k = 0; k < n; k++)
 				R[i][j] += M1[i][k] * M2[k][j];
 }
 
 void multiply_matrix_incomplete_bottom_matrix(
 	const matrix_t &M1, const matrix_t &M2, size_t n2, matrix_t &R)
 {
-	int i, j, k;
-	int n = M1.cols();
+	size_t n = M1.cols();
 
 	R.nullify();
 
-	for (i = 0; i < n; i++)
-		for (j = 0; j < n; j++)
-			for (k = 0; k < n2; k++)
+	for (size_t i = 0; i < n; i++)
+		for (size_t j = 0; j < n; j++)
+			for (size_t k = 0; k < n2; k++)
 				R[i][j] += M1[i][k] * M2[k][j];
+}
+
+void add_matrix_matrix(const matrix_t &M1, const matrix_t &M2, matrix_t &R)
+{
+	size_t n = M1.cols();
+
+	for (size_t i = 0; i < n; i++)
+		for (size_t j = 0; j < n; j++)
+			R[i][j] = M1[i][j] + M2[i][j];
 }
 
 std::ostream &operator<< (std::ostream &o, const vector_t &vector)
