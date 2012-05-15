@@ -4,9 +4,7 @@
 
 #include "File.h"
 #include "CommandLine.h"
-#include "Variation.h"
-#include "HotSpot.h"
-#include "TemperatureAnalysis.h"
+#include "TransientTemperatureAnalysis.h"
 
 class MyCommandLine: public CommandLine
 {
@@ -101,7 +99,7 @@ int main(int argc, char **argv)
 				<< "  Cores: " << dynamic_power.cols() << std::endl
 				<< "  Steps: " << step_count << std::endl;
 
-		Variation variation(processor_count, node_count, arguments.variation_config);
+		Variation variation(processor_count, arguments.variation_config);
 
 		if (!arguments.pretend) {
 			matrix_t temperature;

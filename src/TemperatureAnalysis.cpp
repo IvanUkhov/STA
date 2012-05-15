@@ -1,28 +1,44 @@
 #include "TemperatureAnalysis.h"
 #include "EigenvalueDecomposition.h"
-#include "File.h"
 
-TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
+TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot,
+	const Variation &variation)
+
 	: _processor_count(hotspot.processor_count()),
 	_node_count(hotspot.node_count()),
 	_sampling_interval(hotspot.sampling_interval()),
 	_ambient_temperature(hotspot.ambient_temperature())
 {
+	prepare_memory();
+	prepare_thermal_coefficients(hotspot);
+	prepare_variations(variation);
+}
+
+void TemperatureAnalysis::prepare_memory()
+{
+	/* Main matrices and vectors */
+	Cm12.resize(_node_count);
+
 	A.resize(_node_count, _node_count);
 	AT.resize(_node_count, _node_count);
 
 	B.resize(_node_count, _node_count);
 	BT.resize(_node_count, _node_count);
 
-	Cm12.resize(_node_count);
-
 	V.resize(_node_count);
 	U.resize(_node_count, _node_count);
 	UT.resize(_node_count, _node_count);
 
+	/* Variations */
+	GammaSdyn.resize(_node_count, _node_count);
+
+	/* Auxiliary space */
 	Mtemp.resize(_node_count, _node_count);
 	Vtemp.resize(_node_count);
+}
 
+void TemperatureAnalysis::prepare_thermal_coefficients(const HotSpot &hotspot)
+{
 	/* We have:
 	 * C * dT/dt + G * T = P
 	 */
@@ -82,57 +98,32 @@ TemperatureAnalysis::TemperatureAnalysis(const HotSpot &hotspot)
 	transpose_matrix(B, BT);
 }
 
-void TransientTemperatureAnalysis::perform(const matrix_t &dynamic_power,
-	matrix_t &temperature)
+void TemperatureAnalysis::prepare_variations(const Variation &variation)
 {
-	size_t step_count = dynamic_power.rows();
+	size_t i;
 
-	if (dynamic_power.cols() != _processor_count || step_count == 0)
-		throw std::runtime_error("The power profile has an invalid size.");
-
-	const double *P = dynamic_power;
-
-	temperature.resize(dynamic_power);
-
-	double *T = temperature;
-
-	size_t i, j, k;
-
-	/* The initial temperature is always zero.
-	 * Let us treat this case separately.
+	/* We have:
+	 * Kdyn -- the variation ratio of the dynamic power.
+	 * Sdyn -- the correlation matrix of the dynamic power,
 	 */
+	Kdyn.clone(variation.dynamic_ratio);
 
-	/* Expectation:
-	 *
-	 * BP(0) = B * P(0)
-	 * E(T'(0)) = A * 0 + BP(0)
+	matrix_t &Sdyn = Mtemp;
+	matrix_t &Mtemp2 = GammaSdyn;
+
+	/* Extend the correlation matrix to the dimensions of the circuit,
+	 * fill the diagonal with 1s, everywhere else -- with 0s.
 	 */
-	multiply_matrix_incomplete_vector(B, P, _processor_count, Tlast);
+	Sdyn.nullify();
+	Sdyn.copy(variation.dynamic_correlation);
+	for (i = _processor_count; i < _node_count; i++)
+		Sdyn[i][i] = 1;
 
-	/* Return back form T from T':
-	 * E(T) = C^(-1/2) * E(T')
-	 *
-	 * ... and do not forget about the ambience.
-	 */
-	for (j = 0, k = 0; j < _processor_count; j++, k++)
-		T[k] = Tlast[j] * Cm12[j] + _ambient_temperature - KELVIN;
+	/* Gamma(Sdyn) = U * V^(1/2) */
+	EigenvalueDecomposition decomposition(Sdyn, Mtemp2, Vtemp);
 
-	/* Repeat for the rest */
-	for (i = 1; i < step_count; i++) {
-		/* BP(i) = B * P(i) */
-		multiply_matrix_incomplete_vector(B, P + i * _processor_count,
-			_processor_count, BP);
+	for (i = 0; i < _node_count; i++)
+		Vtemp[i] = std::sqrt(Vtemp[i]);
 
-		/* E(T'(i)) = A * E(T'(i-1)) + Q(i) */
-		multiply_matrix_vector_plus_vector(A, Tlast, BP, Tnext);
-
-		/* Return back */
-		for (j = 0; j < _processor_count; j++, k++)
-			T[k] = Tnext[j] * Cm12[j] + _ambient_temperature - KELVIN;
-
-		/* Swap */
-		double *_ = Tlast;
-		Tlast = Tnext;
-		Tnext = _;
-	}
+	multiply_matrix_diagonal_matrix(Mtemp2, Vtemp, GammaSdyn);
 }

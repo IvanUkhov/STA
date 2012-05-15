@@ -1,27 +1,39 @@
 #ifndef __VARIATION_H__
 #define __VARIATION_H__
 
+#include <string>
+#include <cmath>
+
 #include "Configuration.h"
 #include "EigenvalueDecomposition.h"
 
 class Variation
 {
-	const size_t _processor_count;
-	const size_t _node_count;
-
-	/* Dynamic power */
-	vector_t Kdyn;
-	matrix_t GammaSdyn;
-
-	matrix_t Mtemp;
-	vector_t Vtemp;
-
 	public:
 
-	Variation(size_t processor_count, size_t node_count, const std::string &filename);
+	vector_t dynamic_ratio;
+	matrix_t dynamic_correlation;
 
-	void compute_initial_variance(const matrix_t &B, const matrix_t &BT,
-		const double *Pdyn, matrix_t &Var);
+	Variation(size_t processor_count, const std::string &filename)
+	{
+		Configuration config(filename);
+
+		size_t count = config.size();
+
+		for (size_t i = 0; i < count; i++) {
+			if (config[i].name == "dynamic_ratio")
+				config[i].to_vector(dynamic_ratio);
+			else if (config[i].name == "dynamic_correlation")
+				config[i].to_matrix(dynamic_correlation);
+		}
+
+		/* Validate! */
+		if (processor_count != dynamic_ratio.size())
+			throw std::runtime_error("The dynamic variation ratio vector is invalid.");
+		if (processor_count != dynamic_correlation.rows() ||
+			processor_count != dynamic_correlation.cols())
+			throw std::runtime_error("The dynamic correlation matrix is invalid.");
+	}
 };
 
 #endif
