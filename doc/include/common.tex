@@ -3,9 +3,6 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 
-\usepackage{bm}
-\bmdefine\bmu{\mu}
-
 \usepackage{multibib}
 
 % Utils
@@ -21,16 +18,18 @@
 \renewcommand{\v}[1]{\mathbf{#1}}
 \newcommand{\av}[1]{\a{\v{#1}}}
 
+\renewcommand{\r}[1]{\hat{#1}} % reduced
+
 \newcommand{\diag}[1]{\text{diag}\left(#1\right)}
 
 \renewcommand{\vector}[1]{\left(#1\right)^T}
 \renewcommand{\matrix}[1]{\left(#1\right)}
 
-\newcommand{\vzero}{\v{0}}
-\newcommand{\mzero}{\m{0}}
+\newcommand{\mOne}{\m{I}}
+\newcommand{\mZero}{\m{0}}
 
-\newcommand{\mone}{\m{I}}
-\newcommand{\vone}{\v{1}}
+\newcommand{\vOne}{\v{1}}
+\newcommand{\vZero}{\v{0}}
 
 \newcommand{\factorize}[1]{\Gamma[#1]}
 
@@ -38,7 +37,7 @@
 \newcommand{\ddbl}[1]{\langle \langle #1 \rangle \rangle}
 
 % Sets
-\newcommand{\real}{\mathbb{R}}
+\newcommand{\real}{\mathcal{R}}
 
 % References
 \newcommand{\equref}[1]{Eq.~(\ref{eq:#1})}
@@ -60,7 +59,7 @@
 \newcommand{\noisy}{\text{ns}}
 
 \newcommand{\mean}[1]{\mu_{#1}}
-\newcommand{\vmean}[1]{\bmu_{#1}}
+\newcommand{\vmean}[1]{\boldsymbol\mu_{#1}}
 
 \newcommand{\dev}[1]{\sigma_{#1}}
 \newcommand{\ddev}[1]{\m{\Lambda}_{#1}}
@@ -88,54 +87,79 @@
 
 % System
 \newcommand{\system}{\Pi}
-
-\newcommand{\profile}[1]{(\timepartition, #1)}
+\newcommand{\profile}[1]{(\pTime, #1)}
 
 % Time
 \newcommand{\timeset}{T}
 \renewcommand{\time}{t}
 
-\newcommand{\timepartition}{\mathbf{T}}
-\newcommand{\period}{\mathcal{T}}
+\newcommand{\pTime}{\Delta \tau}
+\newcommand{\period}{\tau}
 \newcommand{\timeinterval}{\Delta t}
 
-\newcommand{\stepcount}{m}
-\newcommand{\timeindex}{I_m}
+\newcommand{\steps}{s}
+\newcommand{\timeindex}{\mathcal{I}_s}
 
 % Power
 \newcommand{\powerset}{P}
 \newcommand{\power}{P}
-\newcommand{\vpower}{\v{P}}
-\newcommand{\mpower}{\m{P}}
+\newcommand{\vPower}{\v{P}}
+\newcommand{\mPower}{\mathbb{P}}
 
-\newcommand{\pprofile}[1]{\profile{\mpower_{#1}}}
+\newcommand{\pPower}[1]{\profile{\mPower_{#1}}}
 \newcommand{\mpprofile}[1]{\profile{\vmean{#1}}}
 
 \newcommand{\dyn}{\text{dyn}}
 \newcommand{\leak}{\text{leak}}
 
-% Temperature
-\newcommand{\tempset}{\Theta}
-\newcommand{\temp}{\Theta}
-\newcommand{\vtemp}{\v{\Theta}}
-\newcommand{\mtemp}{\m{\Theta}}
+\newcommand{\mAlpha}{\boldsymbol\alpha}
+\newcommand{\vBeta}{\boldsymbol\beta}
 
-\newcommand{\tprofile}[1]{\profile{\mtemp}}
+% Temperature
+\newcommand{\temp}{\Theta}
+\newcommand{\vTemp}{\v{\Theta}}
+\newcommand{\mTemp}{\m{\Theta}}
+\newcommand{\vOutTemp}{\v{T}}
+\newcommand{\mOutTemp}{\mathbb{T}}
+
+\newcommand{\pTemp}[1]{\profile{\mOutTemp}}
 
 \newcommand{\amb}{\text{amb}}
 \newcommand{\refer}{\text{ref}}
 
 % Thermal RC circuit
-\newcommand{\mcapacitance}{\m{C}}
-\newcommand{\mconductance}{\m{G}}
-\newcommand{\amconductance}{\a{\m{G}}}
+\newcommand{\nodes}{N}
+\newcommand{\rnodes}{n}
+\newcommand{\inodes}{m}
+\newcommand{\onodes}{p}
+\newcommand{\nodeindex}{\mathcal{I}_n}
 
-\newcommand{\cg}{\mcapacitance^{-1} \mconductance}
+\newcommand{\mCap}{\m{C}}
+\newcommand{\mCond}{\m{G}}
+
+\newcommand{\mIn}{\m{B}}
+\newcommand{\mOut}{\m{L}}
+
+\newcommand{\cg}{\mCap^{-1} \mCond}
 \newcommand{\ecg}[2]{e^{#1 \cg #2}}
 \newcommand{\emcg}[1]{e^{- \cg #1}}
 \newcommand{\ecgt}{e^{\cg t}}
 \newcommand{\emcgt}[1]{e^{- #1 \cg t}}
 
-% Thermal nodes
-\newcommand{\nodeindex}{I_n}
+% Deprecated
+\newcommand{\vpower}{\v{P}}
+\newcommand{\mpower}{\m{P}}
+\newcommand{\vtemp}{\v{\Theta}}
+\newcommand{\mtemp}{\m{\Theta}}
+\newcommand{\mcapacitance}{\m{C}}
+\newcommand{\mconductance}{\m{G}}
+\newcommand{\amconductance}{\a{\m{G}}}
 \newcommand{\nodecount}{n}
+\newcommand{\mone}{\m{I}}
+\newcommand{\mzero}{\m{0}}
+\newcommand{\pprofile}[1]{\profile{\mpower_{#1}}}
+\newcommand{\timepartition}{\mathcal{T}}
+\newcommand{\stepcount}{s}
+\newcommand{\tprofile}[1]{\profile{\mtemp}}
+\newcommand{\vzero}{\v{0}}
+\newcommand{\vone}{\v{1}}

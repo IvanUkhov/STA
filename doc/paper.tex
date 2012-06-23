@@ -2,13 +2,13 @@
 \input{include/common}
 
 \begin{document}
-  \title{System-Level Stochastic Temperature Analysis}
+  \title{System-Level Stochastic Temperature Analysis of Multiprocessor Systems}
   \author{Ivan Ukhov, Petru Eles, and Zebo Peng}
 
   \maketitle
 
   \begin{abstract}
-    Temperature is important.
+    In this work, we develop a novel technique to perform the temperature analysis of multiprocessor systems that are exposed to multiple sources of uncertainties. The uncertainties are manifested in the deviation of the actual power dissipation of the system from the nominal value. Apart from traditional time-invariant variations due to the process variation, we model the environmental noise, which by definition evolves in time. In order to demonstrate our technique in action, we perform an energy optimization under probabilistic temperature constraints. The experimental results show that the energy efficiency of the system can be significantly improved by accepting a negligibly small probability of the constraint violation.
   \end{abstract}
 
   \section{Introduction} \seclabel{introduction} \seclabel{uncertain-parameters}
@@ -16,6 +16,9 @@
 
   \section{Preliminaries}
   \input{include/preliminaries.tex}
+
+  \section{Model Reduction} \seclabel{model-reduction}
+  \input{include/model-reduction.tex}
 
   \section{Solution to the Thermal Model} \seclabel{thermal-model-solution}
   \input{include/thermal-model-solution.tex}

@@ -3,8 +3,8 @@ We assume that the variations of the dynamic power are normally distributed and 
 
 Taking everything together, the dynamic power is modeled as the following:
 \begin{align} \equlabel{dynamic-power}
-  & \vpower_\dyn = \vmean{\dyn} + \ddev{\dyn} \; \vnormal_\dyn \\
-  & \ddev{\dyn} = \diag{\vmean{\dyn}} \mratio_\dyn \factorize{\corr{\vpower_\dyn}} \nonumber \\
+  & \vpower_\dyn(\time) = \vmean{\dyn}(\time) + \ddev{\dyn}(\time) \; \vnormal_\dyn \\
+  & \ddev{\dyn}(\time) = \diag{\vmean{\dyn}(\time)} \mratio_\dyn \factorize{\corr{\vpower_\dyn}} \nonumber \\
   & \vnormal_\dyn \sim \normal(\vzero, \mone) \nonumber
 \end{align}
 where $\vmean{\dyn}$ is the vector of the mean (nominal) dynamic power dissipation, $\diag{\v{X}}$ denotes a diagonal matrix with the central diagonal composed of the elements of the vector $\v{X}$, and $\factorize{\corr{\vpower_\dyn}}$ denotes the factorization, introduced in \secref{probability-theory}. Such a model with a single \mrv\ implies that the direction of the variations from the nominal values is fixed, i.e., a core always is either cold, meaning that its power always tends to be lower than the nominal value, or hot, meaning that its power always tends to be higher than the nominal value.
@@ -17,7 +17,7 @@ In this paper, we assume that the leakage currents have a pure random nature and
   & \vnormal_\leak \sim \normal(\vzero, \mone)
 \end{align*}
 
-Due to the fact that the leakage power has a strong dependency on temperature, the later should be considered in the leakage modeling. As it was shown in \cite{liu2007}, a linear approximation of the leakage current yields sufficiently accurate results. Therefore, we also employ this technique in the paper and assume that $\vmean{\leak}$ is given at the reference temperature $\vtemp_\refer$ and the coefficient of proportionality, denoted by a diagonal matrix $\mratio_\leak$, is known\footnote{$\mratio_\leak$ can be obtained through a curve fitting procedure using, for instance, the least squares regression \cite{press2007}.}. $\mratio_\leak$ relates the difference between the current temperature and the reference one to the change of the leakage power. The final expression for the leakage power is the following:
+Due to the fact that the leakage power has a strong dependency on temperature, the later should be considered in the leakage modeling. $\mratio_\leak$ relates the difference between the current temperature and the reference one to the change of the leakage power. The final expression for the leakage power is the following:
 \begin{equation} \equlabel{leakage-power}
   \vpower_\leak(\time) = \vmean{\leak} + \ddev{\leak} \vnormal_\leak + \mratio_\leak(\vtemp(\time) - \vtemp_\refer)
 \end{equation}
@@ -26,15 +26,15 @@ Note that both the current temperature $\vtemp(\time)$ and reference one $\vtemp
 \subsection{Total Power and Temperature}
 Summing up \equref{dynamic-power} and \equref{leakage-power}, the total power dissipation can be computed as the following:
 \begin{align} \equlabel{total-power}
-  \vpower(\time) & = \vmean{\dyn} + \vmean{\leak} - \mratio_\leak \vtemp_\refer + \mratio_\leak \vtemp(\time) \nonumber \\
-  & { } \qquad + \ddev{\dyn} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak
+  \vpower(\time) & = \vmean{\dyn}(\time) + \vmean{\leak} - \mratio_\leak \vtemp_\refer + \mratio_\leak \vtemp(\time) \nonumber \\
+  & { } \qquad + \ddev{\dyn}(\time) \vnormal_\dyn + \ddev{\leak} \vnormal_\leak
 \end{align}
 In the following, we assume that $\vnormal_\dyn$ and $\vnormal_\leak$ are independent. However, all the models can be easily extended to the dependent case if the cross-covariance matrix $\cov{\vnormal_\dyn, \vnormal_\leak}$ is known\footnote{Another possible extension is to model $\vnormal_\dyn$ and $\vnormal_\leak$ as a single \mrv, implying the same source of the process variation of both parts of the power dissipation.}. Therefore, we rewrite \equref{fourier} as follows:
 \begin{align}
-  & \mcapacitance \frac{d\vtemp(\time)}{d\time} + (\mconductance - \mratio_\leak) \vtemp(\time) = \vmean{} \nonumber \\
-  & { } \qquad \qquad + \ddev{\dyn} \vnormal_\dyn + \ddev{\leak} \vnormal_\leak  \equlabel{fourier-pv}
+  & \mcapacitance \frac{d\vtemp(\time)}{d\time} + (\mconductance - \mratio_\leak) \vtemp(\time) = \vmean{}(\time) \nonumber \\
+  & { } \qquad \qquad + \ddev{\dyn}(\time) \vnormal_\dyn + \ddev{\leak} \vnormal_\leak  \equlabel{fourier-pv}
 \end{align}
 where:
 \[
-  \vmean{} = \vmean{\dyn} + \vmean{\leak} - \mratio_\leak \vtemp_\refer
+  \vmean{}(\time) = \vmean{\dyn}(\time) + \vmean{\leak} - \mratio_\leak \vtemp_\refer
 \]

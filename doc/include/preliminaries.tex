@@ -1,37 +1,57 @@
 \subsection{Architecture Model}
-Consider a multiprocessor system that is composed of a number of processing elements and a thermal package. Denote $\system$ the set of parameters that describes the system and includes the following information:
+Consider a multiprocessor system on a chip that contains a number of processing elements and is equipped with a thermal package. Denote $\system$ the set of parameters that describes the system and includes the following information:
 \begin{itemize}
   \item The floorplan of the die (the location and dimensions of the processing elements).
   \item The configuration of the thermal package (the dimensions of each of the layers).
   \item The thermal parameters of the materials that the die and package are made of (the thermal conductivity, specific heat, convection capacitance, and convection resistance).
-  \item The temperature of the ambience.
 \end{itemize}
 
-\subsection{Power and Thermal Models} \seclabel{thermal-model} \seclabel{power-model}
-Given $\system$, an equivalent thermal RC circuit of the system is constructed \cite{kreith2000}. The circuit is composed of $\nodecount$ \definition{thermal nodes}, indexed by an index set $\nodeindex = \{ 0, \dots, \nodecount - 1 \}$. The structure and number of thermal nodes depend on the desired level of details, defining the accuracy of the final model.
+\subsection{Thermal Model} \seclabel{thermal-model}
+Given $\system$, an equivalent thermal RC circuit of the system is constructed \cite{kreith2000}. The circuit is composed of $\nodes$ \definition{thermal nodes} indexed by an index set $\nodeindex = \{ 0, \dots, \nodes - 1 \}$. The structure of the circuit depends on the intended level of details that defines the accuracy of the resulting model.
 
-The total power dissipation of the constructed circuit at time $\time$ is denoted by a column vector $\vpower(\time) = \vector{\power_i(\time)}_{i \in \nodeindex}$ (hereafter this notation is used to emphasize elements of a vector), where $\power_i(\time)$ is the power of the $i$th thermal node\footnote{The passive nodes, i.e., the nodes that belong to the thermal package, dissipate no power.}. The total power is modeled as the sum of the dynamic power $\vpower_\dyn(\time)$ and leakage power $\vpower_\leak(\time)$, which we shall further discuss in \secref{process-variation}. The corresponding temperature is denoted by a column vector $\vtemp(\time) = \vector{\temp_i(\time)}_{i \in \nodeindex}$, where $\temp_i(\time)$ is the temperature of the $i$th thermal node.
+The thermal behaviour of the circuit is modeled with the following system of differential-algebraic equations (DAE):
+\begin{align}
+  & \mCap \frac{d\vTemp(\time)}{d\time} + \mCond \vTemp(\time) = \mIn \vPower(\time)  \equlabel{fourier} \\
+  & \vOutTemp(\time) = \mOut^T \vTemp(\time) \nonumber
+\end{align}
+$\vTemp(\time) \in \real^{\nodes}$ is the state vector of the system at time $\time$, which is the temperature vector of the thermal nodes. $\mCap \in \real^{\nodes \times \nodes}$ and $\mCond \in \real^{\nodes \times \nodes}$ are the matrices of the thermal capacitance and conductance, respectively. $\vPower(\time) \in \real^{\inodes}$ is the input vector of the power dissipation of the processing elements at time $\time$, and $\mIn \in \real^{\nodes \times \inodes}$ is its mapping matrix to the thermal nodes. $\vOutTemp(\time) \in \real^{\onodes}$ is the output vector of the system at time $\time$, which is the temperature vector of the thermal nodes of interest chosen by the mapping matrix $\mOut \in \real^{\nodes \times \onodes}$. Without loss of generality, the ambient temperature is assumed to be equal to zero since it can be easily added afterwards, and the mapping matrices are assumed to have the following structures:
+\[
+  \begin{array}{lr}
+  \mIn = \begin{bmatrix}
+    \mOne_\inodes \\
+    \mZero_{(\nodes - \inodes) \times \inodes}
+  \end{bmatrix} &
+  \mOut = \begin{bmatrix}
+    \mOne_\onodes \\
+    \mZero_{(\nodes - \onodes) \times \onodes}
+  \end{bmatrix}
+  \end{array}
+\]
+where $\mOne_k \in \real^{k \times k}$ and $\mZero_{k \times l} \in \real^{k \times l}$ denote an identity and zero matrices, respectively.
 
-The thermal behaviour of the system is modeled using the following heat equation:
-\begin{equation} \equlabel{fourier}
-  \mcapacitance \frac{d\vtemp(\time)}{d\time} + \mconductance (\vtemp(\time) - \vtemp_\amb) = \vpower(\time)
+\subsection{Power Model} \seclabel{power-model}
+The (nominal) power dissipation of the system at time $\time$ is modeled as the following:
+\[
+  \vPower(\time) = \vPower_\dyn(\time) + \vPower_\leak(\time)
+\]
+where $\vPower_\dyn(\time) \in \real^{\inodes}$ and $\vPower_\leak(\time) \in \real^{\inodes}$ are the dynamic and leakage power, respectively. The leakage power is modeled as a function of temperature due to the well-known, strong interdependency between them. In this paper, we use a linearized leakage model since, as shown in \cite{liu2007}, it yields a sufficiently accurate approximation:
+\begin{equation} \label{leakage-power}
+  \vPower_\leak(t) = \mAlpha \mIn^T \vTemp(\time) + \vBeta
 \end{equation}
-where $\mcapacitance$ and $\mconductance$ are $\nodecount \times \nodecount$ matrices of the thermal capacitance and conductance, respectively, $\vtemp_\amb$ is the temperature of the ambience.
+where $\mAlpha = \diag{\alpha_i} \in \real^{\inodes \times \inodes}$ and $\vBeta \in \real^{\inodes}$ are the linearization coefficients, and $\diag{a_i}$ denotes a diagonal matrix. $\mAlpha$ and $\vBeta$ can be obtained through a curve fitting procedure using, for instance, the least squares regression \cite{press2007}.
 
-A (discrete) total \definition{power profile} of the system over a time interval $\period$ is defined as a tuple $\pprofile{}$, where $\timepartition = \{ 0 = \time_0 < \dots < \time_{\stepcount} = \period \}$ is a partition of $\period$ into $\stepcount$ subintervals $\timeinterval_j = \time_{j+1} - \time_j$, indexed by $\timeindex = \{ 0, \dots, \stepcount - 1 \}$, and $\mpower = \matrix{\power_{ij}}_{i \in \nodeindex, j \in \timeindex}$ is a $\nodecount \times \stepcount$ matrix (hereafter this notation is used to emphasize elements of a matrix) of the power dissipation of the $i$th thermal node in the $j$th time interval. $\vpower_j = \vector{\power_{ij}}_{i \in \nodeindex}$ denotes the $j$th column of $\mpower$, i.e., the vector of the power dissipation of all nodes in the $j$th time interval. Since the total power is modeled as the sum of the dynamic power and leakage power, we shall use $\pprofile{\dyn}$ and $\pprofile{\leak}$ to distinguish between these two parts of $\pprofile{}$.
+\subsection{System Profiles} \seclabel{system-profiles}
+A \definition{power profile} of the system over a time interval $\period$ is defined as a tuple $\pPower{}$. $\pTime = \{ 0 = \time_0 < \dots < \time_{\steps} = \period \}$ is a partition of $\period$ into $\steps$ subintervals $\timeinterval_i = \time_{i+1} - \time_i$ indexed by $\timeindex = \{ 0, \dots, \steps - 1 \}$. $\mPower \in \real^{\inodes \times \steps}$ is a matrix of the corresponding power dissipation where the $i$th column vector, $\vPower_i \in \real^{\inodes}$, represents the power consumption of the processing elements at the beginning of the $i$th time interval, $\timeinterval_i$.
 
-A (discrete) \definition{temperature profile} with respect to a power profile $\pprofile{}$ is defined as a tuple $\tprofile{}$, where the time partition $\timepartition$ remains the same as for $\pprofile{}$ and $\mtemp = \matrix{\vtemp_{ij}}_{i \in \nodeindex, j \in \timeindex}$ is a matrix of the corresponding temperature values for the $i$th thermal node in the $j$th time interval. $\vtemp_j = \vector{\temp_{ij}}_{i \in \nodeindex}$ denotes the $j$th column of $\mtemp$, i.e., the vector of temperature values of all nodes in the $j$th time interval.
+A \definition{temperature profile} of the system with respect to $\pPower{}$ is defined as a tuple $\pTemp{}$. $\timepartition$ remains the same as for the power profile, and $\mOutTemp \in \real^{\onodes \times \steps}$ is a matrix of the corresponding temperature where the $i$th column vector, $\vOutTemp_i \in \real^{\onodes}$, represents the temperature of the thermal nodes of interest at the end of the $i$th time interval, $\timeinterval_i$.
 
 \subsection{Elements of Probability Theory} \seclabel{probability-theory}
-Let $(\outcomeset, \salgebra, \pmeasure)$ be a complete probability space \cite{durrett2010}, where $\outcomeset$ is a set of outcomes, $\salgebra$ is a $\sigma$-algebra on $\outcomeset$, and $\pmeasure$ is a probability measure. A $\salgebra$-measurable function $X: \outcomeset \to \real$ is called a \definition{\rv}. $\mean{X}$ and $\dev{X}^2$ represent the mean and variance of $X$, respectively. $X \sim \normal(\mean{X}, \dev{X}^2)$ denotes a \rv\ with a normally distributed \rv.
+Let $(\outcomeset, \salgebra, \pmeasure)$ be a complete probability space \cite{durrett2010} where $\outcomeset$ is a set of outcomes, $\salgebra$ is a $\sigma$-algebra on $\outcomeset$, and $\pmeasure$ is a probability measure. A $\salgebra$-measurable function $X: \outcomeset \to \real$ is called a \definition{\rv}. $\mean{X}$ and $\dev{X}^2$ represent the mean and variance of $X$, respectively.
 
-A vector of \rvs\ $\v{X}: \outcomeset \to \real^n$ is called a \definition{\mrv}. $\expect{\v{X}}$ and $\cov{\v{X}} = \expect{(\v{X} - \expect{\v{X}})(\v{X} - \expect{\v{X}})^T}$ represent the mean vector and covariance matrix of $\v{X}$, respectively. A normalized version of the covariance matrix is known as the correlation matrix $\corr{\v{X}}$, where $(i,j)$th element of the former is divided by $\dev{X_i} \dev{X_j}$, loosing the units of measure, but preserving the degree of linear dependencies in terms of the Person correlation coefficient\footnote{The Pearson correlation coefficient takes values from $-1$ to $1$ and is defined by $\rho_{ij} = \expect{(X_i - \mean{X_i})(X_j - \mean{X_j})}/(\dev{X_i}\dev{X_j})$.}. $\v{X} \sim \normal(\expect{\v{X}}, \cov{\v{X}})$ denotes a normally distributed \mrv.
+A vector of \rvs\ $\v{X}: \outcomeset \to \real^n$ is called a \definition{\mrv}. $\expect{\v{X}}$ and $\cov{\v{X}} = \expect{(\v{X} - \expect{\v{X}})(\v{X} - \expect{\v{X}})^T}$ represent the mean vector and covariance matrix of $\v{X}$, respectively. A normalized version of the covariance matrix is known as the correlation matrix $\corr{\v{X}}$, where $(i,j)$th element of the former is divided by $\dev{X_i} \dev{X_j}$, loosing the units of measure, but preserving the degree of linear dependencies in terms of the Person correlation coefficient\footnote{The Pearson correlation coefficient takes values from $-1$ to $1$ and is defined by $\rho_{ij} = \expect{(X_i - \mean{X_i})(X_j - \mean{X_j})}/(\dev{X_i}\dev{X_j})$.}.
 
 A \definition{\sp} is a parametrized collection of \rvs\ $\{ X(\time) \}_{\time \in \timeset}$, where $\timeset$ is the parameter space, the half line $[0, \infty)$ meaning time. $\{ \v{X}(\time) \}_{\time \in \timeset}$ denotes a multidimensional \sp.
 
-Throughout the paper, we shall use the following property of \mnrvs. A linear combination $\m{A} \v{X} + \m{B} \v{Y}$ of two dependent \mnrvs\ $\v{X} \sim \normal(\expect{\v{X}}, \cov{\v{X}})$ and $\v{Y} \sim \normal(\expect{\v{X}}, \cov{\v{X}})$ is a \mnrv\ $\v{Z} \sim \normal(\m{A} \expect{\v{X}} + \m{B} \expect{\v{X}}, \dbl{\m{A}, \cov{\v{X}}} + \dbl{\m{B}, \cov{\v{Y}}} + \ddbl{\m{A}, \cov{\v{X}, \v{Y}}, \m{B}})$, where $\dbl{\m{C}, \m{D}} = \m{C} \m{D} \m{C}^T$, $\ddbl{\m{C}, \m{D}, \m{E}} = \m{C} \m{D} \m{E}^T + \m{E} \m{D}^T \m{C}^T$, and $\cov{\v{X}, \v{Y}}$ is the cross-covariance matrix of the variables $\v{X}$ and $\v{Y}$. If the variables are independent, the cross-covariance matrix is zero.
+$X \sim \normal(\mean{X}, \dev{X}^2)$ denotes a normally distributed \rv\ while $\v{X} \sim \normal(\expect{\v{X}}, \cov{\v{X}})$ denotes a normally distributed \mrv. A linear combination $\m{A} \v{X} + \m{B} \v{Y}$ of two dependent \mnrvs\ $\v{X} \sim \normal(\expect{\v{X}}, \cov{\v{X}})$ and $\v{Y} \sim \normal(\expect{\v{Y}}, \cov{\v{Y}})$ is a \mnrv\ $\v{Z} \sim \normal(\m{A} \expect{\v{X}} + \m{B} \expect{\v{Y}}, \dbl{\m{A}, \cov{\v{X}}} + \dbl{\m{B}, \cov{\v{Y}}} + \ddbl{\m{A}, \cov{\v{X}, \v{Y}}, \m{B}})$ where $\dbl{\m{C}, \m{D}} = \m{C} \m{D} \m{C}^T$, $\ddbl{\m{C}, \m{D}, \m{E}} = \m{C} \m{D} \m{E}^T + \m{E} \m{D}^T \m{C}^T$, and $\cov{\v{X}, \v{Y}}$ is the cross-covariance matrix of the variables $\v{X}$ and $\v{Y}$. If the variables are independent, the cross-covariance matrix is zero.
 
-As any real symmetric matrix, a covariance matrix $\cov{\v{X}}$ (hence, the correlation matrix as well) can be factorized using the eigenvalue decomposition \cite{press2007} as $\cov{\v{X}} = \m{U} \m{V} \m{U}^T$, where $\m{U}$ and $\m{V}$ are an orthogonal matrix of the eigenvectors and a diagonal matrix of the eigenvalues of $\cov{\v{X}}$, respectively. Denote $\factorize{\cov{\v{X}}} = \m{U} \m{V}^{1/2}$. Therefore, a \mnrv\ $\v{X} \sim \normal(\vzero, \cov{\v{X}})$ has the same distribution as a \msnrv\ $\v{Y} \sim \normal(\vzero, \mone)$, multiplied by $\factorize{\cov{\v{X}}}$ on the left.
-
-\subsection{Process Variation and Environmental Noise} \seclabel{uncertainties}
-In this paper, we model two sources of uncertainties: the process variation, discussed in \secref{process-variation}, and environmental noise, discussed in \secref{noise}. Both components affect the dynamic power dissipation $\power_\dyn$ as well as the leakage power $\power_\leak$. Consequently, the actual power consumption of the system can deviate from the nominal values, becoming a \rv. $\power_\leak$ was shown to be considerably more sensible to the process variation than $\power_\dyn$. However, when $\power_\leak$ is negligible small, the variations in $\power_\dyn$ play the key role. In this paper, we take into consideration variations in both components.
+As any real symmetric matrix, a covariance matrix $\cov{\v{X}}$ (hence, the correlation matrix as well) can be factorized using the eigenvalue decomposition \cite{press2007} as $\cov{\v{X}} = \m{U} \m{V} \m{U}^T$ where $\m{U}$ and $\m{V}$ are an orthogonal matrix of the eigenvectors and a diagonal matrix of the eigenvalues of $\cov{\v{X}}$, respectively. Denote $\factorize{\cov{\v{X}}} = \m{U} \m{V}^{1/2}$. As a consequence, a \mnrv\ $\v{X} \sim \normal(\vzero, \cov{\v{X}})$ has the same distribution as a \msnrv\ $\v{Y} \sim \normal(\vzero, \mone)$ multiplied by $\factorize{\cov{\v{X}}}$ on the left.

@@ -1,4 +1,4 @@
-For the clarity reasons and without loss of generality, we let $\vtemp(\time) \equiv \vtemp(\time) - \vtemp_\amb$ in \equref{fourier}, since $\vtemp_\amb$ can be easily added to the final solution afterwards. In order to handle discrete power profiles and calculate the corresponding temperature profiles (see \secref{power-model}), we assume that within each time interval $\timeinterval_i$ the power consumption is constant in the right-hand side of \equref{fourier}. In this case, for a single time interal, we have a system of ordinary differential equations:
+In order to calculate the temperature profile $\pTemp{}$ based on a given power profile $\pPower{}$, the power consumption during each time interval $\timeinterval_i$, $i \in \timeindex$, is assumend to be constant and equal to the power consumption at the beginning of the interval, i.e., $\vPower_i$. Hence, for a particular time interval, the right-hand side of \equref{fourier} becomes constant resulting in a system of ordinary differential equations (ODE):
 \begin{equation} \equlabel{fourier-constant-power}
   \mcapacitance \frac{d\vtemp(\time)}{d\time} + \mconductance \vtemp(\time) = \vpower
 \end{equation}
@@ -11,8 +11,8 @@ where:
   & \m{A}(\time) = \emcg{\time} \equlabel{a} \\
   & \m{B}(\time) = -(\cg)^{-1}(\emcg{\time} - \mone) \mcapacitance^{-1} \equlabel{b}
 \end{align}
-Here $e^\m{M}$ denotes the matrix exponential of $\m{M}$. Consequently, the following recurrence can be applied in order to calculate temperature vectors for all $\timeinterval_i$ of the power profile:
+Here $e^\m{M}$ denotes the matrix exponential of $\m{M}$. Consequently, the following recurrence can be applied in order to calculate temperature vectors for all $\time_i$:
 \begin{equation} \equlabel{fourier-recurrence}
-  \vtemp_{i + 1} = \m{A}_i \vtemp_i + \m{B}_i \vpower_i, \sep i \in \timeindex
+  \vtemp_{i+1} = \m{A}_i \vtemp_i + \m{B}_i \vpower_i, \sep i \in \timeindex
 \end{equation}
-where we denote $\m{A}_i = \m{A}(\timeinterval_i)$ and $\m{B}_i = \m{B}(\timeinterval_i)$.
+where $\vtemp_0$ is the initial temperature vector at time $\time_0$, $\vtemp_\stepcount$ is the final temperature vector at time $\time_\stepcount$, $\m{A}_i = \m{A}(\timeinterval_i)$, and $\m{B}_i = \m{B}(\timeinterval_i)$. It can be seen that the power dissipation at time $\time_i$ and further during the whole time interval $\timeinterval_i$ appears in temperature at time $\time_{i+1}$.

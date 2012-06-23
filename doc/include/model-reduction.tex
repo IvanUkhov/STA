@@ -1,0 +1,12 @@
+The number of thermal nodes in the equivalent RC thermal circuit can be extremely large. The first cause is the constantly increasing number of processing elements on a single die, each of which require a separate thermal node. The second reason is the desire of having more accurate models where a whole set of thermal nodes is to be mapped onto a single core. The third reason is the need to take into consideration the thermal package of the system, which usually has several layers with the same level of details as the die itself dramatically multiplying the number of thermal nodes.
+
+A detailed thermal RC circuit produces a detailed temperature profile. However, in practice, what really matters is a relatively small set of thermal nodes, i.e., $\vOutTemp$ has a much smaller dimension than $\vTemp$ ($\onodes \ll \nodes$) in \equref{fourier}. For instance, one can be interested only in the temperature of the processing elements leaving the thermal package aside; in this case $\mOut = \mIn$. At the same time, the thermal package cannot be simply excluded from the model since it is essential for the dynamics of the system.
+
+Moreover, as the first step, a complex model is required to be constructed to aim at a high accuracy, but it does not mean that a smaller set of state variables cannot achieve the same accuracy; it is just not that intuitive to be obtained.
+
+All in all, there is a large room for model reduction techniques \cite{antoulas2001} where the basic idea is to project the state space of the initial system to a space of a lower dimension while preserving the original behaviour. Consequently, \equref{fourier} is transformed into:
+\begin{align}
+  & \r{\mCap} \frac{d\r{\vTemp}(\time)}{d\time} + \r{\mCond} \r{\vTemp}(\time) = \r{\mIn} \vPower(\time)  \equlabel{reduced-fourier} \\
+  & \vOutTemp(\time) = \r{\mOut}^T \r{\vTemp}(\time) \nonumber
+\end{align}
+Here $\r{\vTemp} \in \real^{\rnodes}$, $\r{\mCap} \in \real^{\rnodes \times \rnodes}$, $\r{\mCond} \in \real^{\rnodes \times \rnodes}$, $\r{\mIn} \in \real^{\rnodes \times \inodes}$, and $\r{\mOut} \in \real^{\rnodes \times \onodes}$ where $\rnodes < \nodes$.
